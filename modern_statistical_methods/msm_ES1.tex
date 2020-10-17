@@ -1,0 +1,208 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage{mathtools, amsmath, amssymb, amsthm, enumerate, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\title{Modern Statistical Methods --- Example Sheet 1} % subject
+\author{Lucas Riedstra}
+\date{...} % date
+
+\begin{document}
+\maketitle
+
+\begin{qbox}
+    Consider minimising the following objective involving response $Y \in \RR^n$ and design matrix $X \in \RR^{n \times p}$ over $(\mu, \beta) \in \RR \times \RR^p$: 
+    \[
+    \norm{Y - \mu \Bf{1} - X\beta}_2^2 + J(\beta).
+    \]
+    Here $J \colon \RR^p \to \RR$ is an arbitrary penalty function. Suppose $\bar{X_k} = 0$ for $k = 1, \dotsc, p$. Assuming that a minimiser $(\hat\mu, \hat\beta)$ exists, show that $\hat\mu = \bar Y$. Now take $J(\beta) = \lambda \norm{\beta}_2^2$ so we have the ridge regression objective. Show that
+    \[
+    \hat\beta = (X\T X + \lambda I)^{-1} X\T Y.
+    \] 
+    From here onwards, whenever we refer to ridge regression, we will assume $X$ has had its columns mean-centred. 
+\end{qbox}
+
+\begin{solution}
+    If a minimiser $\hat\mu$ exists, then the derivative of the objective must be 0. We expand the objective function as
+    \begin{align*}
+    \norm{Y - \mu\Bf{1} - X\beta}_2^2 + J(\beta) &= \sum_{i=1}^n \qty(Y_i - \mu - (X\beta)_i)^2 + J(\beta) \\
+    &= \sum_{i=1}^n \qty(Y_i - \mu - \sum_{j=1}^p X_{ij}\beta_j)^2. 
+    \end{align*}
+Now, differentiating w.r.t.\ $\mu$ yields
+\begin{align*}
+\pdv{\mu} \norm{Y - \mu\Bf{1} - X\beta}_2^2 + J(\beta) &= -2 \sum_{i=1}^n \qty( Y_i - \mu - \sum_{j=1}^p X_{ij}\beta_j) \\
+&= -2 \qty(\sum_{i=1}^n Y_i  - n\mu - \sum_{i=1}^n \sum_{j=1}^p X_{ij}\beta_j) \\
+&= -2 \qty(\sum_{i=1}^n Y_i  - n\mu - \sum_{j=1}^p \beta_j (\sum_{i=1}^p X_{ij})) \\
+&= -2 \qty( \sum_{i=1}^n Y_i - n\mu), 
+\end{align*}
+since $\sum_{i=1}^p X_{ij} = 0$ for all $i$ by assumption. Now, setting the derivative to 0 shows that $\hat\mu = \frac1n \sum_{i=1}^n Y_i = \bar Y$ is the minimiser. Since the second derivative of the objective function is constantly $+2$, this $\hat\mu$ is indeed a minimum. 
+
+To compute $\hat\beta$, we differentiate the objective function w.r.t.\ $\beta$: 
+\begin{align*}
+    \nabla_\beta \norm{Y- \mu \vec 1 - X\beta}_2^2 + \lambda \norm{\beta}_2^2 &= ...
+\end{align*}
+\TODO Finish
+\end{solution}
+
+\begin{question}
+    Consider performing ridge regression when $Y = X \beta^0 + \eps$, where $X \in \RR^{n \times p}$ has full column rank, and $\Var(\eps) = \sigma^2 I$. Let the SVD of $X$ be $UDV\T$ and write $U\T X \beta^0 = \gamma$. Show that
+    \[
+    \frac1n \EE\norm{X \beta^0 - X \hat\beta_\lambda^R}_2^2 = \frac1n \sum_{j=1}^p \qty(\frac\lambda{\lambda + D_{jj}^2})^2 \gamma_j^2 + \frac{\sigma^2}{n} \sum_{j=1}^p \frac{D_{jj}^4}{(\lambda + D_{jj}^2)^2}. 
+    \]
+\end{question}
+
+\begin{solution}
+    We write $\hat\beta \ceq \hat\beta_\lambda^R$. We write out
+    \[
+    X\hat\beta = UDV\T (V\T D^2 V + \lambda I)^{-1} V\T D U\T Y =  UD^2 (D^2 + \lambda I)^{-1} U\T Y = \sum_j \frac{D_{jj}^2}{\lambda + D_{jj}^2} U_j U_j\T Y. 
+    \]
+    Since $X\beta^0 = UDV\T \beta^0$ lies in the range of $U$, we have $X\beta^0 = \sum_j U_j U_j\T X\beta^0$. 
+    \begin{align*}
+        X\beta^0 - X\hat\beta &= \sum_j U_j U_j\T X \beta^0 -  \sum_j \frac{D_{jj}^2}{\lambda + D_{jj}^2} U_j U_j\T Y \\
+        &= \sum_j \qty(U_j\T X \beta^0 - \frac{D_{jj}^2 U_j\T Y}{\lambda + D_{jj}^2}) U_j \\
+        &= \sum_j \qty(\frac{D_{jj}^2 U_j\T (X\beta^0 - Y) + \lambda U_j\T X \beta^0}{\lambda + D_{jj}^2})
+    \end{align*}
+and therefore
+\begin{align*}
+    \frac1n \EE\norm{X\beta^0 - X\hat\beta}_2^2 &= \frac1n \sum_j \EE \qty(\frac{D_{jj}^2 U_j\T (X\beta^0 - Y) + \lambda U_j\T X \beta^0}{\lambda + D_{jj}^2})^2 \\
+    &\overset{*}= \frac1n \sum_j \frac{D_{jj}^4}{(\lambda + D_{jj}^2)^2} \EE[(U_j\T (X\beta^0 - Y))^2] + \frac1n \sum_j \qty(\frac{\lambda}{\lambda + D_{jj}^2})^2  (U_j\T X \beta^0)^2 \\
+&\overset{**}= \frac{\sigma^2}{n} \sum_j \frac{D_{jj}^4}{(\lambda + D_{jj}^2)^2}  + \frac1n \sum_j \qty(\frac{\lambda}{\lambda + D_{jj}^2})^2  \gamma_j^2.
+\end{align*}
+Note that the cross-terms in $(*)$ disappear since they are linear combinations of $\EE(X\beta^0 - Y) = 0$, while the equality $**$ holds since 
+\[
+\EE[(U_j\T(X \beta^0 - Y))^2] = \Var(U_j\T (X\beta^0 - Y)) = U_j\T \Var(X\beta^0 - Y) U_j = \sigma^2 U_j\T U_j = \sigma^2. 
+\]
+\end{solution}
+
+\begin{question}
+    Show that the ridge regression estimates can be otained by ordinary least squares regression on an augmented data set with $\sqrt\lambda I$ added to the botten of $X$, and $p$ zeroes added to the end of the response $Y$. 
+\end{question}
+
+\begin{solution}
+    Let $\tilde X, \tilde Y$ be the new data set, then our ordinary least squares objective function is
+    \begin{align*}
+    L(\beta) & \ceq \norm{\tilde Y - \tilde X \beta}^2 \\
+    &= \norm{Y - X\beta}^2 + \norm{\sqrt\lambda\beta}^2 \\
+    &= \norm{Y - X\beta}^2 + \lambda \norm{\beta}^2,
+    \end{align*}
+which is exactly our ridge regression objective function. 
+\end{solution}
+
+\begin{question}
+    In the following, assume that forming $AB$ where $A \in \RR^{a \times b}, B \in \RR^{b \times c}$ requires $O(abc)$ computational operations, and that if $M \in \RR^{d \times d}$ is invertible, then forming $M^{-1}$ requires $O(d^3)$ operations. 
+    \begin{enumerate}[(a)]
+        \item Suppose we wish to apply ridge regression to data $(Y, X) \in \RR^n \times \RR^{n \times p}$ with $n \gg p$. A complication is that the data is split into $m$ separate datasets of size $n/m \in \NN$, 
+        \[
+        Y = \mqty( Y^{(1)} \\ \vdots \\ Y^{(m)}), \quad X = \mqty( X^{(1)} \\\vdots\\X^{(m)}),
+        \]
+        with each dataset located on a different server. Moving large amounts of data between servers is expensive. Explain how one can produce ridge estimates $\hat\beta_\lambda$ by communicating only $O(p^2)$ numbers from each server to some central server. What is the total order of the computation time required at each server, and at the central server for your approach? 
+        
+        \item Now suppose instead that $p \gg n$ and it is instead the variable sthat are split across $m$ servers, so each server has only a subset of $p/m \in \NN$ variables for each observation, and some central server stores $Y$. Explain how one can obtain the fitted values $X\hat\beta_\lambda$ communicating only $O(n^2)$ numbers from each server to the central server. What is the total order of the computation time required at each server, and at the central server for your approach? 
+    \end{enumerate}
+\end{question}
+
+\begin{solution}
+    \begin{enumerate}[(a)]
+        \item Note that
+        \[
+        X\T Y = \mqty( X^{(1)\top} \dotsc X^{(m)\top}) \mqty( Y^{(1)}\\\vdots\\Y^{(m)}) = \sum_{i=1}^m X^{(i)\top} Y^{(i)}. 
+        \]
+        Each of the $X^{(i)\top} Y^{(i)}$ can be computed at the data server (requiring $O(np)$ computation) and produces $p$ numbers per data server. 
+        
+        Analogously, we have
+        \[
+        X\T X = \sum_{i=1}^m X^{(i)\top} X^{(i)},
+        \]
+        which can also be computed at the data server (requiring $O(np^2)$ computation) and produces $p^2$ numbers per data server. In the end, each server will therefore have $O(p^2)$ numbers to send, having done $O(np^2)$ computations. 
+        
+        When each server sends their numbers to the central data server, the central data server can then compute $(X\T X + \lambda I)^{-1}$ using $O(p^3)$ computations and then multiply that with $X\T Y$ which will require $O(np)$ computations. 
+        
+        \item In this case, we have 
+        \[
+        X = \mqty( X^{(1)} \dotsb X^{(m)} ). 
+        \]
+        We use the alternative form of  $\hat\beta_\lambda$, namely
+        \[
+        X \hat\beta_\lambda^R = XX\T (XX\T + \lambda I)^{-1} Y.
+        \]
+        
+        Now, we have $XX\T = \sum_{i=1}^m X^{(i)} X^{(i)\top}$, and each $X^{(i)} X^{(i)\top}$ can be computed at the data server, requiring $O(n^2 p)$ computations and producing $O(n^2)$ numbers to send.  
+        
+        After sending these numbers over to the central server, the inverse $(XX\T + \lambda I)^{-1}$ can be computed in $O(n^3)$ time, then multiplied from the left with $XX\T$ in $O(n^3)$ time, and multiplied with $Y$ in $O(n^2)$ time. The total amount of computation at the central server will therefore be $O(n^3)$ as well. 
+    \end{enumerate}
+\end{solution}
+
+
+\end{document}

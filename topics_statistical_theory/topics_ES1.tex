@@ -1,0 +1,187 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage{mathtools, amsmath, amssymb, amsthm, enumerate, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+\newcommand\toprob{\overset{\Rm{p}}{\to}}
+\newcommand\todist{\overset{\Rm{d}}{\to}}
+\newcommand\toas{\overset{\Rm{a.s.}}{\to}}
+\newcommand\deq{\overset{\Rm{d}}=}
+\newcommand\iid{\overset{\Rm{iid}}{\sim}}
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator\Exp{Exp}
+\DeclareMathOperator\Beta{Beta}
+\DeclareMathOperator\Gam{Gamma}
+
+\title{Topics in Statistical Theory --- Example Sheet 1} % subject
+\author{Lucas Riedstra}
+\date{...} % date
+
+\begin{document}
+\maketitle
+
+\begin{question}
+    Let $U_1, \dotsc, U_n \iid U(0, 1)$ and let $Y_1, \dotsc, Y_{n+1} \iid \Exp(1)$. Writing $S_j \ceq \sum_{i=1}^j Y_i$ for $j = 1, \dotsc, n+1$, show that
+    \[
+    U_{(j)} \deq \frac{S_j}{S_{n+1}} \sim \Beta(j, n - j + 1)
+    \]
+    for $j = 1, \dotsc, n$. 
+\end{question}
+
+\begin{solution}
+    First we compute the distribution function of $X_{(j)}$. If $X_{(j)} \leq x$, then at least $j$ of the $X_i$ must be $\leq x$. 
+
+For $k = j, j+1, \dotsc, n$, there are $\binom{n}{k}$ ways to choose $k$ of the $X_i$'s that must be $\leq j$. Fix $x \in [0, 1]$, then we have
+\begin{align*}
+    \PP(X_{(j)} \leq x) &= \sum_{k=j}^n \binom{n}{k} \PP(X_1 \leq x, \dotsc, X_k \leq x, X_{k+1} > x, \dotsc, X_n > x) \\
+    &= \sum_{k=j}^n \binom{n}{k} (F(x))^k \cdot (1 - F(x))^{n-k} \\
+    &=  \sum_{k=j}^n \binom{n}{k} x^k (1-x)^{n-k}.
+\end{align*}
+
+Now, the density function of $X_{(k)}$ is given by the derivative of $F$. This is a hefty calculation, see for example \href{https://math.stackexchange.com/a/1179378/696417}{this StackExchange link}, but it turns out to be
+\[
+\dv{x} F_{(j)}(x) = f_{(j)}(x) = \frac{n!}{(j-1)!(n-j)!} x^{j-1}(1-x)^{n-j},
+\]
+which is also the density function of the $\Rm{Beta}(j, n-j+1)$ distribution.
+
+Finally, define $T = S_{n+1} - S_j$, so that $S_j$ and $T$ are independent. It is known that $S_j \sim \Gam(j, 1)$, $T \sim \gamma(n - j + 1)$, and furthermore that
+\[
+\frac{S_j}{S_{n+1}} = \frac{S_j}{S_j + T} \deq \frac{\Gamma(j, 1)}{\Gamma(j, 1) + \Gamma(n - j + 1, 1)} \sim \Beta(j, n - j + 1). 
+\]
+\end{solution}
+
+\begin{question}
+    Let $X$ be a random variable with mean zero that satisfies $a \leq X \leq b$. Use convexity to show that for every $t \in \RR$, we have
+    \[
+    \log \EE(e^{tX}) \leq - \alpha u + \log(\beta + \alpha e^u),
+    \]
+    where $u \ceq t(b-a)$ and $\alpha \ceq 1 - \beta = -a/(b-a)$. Using a second-order Taylor expansion around the origin, deduce that $\log \EE(e^{tX}) \leq t^2 (b-a)^2/8$. 
+\end{question}
+
+\begin{proof}
+    Let $x \in [a, b]$, then we know there exists a unique $\lambda \in [0, 1]$ such that $x = (1-\lambda) a + \lambda b$. A simple computation gives $\lambda = (x-a)/(b-a)$, $1 - \lambda = (b-x)/(b-a)$. By convexity of $t \mapsto e^{tx}$ we find
+    \[
+    e^{tx} \leq \frac{b-x}{b-a} e^{t a} + \frac{x-a}{b-a} e^{t b}. 
+    \]
+    
+    From this we deduce that 
+    \[
+    \EE[e^{tX}] \leq \EE\qty[\frac{b-X}{b-a} e^{t a} + \frac{X-a}{b-a} e^{t b}] = \frac{b}{b - a} e ^{ta} + \frac{-a}{b - a} e^{tb} = \beta e^{ta} + \alpha e^{tb} = e^{-\alpha u + \log(\beta + \alpha e^u)}. 
+    \]
+    Since $\log$ is increasing, we can take the logarithm on both sides to conclude
+    \[
+    \log \EE[e^{tX}] \leq -\alpha u + \log(\beta + \alpha e^u). 
+    \]
+    
+    Now, we compute the taylor polynomial of $f(u) \ceq -\alpha u + \log(\beta + \alpha e^u)$ in $u = 0$: we have
+    \begin{align*}
+        f(0) &= \log(\beta + \alpha) = \log(1) = 0; \\
+        f'(u) &= -\alpha + \frac{\alpha e^u}{\beta + \alpha e^u}; \\
+        f'(0) &= -\alpha + \frac{\alpha}{\beta + \alpha} = 0; \\
+        f''(u) &= \frac{(\beta + \alpha e^u)\alpha e^u - (\alpha e^u)^2}{(\beta + \alpha e^u)^2} = \frac{\alpha e^u}{(\beta + \alpha e^u)} \qty(1 - \frac{\alpha e^u}{(\beta + \alpha e^u)})
+    \end{align*}
+
+Note that $\frac{\alpha e^u}{\beta + \alpha e^u} \in [0, 1]$ since $\alpha, \beta \geq 0$ (this holds because $a$ must be negative and $b$ must be positive due to the condition $\EE X = 0$). For $y \in [0, 1]$, the polynomial $y(1-y)$ takes values in $[0, \frac14]$. Therefore, by Taylor's theorem with remainder, we conclude
+\[
+\log \EE[e^{tX}] \leq \qty(\sup_{u \in \RR} \frac{f''(u)}{2} )u^2 = \frac18 u^2 = \frac{t^2(b-a)^2}{8}. 
+\]
+\end{proof}
+
+\begin{question}
+    Let $X_1, \dotsc, X_n$ be independent with distribution $P$ on a measurable space $(\Cal X, \Cal A)$, and let $\hat P_n$ be the empirical measure of $X_1, \dotsc, X_n$; thus $\hat P_n(A) = n^{-1} \sum_{i=1}^n \ind_{X_i \in A}$. Show that, for all $\eps > 0$ and $A \in \Cal A$, we have
+    \[
+    \PP\qty(\abs{\hat P_n(A) - P(A)} > \eps) \leq 2 e^{-2n\eps^2}. 
+    \]
+\end{question}
+
+\begin{proof}
+    Define a new distribution $Y = \ind_{X \notin A}$. Its distribution function is given by
+    \[
+    F_Y(y) = \begin{cases}
+        0 &\text{$y < 0$}; \\
+        P(A) &\text{$y \in [0, 1)$}; \\
+        1 &y \geq 1. 
+    \end{cases}, \quad F_Y(0) = P(A). 
+    \]
+    The empirical distribution function of $Y_1, \dotsc, Y_n \iid Y$ is given by
+    \[
+    \hat F_n(y) = \frac1n \sum_{i=1}^n \ind_{Y_i \leq y},
+    \]
+    and thus for $y = 0$ we have
+    \[
+    \hat F_n(0) = \frac1n \sum_{i=1}^n \ind_{Y_i \leq 0} = \frac1n \sum_{i=1}^n \ind_{X_i \in A} = \hat P_n(A).
+    \]
+    
+    The result now follows from the DKW inequality. \TODO make more precise. 
+\end{proof}
+\end{document}
