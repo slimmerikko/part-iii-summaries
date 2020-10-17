@@ -1,0 +1,313 @@
+\section{Basic concepts}
+\subsection{Parametric vs nonparametric models}
+\begin{definition}
+    A \emph{statistical model} is a family of possible data-generating mechanisms. If the parameter space $\Theta$ is finite-dimensional, we speak of a \emph{parametric model}. 
+    
+    A model is called \emph{well-specified} if there is a $\theta_0 \in \Theta$ for which the data was generated from the distribution with parameter $\theta_0$, and otherwise it is called \emph{misspecified}. 
+\end{definition}
+
+\begin{recap}
+    Let $(Y_n)$ be a sequence of random vectors and $Y$ a random vector. 
+    \begin{enumerate}
+        \item We say that $(Y_n)$ \emph{converges almost surely} to $Y$, notation $Y_n \toas Y$, if $\PP(Y_n \to Y) = 1$. 
+        \item We say that $(Y_n)$ \emph{converges in probability} to $Y$, notation $Y_n \toprob Y$, if for every $\eps > 0$ we have $\PP(\norm{Y_n - Y} > \eps) \to 0$.
+        \item We say that  $(Y_n)$ \emph{converges in distribution} to $Y$, notation $Y_n \todist Y$, if $\PP(Y_n \leq y) \to \PP(Y \leq y)$ for all $y$ where the distribution function of $Y$ is continuous. 
+        
+        This is equivalent to the condition that $\EE[f(Y_n)] \to \EE[f(Y)]$ for all bounded Lipschitz functions $f$. 
+    \end{enumerate}
+    It is known that $Y_n \toas Y \implies Y_n \toprob Y \implies Y_n \todist Y$. 
+    
+    If $(Y_n)$ is a sequence of random vectors and $(a_n)$ is a positive sequence, then we write $Y_n = O_p(a_n)$ if, for all $\eps > 0$, there exists $C > 0$ such that for sufficiently large $n$ we have
+    \[
+    \PP\qty(\frac{\norm{Y_n}}{a_n} > C) < \eps. 
+    \]
+    We write $Y_n = o_n(a_n)$ if $Y_n/a_n \toprob 0$. 
+\end{recap}
+In a well-specified parametric model, the maximum likelihood estimator (MLE) $\hat\theta_n$ typically satisfies $\hat\theta_n - \theta_0 \in O_p(n^{-1/2})$. On the other hand, if the model is misspecified, any inference can give very misleading results. To circumvent this problem, we consider \emph{nonparametric models}, which make much weaker assumptions. Such infinite-dimensional models are much less vulnerable to model misspecification, however we will typically pay a price in terms of a slower convergence rate than in well-specified parametric models. 
+
+\begin{example}
+    Examples of nonparametric models include: 
+    \begin{enumerate}
+        \item Assume $X_1, \dotsc, X_n \iid F$ for some unknown distribution function $F$. 
+        \item Assume $X_1, \dotsc, X_n \iid f$ for some unknown density $f$ belonging to a smoothness class.
+        \item Assume $Y_i = m(x_i) + \eps_i$ ($i = 1, \dotsc, n$), where the $x_i$ are known, $m$ is unknown and belongs to some smoothness class, and the $\eps_i$ are i.i.d.\ with $\EE (\eps_i) = 0$ and $\Var(\eps_i) = \sigma^2$. 
+    \end{enumerate}
+\end{example}
+
+\subsection{Estimating an arbitrary distribution function}
+\begin{definition}
+    Let $\Cal F$ denote the class of all distribution functions on $\RR$ and suppose $X_1, \dotsc, X_n \iid F \in \Cal F$. The \emph{empirical distribution function} $\hat{F_n}$ of $X_1, \dotsc, X_n$ is defined as
+    \[
+    \hat F_n(x) \ceq \frac1n \sum_{i=1}^n \ind_\qty{X_i \leq x}.
+    \]
+\end{definition}
+
+\begin{recap}
+    The \emph{strong law of large numbers} tells us that if $(Y_n)$ are i.i.d.\ with finite mean $\mu$, then $\bar{Y} \ceq \frac1n \sum_{i=1}^n Y_i \toas \mu$. 
+\end{recap}
+
+Note that the strong law of large numbers immediately implies that $\hat{F_n}(x)$ converges almost surely to $F(x)$ as $n \to \infty$. However, the following stronger result states that this convergence holds uniformly in $x$: 
+
+\begin{theorem}[Glivenko-Cantelli] \label{thm:GC}
+    Let $X_1, X_2, \dotsc \iid F$. Then we have 
+    \[
+    \sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)}\toas 0. 
+    \]
+\end{theorem}
+
+\begin{proof}
+    See lecture notes. The main idea of the proof is to ``control'' $\hat{F_n}$ in a finite number of points $x_1, \dotsc, x_k$, and then deduce what happens between those points using the fact that distributions are increasing and right-continuous. On \href{https://en.wikipedia.org/wiki/Glivenko%E2%80%93Cantelli_theorem#Proof}{Wikipedia}, 
+        a simplified proof can be found assuming that $F$ is continuous, which still encapsulates the main idea.  
+\end{proof}
+
+\begin{theorem}[Dvoretzky-Kiefer-Wolfowitz] 
+    Under the conditions of \cref{thm:GC}, for every $\eps > 0$ it holds that
+    \[
+    \PP_F \qty(\sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)} > \eps) \leq 2e^{-2n\eps^2},
+    \]
+    and this is a tight bound. 
+\end{theorem}
+
+We will not prover this theorem, however, we will explore a few consequences. 
+One of these consequences is the following: 
+
+\begin{corollary}[Uniform Glivenko-Cantelli theorem] Under the conditions of \cref{thm:GC}, for every $\eps > 0$, it holds that
+    \[
+    \sup_{F \in \Cal F} \PP_F \qty(\sup_{m \geq n} \sup_{x \in \RR} \abs{\hat{F_m}(x) - F(x)} > \eps) \to 0 \quad\text{as $n \to\infty$.}
+    \]
+\end{corollary}
+
+\begin{proof}
+    By a union bound, the DKW inequality, and convergence of the geometric series we have
+    \begin{align*}
+    \sup_{F \in \Cal F} \PP_F \qty(\sup_{m \geq n} \sup_{x \in \RR} \abs{\hat{F_m}(x) - F(x)} > \eps) &\leq \sup_{F \in \Cal F} \sum_{m = n} \PP_F \qty(\sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)} > \eps) \\
+    &\leq 2 \sum_{m=n}^\infty e^{-2m\eps^2},    \end{align*}
+which converges to 0 as it is the tail of a converging sum. 
+\end{proof}
+
+For another consequence, we consider the problem of finding a confidence band for $F$. Given $\alpha \in (0, 1)$, set $\eps_n \ceq \sqrt{-\frac1{2n}\log(\alpha/2)}$. Then the DKW inequality tells us that
+\[
+\PP_F \qty( \sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)} > \eps_n) \leq \alpha,
+\]
+or equivalently, that 
+\[
+\PP_F\qty(\hat{F_n}(x) - \eps_n \leq F(x) \leq \hat{F_n}(x) + \eps_n \ \text{for all $x \in \RR$}) \geq 1 - \alpha. 
+\]
+
+We can say even more.
+
+\begin{recap}
+    For any distribution function $F$, its \emph{quantile function} is defined as
+    \[
+    F^{-1} \colon (0, 1] \to \RR \cup \qty{\infty} \colon p \mapsto \inf \qty{x \in \RR \mid F(x) \geq p}. 
+    \]
+    When necessary, we also define $F^{-1}(0) \ceq \sup\qty{x \in \RR \mid F(x) = 0}$.
+    
+    If $U \sim U(0, 1)$ and $X \sim F$, then for any $x \in \RR$ we have
+    \[
+    \PP(F^{-1}(U) \leq x) = \PP(U \leq F(x)) = F(x) = \PP(X \leq x). 
+    \]
+    This can be written simply as $F^{-1}(U) \deq X$. 
+\end{recap}
+
+Let $U_1, \dotsc, U_n \iid U(0, 1)$ with empirical distribution function $\hat{G_n}$, and let $X_1, \dotsc, X_n \iid F$. Then, we have
+\begin{align*}
+\hat{G_n}(F(x)) = \frac1n \sum_{i=1}^n \ind_\qty{U_i \leq F(x)} \deq \frac1n \sum_{i=1}^n \ind_\qty{X \leq x} = \hat{F_n}(x), 
+\end{align*}
+where $\deq$ means equality in distribution. It follows that
+\[
+\sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)} \deq \sup_{x \in \RR} \abs{\hat{G_n}(F(x)) - F(x)} \leq \sup_{t \in [0, 1]} \abs{\hat{G_n}(t) - t},
+\]
+with equality if $F$ is continuous. We conclude that if $F$ is continuous, the distribution of $\sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)}$ does not depend on $F$. 
+
+Other generalisations of \cref{thm:GC} include Uniform Laws of Large Numbers. Let $X, X_1, \dotsc, X_n$ be i.i.d.\ on a measurable space $(\Cal X, \Cal A)$, and $\Cal G$ a class of measurable functions on $\Cal X$. We say that $\Cal G$ satisfies a ULLN if 
+\[
+\sup_{g \in \Cal G} \abs{\frac1n \sum_{i=1}^n g(X_i) - \EE[g(X)]} \toas 0. 
+\]
+In \cref{thm:GC}, we showed that $\Cal  G = \qty{ \ind_\qty{\cdot \leq x} \mid x \in \RR}$ satisfies a ULLN. 
+
+\begin{recap}
+    We recall the central limit theorem: if $X_1, \dotsc, X_n$ are i.i.d.\ random variables with mean $\mu$ and variance $\sigma^2 < \infty$, then $\sqrt n \qty(\bar{X_n} - \mu) \todist N(0, \sigma^2)$. 
+    
+    Dividing by $\sigma$ yields
+    \[
+    \frac{\sqrt n \qty(\bar{X_n} - \mu)}{\sigma} \todist N(0, 1), 
+    \]
+    and multiplying both sides by $n$ and writing $V_i = \sum_{j=1}^i X_j$ we obtain
+    \[
+    \frac{V_i - \EE V_i}{\sqrt{\Var(V_i)}} \todist N(0, 1).
+    \]
+\end{recap}
+Another extension starts with the observation that $\sqrt n \qty(\hat{F_n}(x) - F(x)) \todist N(0, \sigma^2)$, where
+\[
+\sigma^2 = \Var(\ind_\qty{X \leq x}) = \EE[\ind_{X \leq x}^2] - \EE[\ind_{X \leq x}]^2 = F(x) - F(x)^2 = F(x)(1 - F(x)). 
+\]
+This can be strengthened by considering $(\sqrt n \qty(\hat{F_n}(x) - F(x)) \todist N(0, \sigma^2) \mid x \in \RR)$ as a stochastic process. 
+
+\subsection{Order statistics and quantiles}
+\begin{definition}
+    Let $X_1, \dotsc, X_n \iid F \in \Cal F$. The \emph{order statistics} are the ordered samples $X_{(1)} \leq \dotsb \leq X_{(n)}$ (where the original order is preserved in case of a tie). 
+\end{definition}
+
+The order statistics of the uniform distribution can be computed explicitly: 
+\begin{proposition}
+    Let $U_1, \dotsc, U_n \iid U(0, 1)$,  let $Y_1, \dotsc, Y_{n+1} \iid \Exp(1)$, and write $S_j \ceq \sum_{i=1}^j Y_j$ ($j = 1, \dotsc, n+1$). Then
+    \[
+    U_{(j)} \deq \frac{S_j}{S_{n+1}} \sim \Rm{Beta}(j, n - j + 1) \quad\text{for $j = 1, \dotsc, n$}. 
+    \]
+\end{proposition}
+
+\begin{proof}
+    See example sheet 1, question 1.  
+\end{proof}
+\begin{definition}
+    Let $X_1, \dotsc, X_n \iid F$. Then the \emph{sample quantile function} is defined as 
+    \[
+    \hat F_n^{-1}(p) = \inf \qty{x \in \RR \mid \hat F_n(x) \geq p}. 
+    \]
+\end{definition}
+
+\begin{proposition}
+    It holds that $\hat F_n^{-1}(p) = X_{(\ceil{np})}$. 
+\end{proposition}
+
+\begin{proof}
+    By definition, $\hat F_n^{-1}(p)$ is the smallest value of $x$ for which $\hat F(x)$ is larger than $p$. Note that
+    \[
+    \hat F(x) \geq p \iff \frac1n \sum_{i=1}^n \ind_\qty{X_i \leq x} \geq p \iff \sum_{i=1}^n \ind_\qty{X_i \leq x} \geq np \iff \sum_{i=1}^n \ind_\qty{X_i \leq x} \geq \ceil{np}.
+    \]
+    The smallest value of $x$ for which this occurs is the smallest value of $x$ such that exactly $\ceil{np}$ of the variables $X_1, \dotsc, X_n$ satisfy $X_i \leq x$. We conclude that $\hat F_n^{-1}(p) = X_{(\ceil{np})}$. 
+\end{proof}
+
+For $p = \frac12$ for example, this proposition tells us that $\hat F_n^{-1}(p) = X_{(\ceil{n/2})}$, the median of the data. We now explore the distribution of $X_{(\ceil{np})}$. 
+
+\begin{recap}
+We recall two theorems. The first is \emph{Slutsky's theorem}:
+\begin{theorem}
+    Let $(Y_n)$ and $(Z_n)$ be sequences of random vectors with $Y_n \todist Y$ and $Z_n \toprob c$ for some constant $c$. If $g$ is a continuous real-valued function, then $g(Y_n, Z_n) \todist g(Y, c)$. 
+\end{theorem}
+
+The second is the \emph{delta method}:
+\begin{theorem}
+    Let $(Y_n)$ be a sequence of random vectors such that $\sqrt n (Y_n - \mu) \todist Z$. If $g \colon \RR^d \to \RR$ is differentiable at $\mu$, then
+    \[
+    \sqrt n \qty(g(Y_n) - g(\mu)) \todist g'(\mu) Z. 
+    \]
+\end{theorem}
+\end{recap}
+
+\begin{lemma}
+    If $U_1, \dotsc, U_n \iid U(0, 1)$ and $p \in (0, 1)$, then $\sqrt n \qty(U_{\ceil{np}} - p) \todist N(0, p(1-p))$. 
+\end{lemma}
+
+\begin{proof}
+    Let $Y_1, \dotsc, Y_{n+1} \iid \Exp(1)$, $V_n \ceq \sum_{i=1}^{\ceil{np}} Y_i$ and $W_n \ceq \sum_{i = \ceil{np} + 1}^{n+1} Y_i$. Then $V_n$ and $W_n$ are independent, and we have seen that $U_{\ceil{np}} \sim \frac{V_n}{V_n + W_n}$. 
+    
+    Noting that $\EE V_n = \Var(V_n) = \ceil{np}$ we find
+    \begin{align*}
+    \sqrt{n} \qty(\frac{V_n}{n} - p) &= \frac{\sqrt{\ceil{np}}}{\sqrt n} \qty(\frac{V_n - \ceil{np}}{\sqrt{\ceil{np}}}) + \frac{\ceil{np} - np}{\sqrt n} \\
+    &= \frac{\sqrt{\ceil{np}}}{\sqrt n}  \qty(\frac{V_n - \EE V_n}{\sqrt{\Var(V_n)}}) +  \frac{\ceil{np} - np}{\sqrt n}.
+    \end{align*}
+    Now, by the central limit theorem, the term between brackets converges to a standard $N(0, 1)$ distribution. The term $\sqrt{\ceil{np}}{\sqrt n}$ converges to $\sqrt p$ and the term $(\ceil{np} - np)/\sqrt n$ converges to 0, so by Slutsky's lemma, we find
+    \[
+    \sqrt{n}\qty(\frac{V_n}{n} - p) \todist \sqrt p N(0, 1) = N(0, p). 
+    \]
+    
+    An analogous calculation shows that $\sqrt n \qty(\frac{W_n}{n} - (1-p)) \to N(0, 1 - p)$. 
+    
+    Now we define $g \colon (0, \infty)^2 \to (0, \infty)$ by $g(x, y) \ceq x / (x + y)$, which is differentiable at $(p, 1 - p)$. Note that the distribution of $(V_n, W_n)$ is an $N(0, \smqty(p & 0 \\ 0 & q))$ distribution. By the delta method we find
+    \begin{align*}
+        \sqrt n \qty(U_{\ceil{np}} - p) &\deq \sqrt n\qty( g\qty(\frac{V_n}{n}, \frac{W_n}{n}) - g(p, q)) \\
+        &\todist g'(p, 1-p) N\qty(0, \mqty(p & 0 \\ 0 & q)) \\
+        &= N\qty(0, g'(p, 1-p) \mqty(p & 0 \\ 0 & q) g'(p, 1-p)\T) \\
+        &= N(0, p(1-p)).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    \end{align*}
+\end{proof}
+
+We now relate what we know about the uniform distribution to the  quantile function: 
+\begin{theorem}
+    Let $p \in (0, 1)$ and let $X_1, \dotsc, X_n \iid F$. Suppose that $F$ is differentiable at $\xi_p \ceq F^{-1}(p)$ with derivative $f(\xi_p)$. Then
+    \[
+    \sqrt n \qty(X_{(\ceil{np})} - \xi_p) \todist N\qty(0, \frac{p(1-p)}{f(\xi_p)^2}).
+    \]
+\end{theorem}
+
+\begin{proof}
+    Let $U_1, \dotsc, U_n \iid U(0, 1)$, then we know that $F^{-1}(U_i) \deq X_i$ and thus $F^{-1} (U_{(\ceil{np})}) \deq X_{(\ceil{np})}$. Applying the delta method with $g = F^{-1}$, together with the previous theorem yields
+    \[
+    \sqrt n \qty(X_{(\ceil{np})} - \xi_p) = \sqrt n \qty(F^{-1}(U_{(\ceil{np})}) - F^{-1}(p)) \todist (F^{-1})'(p) \cdot  N(0, p(1-p)).
+    \]
+    Noting that $(F^{-1})'(p) = \frac1{f(\xi_p)}$ yields the result. 
+\end{proof}
+
+\subsection{Concentration inequalities}
+We turn our attention to concentration inequalities, with a focus on finite-sample results (instead of results that only hold for $n \to\infty$). 
+\begin{definition}
+    A random variable $X$ with mean 0 is called \emph{sub-Gaussian} with parameter $\sigma^2$ if
+    \[
+    M_X(t) = \EE(e^{tX}) \leq e^{t^2\sigma^2/2}
+    \]
+    for every $t \in \RR$. 
+\end{definition}
+Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\mu, \sigma^2)$ distribution is given by $t \mapsto \exp(\mu t + \sigma^2 t^2 /2)$. 
+
+
+\begin{proposition}We consider some characterisations of sub-Gaussianity: 
+    \begin{enumerate}[(a)]
+        \item     Let $X$ be sub-Gaussian with parameter $\sigma^2$. Then 
+        \begin{equation} \label{eq:sg_tail_bounds}
+        \max\qty{\PP(X \geq x), \PP(X \leq -x)} \leq e^{-x^2/(2\sigma^2)} \quad\text{for every $x \geq 0$}.
+        \end{equation}
+        
+        \item Let $X$ be a random variable which satisfies $\EE(X) = 0$ and \cref{eq:sg_tail_bounds}. Then for every $q \in \NN$ it holds that
+        \[
+        \EE(X^{2q}) \leq 2 \cdot q! (2\sigma^2)^q \leq q! (2\sigma)^{2q}.
+        \]
+        
+        \item If $X$ is a random variable with $\EE(X) = 0$ and $\EE(X^{2q}) \leq q! C^{2q}$ for all $q \in \NN$, then $X$ is sub-Gaussian with parameter $4C^2$. 
+    \end{enumerate}
+
+\end{proposition}
+
+\begin{recap}
+    Recall the \emph{tail bound formula} for the expectation: if $X$ is a nonnegative random variable, then 
+    \[
+    \EE[X] = \int_0^\infty \PP(X > x) \dd{x}. 
+    \]
+    
+    Furthermore, recall that the \emph{gamma function} is defined for $z \in (0, \infty)$ by
+    \[
+    \Gamma(z) = \int_0^\infty x^{z-1} e^{-x} \dd{x}
+    \]
+    and satisfies $\Gamma(n) = (n-1)!$ for all $n \in \NN$. 
+\end{recap}
+\begin{proof}
+    \begin{enumerate}[(a)]
+        \item We first consider $\PP(X \geq x)$. 
+        By Markov's inequality, we have for all $t \in \RR$ that
+        \[
+        \PP(X \geq x) = \PP(e^{tX} \geq e^{tx}) \leq e^{-tX} \EE(e^{tX}) \leq e^{-tx + t^2\sigma^2/2}.  
+        \]
+        Since the LHS is independent of $t$, we can take the infimum over $t$ on the RHS and obtain
+        \[
+        \PP(X \geq x) \leq \inf_{t \in \RR} e^{-tx + t^2\sigma^2/2} = e^{-x^2/(2\sigma^2)}, 
+        \]
+        since the infimum of $t^2\sigma^2/2 - tx$ is attained at $t = x/\sigma^2$. 
+        
+        For $\PP(X \leq -x) = \PP(-X \geq x)$ we can use the fact that $-X$ is also sub-Gaussian with parameter $\sigma^2$. 
+        
+        \item By the previous part, we have $\PP(\abs{X} \geq x) \leq 2 e^{-x^2/(2\sigma^2)}$. Some calculations give
+        \begin{align*}
+            \EE(X^{2q}) &= \int_0^\infty \PP(X^{2q} \geq x) \dd{x} = \int_0^\infty \PP(\abs{X} \geq x^{1/(2q)}) \\
+            &= 2q \int_0^\infty x^{2q - 1} \PP(\abs{X}\geq x)\dd{x} \\
+             &\leq 4q \int_0^\infty x^{2q - 1} e^{-x^2/(2\sigma^2)} \dd{x}.
+        \end{align*}
+    Now set $t = x^2/2\sigma^2$, so that $x = \sigma (2t)^{1/2}$ and thus $\dd{x} = \sigma (2t)^{-1/2} \dd{t}$. Plugging that in we get
+    \begin{align*}
+    \EE(X^{2q}) &\leq 4q \int_0^\infty (\sigma(2t)^{1/2})^{2q - 1} e^{-t} \sigma (2t)^{-1/2} \dd{t} = 2^{q+1} q \sigma^{2q} \int_0^\infty t^{q-1} e^{-t} \dd{t} \\
+    &= 2^{q+1} q \sigma^{2q} \Gamma(q) = 2 \cdot q! (2\sigma)^q. 
+    \end{align*}
+
+\item Note that $x \mapsto e^{-tx}$ is convex for every $t \in \RR$, so $\EE(e^{-tX}) \geq e^{-t \EE(X)} \geq 1$ by Jensen's inequality.
+    \end{enumerate}
+\end{proof}

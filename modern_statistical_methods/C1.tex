@@ -1,0 +1,346 @@
+Classical models rely on so-called ``large $n$ asymptotics'' (where $n$ is the sample size). This course focuses on the scenario where $p$, the number of variables, is larger or about as large as $n$. In this case, the classical theory breaks down, so we need new methods. 
+
+\section{Kernel machines}
+We represent data are pairs $(Y_i, x_i) \in \RR \times \RR^p$ ($i = 1, \dotsc, n$). The random variables $Y_i$ are called the \emph{responses}, and the (fixed) variables $x_i$ are called \emph{predictors}. 
+
+\begin{recap}
+    Let $X = (X_1, \dotsc, X_n)\T$ be a multivariate random variable. Its distribution function is given by
+    \[
+    F_{X} \colon \RR^n \to [0, 1] \colon \vec x \mapsto \PP(X_1 \leq x_1, \dotsc, X_n \leq x_n). 
+    \]
+    Its expected value is given by
+    \[
+    \EE[X] \ceq (\EE[X_1], \dotsc, \EE[X_n])\T \in \RR^n. 
+    \]
+    Its covariance matrix is given by 
+    \[
+    \Var[X] = \EE[(X - \EE[X])(X - \EE[X])\T] = \EE[XX\T] - \EE[X] \EE[X]\T. 
+    \]
+    The matrix $\Var[X]$ is symmetric positive semidefinite and satisfies $(\Var[X])_{ij} = \Cov(X_i, X_j)$. 
+\end{recap}
+\begin{definition}
+    In a \emph{linear model}, we assume that 
+    \[
+    Y_i = x_i\T \beta^0 + \eps_i \quad (i = 1, \dotsc, n). 
+    \]
+    where $\beta \in \RR^p$ is unknown and the multivariate random variable $\eps = (\eps_1, \dotsc, \eps_n)$ satisfies $\EE (\eps) = 0$ and $\Var(\eps) = \sigma^2 I$. 
+\end{definition}
+
+\begin{definition}
+    For an estimator $\tilde\beta$ of $\beta^0$, its \emph{mean squared error} (MSE) is given by 
+    \[
+    \EE_{\beta^0, \sigma^2} \qty[(\tilde\beta - \beta^0)(\tilde\beta - \beta^0)\T]  = \Var(\tilde\beta) + \qty[\EE(\tilde\beta - \beta^0)]\qty[\EE(\tilde\beta - \beta^0)]\T. 
+    \]
+\end{definition}
+Note that if $\tilde\beta$ is unbiased, the second term will disappear and the MSE is simply the variance. 
+
+\begin{recap}
+    The maximum likelihood estimator (MLE) in this model is the ordinary least squares (OLS) estimator $\hat\beta^\Rm{OLS} = (X\T X)^{-1} X\T Y$, where the \emph{design matrix} $X \in \RR^{n \times p}$ is the matrix whose rows are the vectors $x_i$. This estimator only exists if $X$ has full column rank, so in particular, it is required that $p \leq n$. 
+    
+    The Cramér-Rao lower bown states that, out of all unbiased estimators, the MLE has the optimal variance \emph{asymptotically} (i.e., for $n \to\infty$). 
+\end{recap}
+
+\subsection{Ridge regression}
+\begin{definition}
+    Let $\lambda \geq 0$, and let $\Bf 1 \in \RR^n$ be the all-ones vector. Then we define the \emph{Ridge regression} estimators
+    \[
+    (\hat\mu_\lambda^\Rm{R}, \hat\beta_\lambda^\Rm{R}) \ceq \argmin_{(\mu, \beta) \in \RR \times \RR^p} \qty{ \norm{Y - \mu\Bf 1 - X\beta}^2 + \lambda \norm{\beta}^2}, 
+    \]
+    where the used norm is the 2-norm. The parameter $\lambda$ is called the \emph{regularisation parameter}. 
+\end{definition}
+
+The parameter $\lambda$ represents a penalty for large coefficients in the design matrix. The intercept is not penalised --- this is because a shift in units should not affect the fitted values. However, $X\hat\beta$ is not invariant under scale transformations, so it is common practice to centre the columns of $X$ to have mean 0, and then scale them to have $\ell_2$-norm $\sqrt n$. 
+
+After that, we can compute $\hat\mu_\lambda^\Rm{R}$ by taking the derivative:  
+\begin{align*}
+    \norm{Y - \mu\Bf{1} - X\beta}^2 &=  \sum_i (Y_i - \mu - \sum_j X_{ij}\beta_j)^2. \\
+    \pdv{\mu} \norm{Y- \mu\Bf{1} - X\beta}^2 &= -2 \sum_i \qty( Y_i - \mu - \sum_j X_{ij}\beta_j).
+\end{align*}
+Setting this derivative equal to 0 yields
+\begin{align*}
+    -2\sum_i \qty(Y_i - \mu - \sum_j X_{ij}\beta_j) &= 0 \\
+    \sum_i Y_i - n\mu - \sum_j \beta_j (\sum_i X_{ij}) &= 0 \\
+    \sum_i Y_i - n\mu &= 0 \\
+    \mu &= \frac1n \sum_i Y_i = \bar Y. 
+\end{align*}
+
+Therefore we conclude $\hat\mu_\lambda^{\Rm R} = \bar Y$. 
+After centering the responses (i.e.\, replacing $Y_i$ by $Y_i - \bar Y$), the problem can be reduced to 
+\[
+\hat\beta_\lambda^{\Rm R} = \argmin_{\beta \in \RR^p} Q(\beta) \ceq \argmin_{\beta \in \RR^p}  \qty[ \norm{Y- X\beta}^2 + \lambda \norm{\beta}^2]. 
+\]
+
+Since $Q(\beta)$ is convex quadratic, there is a unique root, and to find it we compute
+\[
+\nabla_\beta Q(\beta) = 2 X\T (Y - X \beta) + 2\lambda\beta = 0 \iff \beta = (X\T X + \lambda I)^{-1} X\T Y. 
+\]
+
+We conclude that $\hat\beta^\Rm{R}_\lambda = (X\T X + \lambda I)^{-1} X\T Y$. Note that, even if $X$ does not have full column rank, this estimator exists for all $\lambda > 0$.  In fact, for $\lambda$ sufficiently small, the Ridge estimator outperforms the MLE in terms of mean squared error:
+\begin{theorem}
+    Fix $\beta^0, \sigma^2$, and assume that $\hat\beta^\Rm{OLS}$ exists (i.e., $X$ has full column rank). For some $\lambda > 0$ sufficiently small, it holds that the MSE of $\hat\beta^\Rm{OLS}$ minus the MSE of $\hat\beta^\Rm{R}_\lambda$ is positive definite. 
+\end{theorem}
+
+\begin{proof}
+    This is simply writing out the MSE's. In the end, we find that the result holds for $0 < \lambda < 2\sigma^2 / \norm{\beta^0}^2$. 
+\end{proof}
+
+\subsubsection{The SVD and PCA}
+\begin{recap}
+    Recall that any $X \in \RR^{n \times p}$ can be factorised as $X = UDV\T$, where $U, V$ are $n \times n$ and $p \times p$ orthogonal matrices respectively, and $D \in \RR^{n \times p}$ satisfies $D_{11} \geq\dotsb\geq D_{mm} \geq 0$ where $m \ceq \min(n, p)$, and all other entries of $D$ are 0. This is called the \emph{singular value decomposition} or SVD of $X$. 
+    
+    If $n > p$, we can replace $U$ by its first $p$ columns and $D$ by its first $p$ rows to produce the so-called \emph{thin SVD} of $X$. Then $U \in \RR^{n \times p}$ has orthogo nal columns (so $U\T U = I$) and $D \in \RR^{p \times p}$ is square and diagonal. 
+\end{recap}
+
+Suppose $n \geq p$ and let $X = UDV\T$ be the thin SVD of our design matrix $X$. Then we can write the fitted values from the Ridge regression as follows: 
+\begin{align*}
+    X\hat\beta_\lambda^\Rm{R} &= X(X\T X + \lambda I)^{-1} X\T Y \\
+    &= UDV\T (VD^2V\T + \lambda I)^{-1} VDU\T Y \\
+    &= UDV\T \qty(V(D^2 + \lambda I)V\T)^{-1} VDU\T Y \\
+    &= UD (D^2 + \lambda I)^{-1} DU\T Y \\
+    &= U D^2 (D^2 + \lambda I)^{-1} U\T Y \\
+    &= \sum_{j=1}^p \frac{D_{jj}^2}{D_{jj}^2 + \lambda} U_j U_j\T Y. 
+\end{align*}
+
+Note that for OLS ($\lambda = 0$), this is simply the projection of $Y$ onto the column space of $X$ (if $X$ has full column rank). If $\lambda > 0$, $Y$ is still projected onto the column space of $X$, but the projection is shrunk in the directions of the left singular vectors, and the lower the corresponding singular value, the higher the shrinkage. 
+
+
+\paragraph{Principal component analysis} Consider $v \in \RR^p$ with norm 1, then since the columns of $X$ have been centered, the sample mean of $Xv$ is 0, and the sample variance is therefore
+\[
+\frac1n \sum_i (Xv)_i^2 = \frac1n (Xv)\T Xv = \frac1n v\T X\T X v = \frac1n v\T VD^2V\T v. 
+\]
+Writing $a = V\T v$ (with $\norm{a} = 1$), we find
+\[
+\frac1n v\T VD^2 V\T v = \frac1n a\T D^2 a = \frac1n \sum_j a_j^2 D_{jj}^2
+\]
+
+Therefore, we see that the above is maximised if $a = \pm e_1$, or equivalently $v = \pm V_1$. Therefore, $V_1$ determines which combination of columns of $X$ has the largest variance (subject to having norm 1), and $XV_1 = D_{11} U_1$ is known as the \emph{first principal component} of $X$. Analogously, it can be shown that $D_{22} U_2, \dotsc, D_{pp} U_p$ have maximum variance $D_{jj}^2 / n$, subject to being orthonormal to all earlier principal components. 
+
+We see that Ridge regression shrinks $Y$ most in the smaller principal components of $X$. Therefore it will work well if most of the information is in the larger principal components of $X$. 
+
+\paragraph{A comment on computation}
+By analogous calculations as before, one cam compute $\hat\beta_\lambda^\Rm{R} = V(D^2 + \lambda I)^{-1} DU\T Y$. Since calculating the inverse of a diagonal matrix is trivial, we see that the complexity of computing $\hat\beta_\lambda^\Rm{R}$ for any $\lambda$ lies in $O(np)$. Of course, this is after computation of the SVD of $X$, which lies in $O(np \min(n, p))$. 
+
+\subsection{$v$-fold cross validation}
+Of course, we are still left with the problem of choosing $\lambda$ in ridge regression. We consider one possible way of doing so, namely $v$-fold cross validation, which is a general way of selection a good regression method from several competing methods. Here, we assume that our predictors are random, so that we have i.i.d.\ data pairs $(x_i, Y_i)$ ($i = 1, \dotsc, n$). Suppose $(x^*, Y^*)$ is a new data pair, independent of $(X, Y)$ and identically distributed. Ideally, we want to pick $\lambda$ which minimises the prediction error (averaged over $Y^*$ and $x^*$)
+\[
+\EE\qty[ \qty(Y^* - (x^*)\T \hat\beta_\lambda^\Rm{R}(X, Y))^2 \mid X, Y],
+\]
+where the dependence of $\hat\beta_\lambda^\Rm{R}$ on the training data $(X, Y)$ is made explicit by denoting it $\hat\beta_\lambda^\Rm{R}(X, Y)$. 
+
+This is impossible to minimise, but it may be possible to minimise the expected prediction error (averaged over the training data)
+\begin{equation} \label{eq:averaged_prediction}
+\EE\qty{ \EE\qty[ \qty(Y^* - (x^*)\T \hat\beta_\lambda^\Rm{R}(X, Y))^2 \mid X, Y]}. 
+\end{equation}
+
+This is still not possible to compute directly, but we estimate it using $v$-fold cross validation. Split the data into $v$ groups or \emph{folds} of roughly equal size $(X^{(1)}, Y^{(1)}), \dotsc, (X^{(v)}, Y^{(v)})$ and let $(X^{(-k)}, Y^{(-k)})$ denote all data except that in the $k$-th fold. Then we define 
+\[
+\CV(\lambda) \ceq \frac1n \sum_{i=1}^n \qty[Y_i - x_i\T\hat\beta_\lambda^\Rm{R}(X^{(-\kappa(i))}, Y^{(-\kappa(i))})]^2, 
+\]
+and choose the value of $\lambda$ that minimises $\CV(\lambda)$. 
+
+The function $\CV(\lambda)$ is called the \emph{out-of-sample error}, since the training data does not include $x_i$. 
+
+\begin{recap}
+    The \emph{tower rule} states that for random variables $X, Y$ we have $\EE[X] = \EE[\EE[X \mid Y]]$. 
+\end{recap}
+
+Note that for each $i$, we have
+\[
+\EE\qty[\qty{Y_i - x_i\T\hat\beta_\lambda^\Rm{R}(X^{(-\kappa(i))}, Y^{(-\kappa(i))})}^2] = \EE\qty[ \EE\qty[\qty{Y_i - x_i\T\hat\beta_\lambda^\Rm{R}(X^{(-\kappa(i))}, Y^{(-\kappa(i))})}^2 \mid X^{-\kappa(i)}, Y^{-\kappa(i)} ]]. 
+\]
+This equals the expected prediction error in \cref{eq:averaged_prediction}, except that the training data $X, Y$ are replaced with a smaller data set. 
+
+We now have a bias-variance tradeoff in the size of the folds: if $v = n$ (known as ``leave-one-out'' cross-validation), the estimation will be almost unbiased, but the averaged quantities in $\CV(\lambda)$ will be highly correlated which leads to high variance. Typical choices of $v$ are 5 or 10. 
+
+Instead of finding the single best $\lambda$, we can also aim to find the best weighted combination of $\lambda$'s. For example, suppose $\lambda$ is restricted to a grid $\lambda_1 > \dotsb > \lambda_L$. Then we can use any nonnegative least-squares optimization algorithm to minimise 
+\[
+\frac1n \sum_{i=1}^n \qty[ Y_i - \sum_{\ell = 1}^L w_\ell x_i\T \hat\beta_{\lambda_\ell}^\Rm{R}(X^{(-\kappa(i))}, Y^{(-\kappa(i))})]^2,
+\]
+over all $w \in \RR^L_{\geq 0}$. This procedure is known as \emph{stacking} and often outperforms cross-validation. 
+
+\subsection{The kernel trick}
+We note that 
+\[
+ X\T (XX\T + \lambda I) = (X\T X + \lambda I) X\T,
+\]
+and multiplying from the left with $(X\T X + \lambda I)^{-1}$ and from the right with $(XX\T + \lambda I)^{-1}$ gives
+\[
+(X\T X + \lambda I)^{-1} X\T = X\T (XX\T + \lambda I)^{-1}.
+\]
+Using this, we see that we can rewrite the fitted values from ridge regression as follows:
+\[
+X\hat\beta_\lambda^R = X(X\T X + \lambda I)^{-1} X\T Y = XX\T (XX\T + \lambda I)^{-1} Y.
+\]
+Two important remarks: 
+\begin{enumerate}
+    \item Computing the LHS of this equation takes roughly $O(np^2 + p^3)$ operations, while computing the RHS takes $O(n^2 p + n^3)$ operations (this is because in the LHS we invert an $p \times p$ matrix, while in the RHS we invert a $n \times n$ matrix). Therefore, if $p \gg n$, the RHS can be much cheaper to compute. 
+    \item The LHS depends only on the matrix $K = XX\T$ (this matrix is called the \emph{kernel matrix}). Intuitively, since $K_{ij} = \ang{x_i, x_j}$, the entries of the kernel matrix show how `similar' the corresponding predictors are. 
+\end{enumerate}
+
+\begin{example}
+    Suppose we have data $(Y_i, z_i)_{i = 1, \dotsc, n}$ with $z_i = (z_{i1}, \dotsc, z_{id})\T$, and we believe the following quadratic relation holds:
+    \[
+    Y_i = \sum_k \sqrt{2}\gamma_k z_{ik}  + \sum_{k, \ell} \theta_{k\ell} z_{ik} z_{i\ell} + \eps_i.
+    \]
+    To compute fitted values using ridge regression, we can rewrite this as a linear model $Y = X\beta + \eps$ where
+    \[
+    \beta = \mqty(\gamma_1 \\ \vdots \\ \gamma_d \\ \theta_{11} \\ \theta_{12} \\ \vdots \\ \theta_{dd}), \quad x_i = \mqty(\sqrt{2} z_{i1} \\ \vdots \\ \sqrt 2 z_{id} \\ z_{i1} z_{i1} \\ z_{i1}z_{i2} \\ \vdots \\ z_{id}z_{id}).
+    \]
+    
+    In this case, we have $p = d^2 + d$ variables, which means computing $(X\T X + \lambda I)^{-1}$ takes $O(d^6)$ operations. In this case, computing $(XX\T + \lambda I)^{-1}$ is probably easier. 
+    
+    We are still left with the problem of computing $K \ceq XX\T$, which can take $O(n^2 p) = O(n^2 d^2)$ operations if done naively. However, observe that
+    \[
+    K_{ij} = x_i\T x_j = 2 \sum_k z_{ik} z_{jk} + \sum_{k, \ell} z_{ik} z_{i\ell} z_{jk} z_{j\ell} = \qty( 1 + \sum_k z_{ik} z_{jk})^2 - 1 = (1 + z_i\T z_j) - 1.
+    \]
+    This quantity can be computed in $O(d)$, and therefore $K$ can be computed in $O(n^2 d)$ operations: we have a factor $d$ improvement. 
+\end{example}
+
+The general point of the previous example is that we can bypass the features $x_i$ entirely and instead think directly of $K = XX\T$ where an entry $K_{ij}$ represents similarity between the inputs of the $i$-th and $j$-th samples. This leads to the notion of a kernel in general.
+
+\subsection{Kernels}
+We will assume our inputs $x_1, \dotsc, x_n$ live in an abstract space $\XXX$. 
+\begin{definition}
+    A (\emph{positive-definite}) \emph{kernel} is a symmetric map $k \colon \XXX^2 \to \RR$ such that for all $n \in \NN$ and all $x_1, \dotsc, x_n \in \XXX$, the matrix $K \in \RR^{n \times n}$ with $K_{ij} = k(x_i, x_j)$ is positive semi-definite. 
+\end{definition}
+
+\begin{proposition}[Cauchy-Schwarz for kernels] \label{prop:kernel_cs}
+    Let $k$ be a kernel and $x, x' \in \XXX$, then 
+    \[
+    k(x, x')^2 \leq k(x, x) k(x', x'). 
+    \]
+\end{proposition}
+
+\begin{proof}
+    The matrix $\smqty(k(x, x) & k(x, x') \\ k(x', x) & k(x', x'))$ must be positive semi-definite so its determinant must be non\-negative. 
+\end{proof}
+
+In our old models, the data points $x_i$ were vectors in $\RR^p$. Now we try to think of them as points in an abstract space with an associated \emph{feature map} $\phi \colon \XXX \to \HHH$ (with $\HHH$ an inner product space), and a kernel $k(x, x')$ gives a measure of similarity between $\phi(x)$ and $\phi(x')$. In this case, we have the following: 
+\begin{proposition} \label{prop:ip_kernel}
+    Let $\HHH$ be an inner product space,  $\phi \colon \XXX \to \HHH$ and define $k(x, x') \ceq \ang{\phi(x), \phi(x')}$. Then $k$ is a kernel. 
+\end{proposition}
+
+\begin{proof}
+    We have, for all $x_1, \dotsc, x_n \in \XXX$ and $\alpha \in \RR^n$ that
+    \[
+    \alpha\T K \alpha = \sum_{i, j} K_{ij} \alpha_i \alpha_j = \sum_{i, j} \ang{\phi(x_i), \phi(x_j)} \alpha_i \alpha_j = \norm{\sum_i \alpha_i \phi(x_i)}^2 \geq 0. 
+    \]
+\end{proof}
+
+The following proposition shows how to make new kernels from old:
+\begin{proposition}
+    Suppose $k_1, k_2, \dotsc$ are kernels. Then:
+    \begin{enumerate}
+        \item If $\alpha_1, \alpha_2 \geq 0$ then $\alpha_1 k_1 + \alpha_2 k_2$ is a kernel.
+        \item The pointwise limit of a sequence of kernels is a kernel (if it exists). 
+        \item The pointwise product $k_1 k_2$ is a kernel. 
+    \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+    See Example Sheet 1. 
+\end{proof}
+
+\begin{example} Let us consider some examples of kernels:
+    \begin{enumerate}
+        \item For $\XXX = \RR^p$ we have already seen the \emph{linear kernel} $k(x, x') = x\T x'$. 
+        \item For $\XXX = \RR^p$, the \emph{polynomial kernel} is defined as $k(x, x') = (1 + x\T x')^d$. This is a kernel since it is a power of a sum of two kernels. 
+        \item For $\XXX = \RR^p$, the \emph{Gaussian kernel} is defined by
+        \[
+        k(x, x') = \exp\qty( - \frac{\norm{x - x'}_2^2}{2\sigma^2}).
+        \]
+        To show this is a kernel, write $k$ as the pointwise product $k_1k_2$ where
+        \[
+        k_1(x, x') = \exp\qty(-\frac{\norm{x}^2}{2\sigma^2}) \exp\qty(-\frac{\norm{x'}^2}{2\sigma^2}), \quad k_2(x, x') = \exp\qty(\frac{x\T x'}{\sigma^2}). 
+        \]
+        Clearly $k_1$ is the kernel induced by the feature map $\phi(x) = \exp(-\norm{x}^2/(2\sigma^2))$, while $k_2$ can be seen to be a kernel by using the Taylor expansion, which shows that $k_2$ is a limit of nonnegative linear combinations of kernels. 
+        
+        \item For $\XXX = [0, 1]$, define the \emph{Sobolev kernel} $k(x, x') = \min(x, x')$. The proof that this is a kernel is on example sheet 1. 
+        \item For $\XXX = \pow(\qty{1, \dotsc, p})$, define the \emph{Jaccard kernel}
+        \[
+        k(x, x') = \frac{\abs{x \cap x'}}{\abs{x \cup x'}} \quad\text{where $0/0 \ceq 1$}. 
+        \]
+        The proof that this is a kernel is on example sheet 1. 
+    \end{enumerate}
+\end{example}
+
+By \cref{prop:ip_kernel}, we see that every feature map $\phi \colon \XXX \to \HHH$ gives rise to a kernel. In the next (important!) theorem, we will see that every kernel is in fact induced by a feature map.
+
+\begin{theorem} \label{thm:kernel_ip}
+    Let $k$ be a kernel, then there exists an inner product space $\HHH$ and a feature map $\phi \colon \XXX \to \HHH$ such that 
+    \[
+    k(x, x') = \ang{\phi(x), \phi(x')} \quad\text{for all $x, x' \in \XXX$}. 
+    \]
+\end{theorem}
+
+\begin{proof}
+    We will construct $\HHH$ and $\phi$ explicitly. First we define the function space
+    \[
+    \HHH = \qty{ \sum_{i=1}^n \alpha_i k(\cdot, x_i) \mid n \in \NN,  \alpha_i \in \RR, x_i \in \XXX}. 
+    \]
+    Let $f = \sum_{i=1}^n \alpha_i k(\cdot, x_i)$ and $g = \sum_{j=1}^n \beta_j k(\cdot, x_j')$, then the inner product on $\HHH$ is given by
+    \[
+    \ang{f, g} = \ang*{\sum_{i=1}^n \alpha_i k(\cdot, x_i), \sum_{j=1}^m \beta_j k(\cdot, x_j')} \ceq \sum_{i=1}^n \sum_{j=1}^m \alpha_i \beta_j k(x_i, x_j'). 
+    \]
+    We define $\phi \colon \XXX \to \HHH$ as $\phi(x) = k(\cdot, x)$. 
+    
+    We must check that the inner product does not depend on the choice of representation of $f$ and $g$. For this, note that 
+    \[
+    \sum_{i=1}^n \sum_{j=1}^m \alpha_i\beta_j k(x_i, x_j') = \sum_{i=1}^n \alpha_i g(x_i) = \sum_{j=1}^m \beta_j f(x_j'),
+    \]
+    which holds by symmetry of the kernel. Since $\sum_i \alpha_i g(x_i)$ is independent of the representation of $g$, while $\sum_j \beta_j f(x_j')$ is independent of the representation of $f$, we conclude that the entire expression is independent of both representations. 
+    
+    Secondly, we must verify that the formula $k(x, x') = \ang{\phi(x), \phi(x')}$ indeed holds. For any $f \in \HHH, x \in \XXX$ we have
+    \begin{equation}
+    \ang{k(\cdot, x), f} = \sum_{i=1}^n \alpha_i k(x_i, x) = f(x),
+    \end{equation}
+    i.e., evaluation of a function is a linear functional in $\HHH$. 
+    
+    In particular, we have 
+    \[
+    \ang{\phi(x), \phi(x')} = \ang{k(\cdot, x), k(\cdot, x')} =  k(x, x'). 
+    \]
+    
+    Finally, we must check that $\ang{\cdot, \cdot}$ is indeed an inner product. Symmetry and bilinearity are clear. Furthermore, we have
+    \[
+   \ang{f, f} = \sum_{i=1}^n \sum_{j=1}^n \alpha_i \alpha_j k(x_i, x_j) = \alpha\T K\alpha \geq 0
+    \]
+    by the fact that $k$ is a kernel. We must now only show that $f \neq 0 \implies \ang{f, f} > 0$. For this, note that $\ang{\cdot, \cdot}$ is a kernel on $\HHH$, so by \cref{prop:kernel_cs} (Cauchy-Schwarz) we have
+    \[
+    f(x)^2 = \ang{k(\cdot, x), f}^2 \leq \ang{k(\cdot, x), k(\cdot, x)} \ang{f, f}, 
+    \]
+    and therefore if $f$ is nonzero anywhere, $\ang{f, f}$ must also be nonzero. 
+\end{proof}
+
+While $\HHH$ constructed in the proof is an inner product space, it is not necessarily a Hilbert space. Let $(f_n) \subseteq \HHH$ be Cauchy, then by Cauchy-Schwarz for kernels we find
+\[
+f_m(x) - f_n(x) = (f_m - f_n)(x) = \ang{k(\cdot, x), f_m - f_n} \leq \sqrt{k(x, x)} \norm{f_n - f_m}. 
+\]
+We can do an analogous computation for $f_n - f_m$ to conclude that $\abs{f_m(x) - f_n(x)} \leq \sqrt{k(x, x)} \norm{f_n - f_m}$, and therefore, if $(f_n)$ is Cauchy, then it converges pointwise to some $f^* \colon \XXX \to \RR$. We will not prove the following theorem:
+\begin{theorem}
+    The inner product space $\HHH$ constructed in the proof of \cref{thm:kernel_ip} can be extended to a Hilbert space by adding all pointwise limits $f^*$ of Cauchy sequences $(f_n) \subseteq \HHH$. 
+\end{theorem}
+
+The completion of $\HHH$ is a special type of Hilbert space:
+\begin{definition}
+    A Hilbert space $\BBB$ of functions $f \colon \XXX \to \RR$ is called a \emph{reproducing kernel Hilbert space} (RKHS) if for all $x \in \XXX$, there exists $k_x \in \BBB$ such that 
+    \[
+    f(x) = \ang{k_x, f}, 
+    \]
+    i.e., evaluation of functions is a linear functional. 
+    
+    The function $k(x, x') = \ang{k_x, k_{x'}}$ is known as the \emph{reproducing kernel} of $\BBB$ (induced by the feature map $\phi(x) = k_x$). 
+\end{definition}
+
+If we start with a kernel $k$, construct the corresponding RKHS $\BBB$, then it is easily checked that $k$ is indeed the reproducing kernel of $\BBB$. 
+
+\begin{example}[Linear kernel]
+    Let $X = \RR^p$ and $k(x, x') = x\T x'$. Then we have 
+    \[
+    \HHH = \qty{x \mapsto \sum_{i=1}^n \alpha_i x\T x_i = x\T \qty(\sum_i \alpha_i x_i) \mid \alpha_i \in \RR, x_i \in \RR^p} = \qty{x \mapsto x\T \beta \mid \beta \in \RR^p},
+    \]
+    and if $f(x) = x\T\beta$, $g(x) = x\T \beta'$, then 
+    \[
+    \ang{f, g} = k(\beta, \beta') = \beta\T \beta' \quad\text{so } \norm{f}_\HHH = \norm{\beta}_2. 
+    \]
+\end{example}

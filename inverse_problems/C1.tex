@@ -1,0 +1,328 @@
+\begin{mdframed}
+A \emph{direct problem} is a problem where given an object or \emph{cause}, we must determine the data or \emph{effect}. In an \emph{inverse problem}, we observe data and wish to recover the object. 
+
+A problem is called \emph{well-posed} if a unique solution exists that depends continuously on the data. Most inverse problems are, unfortunately, ill-posed. 
+\end{mdframed}
+
+\section{Generalised Solutions}
+\begin{recap}
+    \begin{enumerate}
+        \item     An operator $A \in \LLL(\XXX, \YYY)$ is called \emph{bounded} if
+        \[
+        \norm{A}_{\LLL(\XXX, \YYY)} \ceq \sup_{u \neq 0} \frac{\norm{Au}_\YYY}{\norm{u}_\XXX} = \sup_{\norm{u}_\XXX \leq 1} < \infty. 
+        \]
+            It is known that a linear operator between normed spaces is continuous if and only if it is bounded. 
+            \item 
+        We let $\Dom(A)$, $\Nul(A)$ and  $\Ran(A)$ denote the domain, null space, and range of $A$ respectively. 
+        
+        \item     We will assume $\XXX$ and $\YYY$ are Hilbert spaces, so there is an inner product $\ang{\cdot, \cdot}$ and any bounded operator $A \in \LLL(\XXX, \YYY)$ has a unique adjoint $A^* \in \LLL(\YYY, \XXX)$ which satisfies
+        \[
+        \ang{Au, v}_\YYY = \ang{u, A^* v}_\XXX \quad\text{for all $u \in \XXX$, $v \in \YYY$.}
+        \]
+        
+        \item For any $\XXX' \subseteq \XXX$ we define the \emph{orthogonal complement} of $\XXX'$ as
+        \[
+        (\XXX')\P \ceq \qty{u \in \XXX \mid \ang{u, v}_\XXX = 0 \ \forall v \in \XXX'}. 
+        \]
+        It is known that $(\XXX')\P$ is a closed subspace of $\XXX$ and that $\XXX' \subseteq ((\XXX')\P)\P$, where equality holds if and only if $\XXX'$ is a closed subspace of $\XXX$. For a non-closed subspace $\XXX'$ we have $((\XXX')\P)\P = \clos{\XXX'}$. 
+        
+        \item If $\XXX'$ is a closed subspace of $\XXX$, then for any $u \in \XXX$ there exist unique $x_u \in \XXX'$, $x_u\P \in (\XXX')\P$ such that $u = x_u + x_u\P$. The map $u \mapsto x_u$ is denoted $P_{\XXX'}$ and is called the \emph{orthogonal projection} on $\XXX'$. Properties are:
+        \begin{enumerate}
+            \item $P_{\XXX'}$ is bounded and self-adjoint with norm 1;
+            \item $P_{\XXX'} + P_{(\XXX')\P} = I$;
+            \item $P_{\XXX'}u$ minimises the distance from $u$ to $\XXX'$;
+            \item $x = P_{\XXX'}u$ if and only if $x \in \XXX'$ and $u - x \in (\XXX')\P$. 
+        \end{enumerate}
+    
+    \item For any $A \in \LLL(\XXX, \YYY)$ we have
+    \[
+    \Ran(A)\P = \Nul(A^*) \quad\text{and}\quad \Nul(A)\P = \clos{\Ran(A^*)}. 
+    \]
+
+     \end{enumerate}
+\end{recap}
+
+\begin{lemma}
+    For any $A \in \LLL(\XXX, \YYY)$ we have $\clos{\Ran(A^*A)} = \clos{\Ran(A^*)}$. 
+\end{lemma}
+
+\begin{proof}
+    It is trivial that $\clos{\Ran(A^*A)} \subseteq \clos{\Ran(A^*)}$. 
+    
+    Now, suppose $u \in \clos{\Ran(A^*)}$ and let $\eps > 0$. Then there exists $v \in \XXX$ such that $\norm{A^*v - u} < \eps/2$. Writing $v = e + f$ with $e \in \Nul(A^*)$, $f \in \Nul(A^*)\P = \clos{\Ran(A)}$, we see that $\norm{A^*f - u} < \eps/2$. 
+    
+    Since $f \in \clos{\Ran(A)}$, there exists $x \in \XXX$ such that $\norm{Ax - f} < \eps/(2\norm{A})$. We now compute
+    \[
+    \norm{A^* A x - u} \leq \norm{A^*A x - A^* f} + \norm{A^*f - u} < \norm{A^*} \frac{\eps}{2\norm{A}} + \frac\eps2 = \eps, 
+    \]
+    and conclude that $u \in \clos{\Ran(A^*A)}$. This shows that $\clos{\Ran(A)} \subseteq \clos{\Ran(A^*A)}$. 
+\end{proof}
+
+\subsection{Generalised inverses}
+We consider the equation \begin{equation} \label{eq:basic_ip}
+    Au = f,
+\end{equation} $A \in \LLL(\XXX, \YYY)$, $f$ is known, and we wish to find $u$. 
+\begin{definition}
+    An element $u \in \XXX$ is called a \emph{least-squares solution} of \cref{eq:basic_ip} if $u$ is a minimiser of the function $v \mapsto \norm{Av - f}_\YYY$. It is called a \emph{minimal-norm solution} of \cref{eq:basic_ip} if it has minimal norm among all least-squares solutions. 
+\end{definition}
+
+Note that a least-squares solution may not exist. If a least-squares solution $u$ exists, then the affine subspace of all least-squares solutions is given by $u + \Nul(A)$. By writing $u = u\D + v$ for $u\D \in \Nul(A)\P$, $v \in \Nul(A)$, we find that the space of least-squares solutions is given by $u\D + \Nul(A)$, and it is now clear that $u\D$ is the unique minimum-norm solution. 
+
+\begin{theorem}
+    Let $f \in \YYY$ and $A \in \LLL(\XXX, \YYY)$. Then the following are equivalent:
+    \begin{enumerate}
+        \item $u \in \XXX$ satisfies $Au = P_{\clos{\Ran(A)} }f$;
+        \item $u$ is a least-squares solution of $\cref{eq:basic_ip}$:
+        \item $u$ solves the \uline{normal equation}
+        \begin{equation} \label{eq:normal}
+                   A^* f = A^* A u. 
+        \end{equation}
+    \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+     ``(1) $\implies$ (2)'': We have
+     \[
+     \norm{Au - f}_\YYY = \norm{ P_{\clos{\Ran(A)} }f - f} = \inf_{g \in \clos{\Ran(A)}} \norm{g - f} \leq \inf_{g \in \Ran(A)} \norm{g - f} = \inf_{u \in \XXX} \norm{Au - f}. 
+     \]
+     
+     ``(2) $\implies$ (3)'':  Let $u \in \XXX$ be a least-squares solution and $v \in \XXX$ arbitrary. Define the quadratic polynomial 
+     \begin{align*}
+     F \colon \RR \to \RR \colon \lambda \mapsto & \norm{A(u + \lambda v) - f}^2 \\
+     &= \ang{Au + \lambda Av - f, Au + \lambda Av - f} \\
+     &= \lambda^2 \norm{Av}^2 - 2\lambda \ang{Av, f - Au} + \norm{f - Au}^2. 
+     \end{align*}
+    As $u$ is a least-squares solution, we know that $F$ attains a minimum in $\lambda =0 $ and therefore that 
+    \[
+    0 = F'(0) = 2\ang{Av, f - Au} = 2 \ang{v, A^*(f - Au)}.
+    \]
+    Since $v$ is arbitrary, we must have $A^*(f - Au) = 0$, so $u$ satisfies $\cref{eq:normal}$. 
+    
+    ``(3) $\implies$ (1)'':  From the normal equation we know that $A^*(f - Au) = 0$. For any $x \in \XXX$, we have
+    \[
+    \ang{Ax, f - Au} = \ang{x, A^*(f - Au)} = \ang{x, 0} = 0,
+    \]
+    so $f - Au \in \Ran(A)\P$. 
+    
+    So we have $Au \in \clos{\Ran(A)}$ and $f - Au \in \Ran(A)\P = \clos{\Ran(A)}\P$, from which it follows that $Au = P_{\clos{\Ran(A)}}f$. 
+\end{proof}
+
+The following lemma gives a precise condition for when a least-squares solution exists: 
+\begin{lemma}
+    \Cref{eq:basic_ip} has a least-squares solution if and only if $f \in \Ran(A) \oplus \Ran(A)\P$. 
+\end{lemma}
+
+\begin{proof}
+    ``$\implies$'' Suppose $u$ is a least-squares solution. Then $f - Au \in \Ran(A)\P$, so $f = Au + (f - Au) \in \Ran(A) \oplus \Ran(A)\P$.
+    
+    ``$\impliedby$'' Suppose $f = Au + g$ for some $u \in \XXX$, $g \in \Ran(A)\P = \clos{\Ran(A)}\P$. Then by the previous theorem, $Au = P_{\clos{\Ran(A)}}f$, so $u$ is a least-squares solution. 
+\end{proof}
+
+\begin{corollary}
+    If $\Ran(A)$ is closed, then \cref{eq:basic_ip} always has a least-squares solution. 
+\end{corollary}
+In particular, this holds if $\Ran(A)$ is finite-dimensional. Therefore, if either $\XXX$ or $\YYY$ is finite-dimensional, \cref{eq:basic_ip} has a least-squares solution for any $A$. 
+
+We have already seen that if a least-squares solution $u$ exists, then the affine subspace of all least-sqares solutions is $u + \Nul(A)$, and the unique minimum-norm solution is the projection of 0 onto this affine subspace, which is the unique element of $u + \Nul(A)$ that lies in $\Nul(A)\P$. 
+
+\begin{definition}
+    Let $A \in \LLL(\XXX, \YYY)$, and define
+    \[
+    \tilde A \ceq A \restr_{\Nul(A)\P} \colon \Nul(A)\P \to \Ran(A). 
+    \]
+    Clearly $\tilde A$ is bijective and we define the \emph{Moore-Penrose inverse} 
+    \[
+    A\D \colon \Ran(A) \oplus \Ran(A)\P \to \Nul(A)\P \colon f \mapsto \tilde A^{-1} P_{\clos{\Ran(A)}} f. 
+    \]
+\end{definition}
+
+\begin{remark}
+    Note that $\clos{\Ran(A) \oplus \Ran(A)\P} = \clos{\Ran(A)} \oplus \Ran(A)\P = \clos{\Ran(A)} \oplus \clos{\Ran(A)}\P = \YYY$, and therefore the operator $\tilde A$ is \emph{densely defined}, and it is defined on all of $
+    \YYY$ if and only if $\Ran(A)$ is closed. 
+\end{remark}
+
+We will not prove the following theorem, but it is interesting: 
+\begin{theorem} \label{thm:mp_inverse_continuous}
+    The Moore-Penrose inverse $A\D$ is continuous if and only if $\Ran(A)$ is closed. 
+\end{theorem}
+
+The following characterises all important facts about the Moore-Penrose inverse: 
+\begin{theorem}[Moore-Penrose equations] \label{thm:mp_equations}
+    The operator $A\D$ satisfies the following equations: 
+    \begin{enumerate}[(1)]
+        \item $A\D A = P_{\Nul(A)\P}$; 
+        \item $AA\D = P_{\clos{\Ran(A)}}\restr_{
+        \Dom(A\D)}$; 
+        \item $AA\D A = A$;
+        \item $A\D AA\D = A\D$. 
+    \end{enumerate}
+
+Conversely, if any linear operator $B \colon \YYY \to \XXX$ satisfies (1) and (2), then $B = A\D$.  
+\end{theorem}
+
+\begin{proof}
+    We will not prove (1) and (2). Point (3) and (4) follow immediately from (1) and (2) respectively. 
+\end{proof}
+
+The Moore-Penrose inverse has the important property that it maps every $f$ in its domain to the corresponding minimum-norm least-squares solution:
+\begin{theorem}
+    For every $f \in \Dom(A\D)$, the minimum-norm solution $u\D$ to \cref{eq:basic_ip} is given by $u\D = A\D f$. 
+\end{theorem}
+
+\begin{proof}
+    Since $f \in \Ran(A) \oplus \Ran(A)\P$, we know that there exists a unique minimum-norm solution $u\D \in \Nul(A)\D$. We write
+    \[
+    u\D = P_{\Nul(A)\P}(u\D) = A\D A u\D = A\D P_{\clos{\Ran(A)}} f = A\D A A\D f = A\D f. 
+    \]
+\end{proof}
+
+\begin{remark}
+    We can also consider the normal equation $A^* f = A^* A u$ as a least-squares problem, whose minimum-norm solution is $(A^* A)\D A^* f$. It is clear that this expression must equal the minimum-norm solution $u\D$ from \cref{eq:basic_ip}. 
+\end{remark}
+
+\subsection{Compact operators}
+\begin{definition}
+    Let $A \in \LLL(\XXX, \YYY)$. Then $A$ is called \emph{compact} if for any bounded $B \subseteq \XXX$, the image $A(B)$ is precompact in $\YYY$. The set of compact operators in $\LLL(\XXX, \YYY)$ is denoted $\KKK(\XXX, \YYY)$. 
+\end{definition}
+
+\begin{lemma}
+    Let $A \in \LLL(\XXX, \YYY)$. Then $A$ is compact if and only if, for every bounded sequence $(x_n) \subseteq X$, the sequence $(Ax_n) \subseteq Y$ has a convergent subsequence. 
+\end{lemma}
+
+\begin{theorem}
+    Let $A \in \KKK(\XXX, \YYY)$ with $\dim(\Ran(A)) = \infty$. Then $A\D$ is discontinuous. 
+\end{theorem}
+
+\begin{proof}
+    If $\dim\Ran(A) = \infty$, then $\XXX$ and $\Nul(A)\P$ are infinite-dimensional as well. Chose an orthonormal sequence $(x_n) \subseteq \Nul(A)\P$, then after taking a subsequence if necessary, we can assume that $f_n \ceq Ax_n$ converges. However, we have
+    \[
+    \norm{A\D(f_n - f_m)}^2 = \norm{A\D A (x_n - x_m)}^2 = \norm{P_{\Nul(A)\P} (x_n - x_m)}^2 = \norm{x_n -x_m}^2 = 2, 
+    \]
+    and in particular the sequence $(A\D f_n)$ does not converge. This shows that $A\D$ is discontinuous. 
+\end{proof}
+
+In particular, combining this with \cref{thm:mp_inverse_continuous} shows that the range of a compact operator is always open, and that not every element in $\YYY$ has a least-squares solution. 
+
+We will need the following theorem, an infinite-dimensional analogue of the spectral theorem: 
+\begin{theorem}[Eigenvalue decomposition of self-adjoint compact operators] Let $\XXX$ be a Hilbert space, and $A \in \KKK(\XXX, \XXX)$ self-adjoint. Then there exists an orthonormal basis $(x_j)$ of $
+   \clos{\Ran(A)}$ and a sequence of eigenvalues $\abs{\lambda_1} \geq \abs{\lambda_2} \geq \dotsb > 0$ such that for all $u \in \XXX$ we have
+    \[
+    Au = \sum_{j=1}^\infty \lambda_j \ang{u, x_j} x_j. 
+    \]
+The sequence $(\lambda_j)$ is either finite or converges to 0. 
+\end{theorem}
+
+The previous theorem gives rise to an infinite-dimensional analogue of the SVD:
+\begin{theorem}
+    Let $A \in \KKK(\XXX, \YYY)$. Then there exists a (not necessarily infinite) sequence $\sigma_1 \geq \sigma_2 \geq \dotsb > 0$ converging to 0, and orthonormal bases $(x_j)$, $(y_j)$ of $\Nul(A)\P$ and $\clos{\Ran(A)}$ respectively, such that
+    \[
+    Ax_j = \sigma_j y_j, \quad A^* y_j = \sigma_j x_j \quad\text{for all $j \in \NN$}, 
+    \]
+    and such that for all $u \in \XXX$ and $f \in \YYY$ we have
+    \[
+    Au = \sum_{j=1}^\infty \sigma_j \ang{u, x_j} y_j, \quad A^* f = \sum_{j=1}^\infty \sigma_j \ang{f, y_j} x_j.
+    \]
+    
+    The sequence $\qty{(\sigma_j, x_j, y_j)}$ is called the \uline{singular value decomposition} (SVD) of $A$.
+\end{theorem}
+
+\begin{proof}
+    Define $B \ceq A^*A$ and $C \ceq AA^*$, which are both compact, self-adjoint, and positive semi-definite operators. By the previous theorem, we can write
+    \[
+     Cf = \sum_{j=1}^\infty \sigma_j^2 \ang{f, y_j} y_j,
+    \]
+    where $(y_j)$ is a basis of $\clos{\Ran(AA^*)} = \clos{\Ran(A)}$ and $(\sigma_j)$ is a positive decreasing sequence converging to 0.  
+    
+    Note that
+    \[
+    B A^* y_j = A^* A A y_j = A^* C y_j = A^* \sigma^2 y_j = \sigma_j^2 A^* y_j,
+    \]
+    so $A^* y_j$ is an eigenvector of $B$ with eigenvector $\sigma_j^2$. 
+    
+    We show that $\qty(\frac{A^* y_j}{\sigma_j})$ is an orthonormal basis of $\Ran(A)\P$. is an orthonormal basis of $\Nul(A)\P$: their inner product is given by 
+    \[
+    \ang*{\frac{A^* y_j}{\sigma_j}, \frac{A^* y_k}{\sigma_k}} = \frac{1}{\sigma_j\sigma_k} \ang{y_j, C y_k} = \frac{\sigma_k}{\sigma_j} \ang{y_j, y_k} = 0, 
+    \]
+    and since the $(y_j)$ are a basis of $\clos{\Ran(A)} = \Nul(A^*)\P$ it is clear that the span of $(A^* y_j)$ is dense in $\clos{\Ran(A^*)} = \Nul(A)\P$. 
+    
+    If we choose $x_j = \frac{A^* y_j}{\sigma_j}$, we find by construction that $A^* y_j = \sigma_j x_j$ and 
+    \[
+    A x_j = \frac{AA^* y_j}{\sigma_j} = \frac{C y_j}{\sigma_j} = \sigma_j y_j.
+    \]
+    
+    Finally, we see that
+    \[
+    A u = \sum_{j=1}^\infty  \ang{u, x_j} Ax_j = \sum_{j=1}^\infty \sigma_j \ang{u, x_j} y_j \quad\text{and}\quad A^* f = \sum_{j=1}^\infty \ang{f, y_j} A^* y_j = \sum_{j=1}^\infty \sigma_j \ang{f, y_j} x_j. 
+    \]
+\end{proof}
+
+\begin{theorem}
+    Let $A \in \KKK(\XXX, \YYY)$ with SVD $\qty{(\sigma_j, x_j, y_j)}$ and let $f \in \Dom(A\D)$. Then
+    \[
+    A\D f = \sum_{j=1}^\infty \frac{1}{\sigma_j} \ang{f, y_j} x_j.
+    \]
+\end{theorem}
+
+\begin{remark}
+    Note that this is comparable to $A^* f = \sum_{j=1}^\infty \sigma_j \ang{f, y_j} x_j$, except that $A^*$ is a smoothing operator (since $\sigma_j \to 0$), while $A\D$ does the opposite. Furthermore, $A\D$ amplifies the right singular vectors corresponding to small singular values the most --- intuitively, the corresponding left singular vectors are vectors where $A$ doesn't ``see much''. 
+\end{remark}
+
+\begin{proof}
+    Define $Bf = \sum_{j=1}^\infty \frac1{\sigma_j} \ang{f, y_j} x_j$. Then by \cref{thm:mp_equations}, we must check that $BA = P_{\Nul(A)\P}$ and $AB = P_{\clos{\Ran(A)}} \restr_{\Dom(A\P)}$. 
+    
+    For the first equation, we compute
+    \[
+    BAu = \sum_{j=1}^\infty \frac{1}{\sigma_j} \ang*{\sum_{i=1}^\infty \sigma_i \ang{u, x_i}y_i, y_j} x_j = \sum_{j=1}^\infty \sum_{i=1}^\infty \frac{\sigma_i}{\sigma_j} \ang{u, x_i} \ang{y_i, y_j} x_j = \sum_{j=1}^\infty \ang{u, x_j} x_j . 
+    \]
+    Since $(x_j)$ is a basis of $\Nul(A)\P$, this proves that $BA = P_{\Nul(A)\P}$. 
+    
+    For the second equation, an analogous computation gives $ABf = \sum_{i=1}^\infty \ang{f, y_i}y_i$, and since $(y_i)$ is a basis of $\clos{\Ran(A)}$, this proves that $AB = P_{\clos{\Ran(A)}}\restr_{\Dom(A\D)}$. 
+\end{proof}
+
+\begin{definition}
+    Let $A \in \KKK(\XXX, \YYY)$ have SVD $\qty{(\sigma_j, x_j, y_j)}$. 
+    We say that $f \in \YYY$ satisfies the \emph{Picard criterion} if 
+    \[
+    \sum_j \frac{\abs{\ang{f, y_j}}^2}{\sigma_j^2} < \infty. 
+    \]
+    Note that the expression on the left corresponds to $\norm{A\D f}^2$ if $f \in \Dom(A\D)$. 
+\end{definition}
+
+\begin{theorem}
+    Let $f \in \clos{\Ran(A)}$. Then $f \in \Ran(A)$ if and only if $f$ satisfies the Picard criterion. 
+\end{theorem}
+
+\begin{proof}
+    `$\implies$' Write $f = Au$, then
+    \[
+    \sum_j \frac{\abs{\ang{f, y_j}}^2}{\sigma_j^2} = \sum_j \frac{\abs{\ang{Au, y_j}}^2}{\sigma_j^2} = \sum_j \frac{\abs{\ang{u, A^* y_j}}^2}{\sigma_j^2} = \sum_j \abs{\ang{u, x_j}}^2 < \infty. 
+    \]
+    
+    `$\impliedby$' Define $u \ceq  \sum_{j=1}^\infty \frac{1}{\sigma_j} \ang{f, y_j} x_j$ (note that by assumption this sum converges). Then 
+    \[
+    Au = A \sum_{j=1}^\infty \frac{1}{\sigma_j} \ang{f, y_j} x_j = \sum_{j=1}^\infty \frac{1}{\sigma_j} \ang{f, y_j} Ax_j = \sum_{j=1}^\infty \ang{f, y_j} y_j = P_{\clos{\Ran(A)}} f = f,
+    \]
+    so $Au = f$ which implies $f \in \Ran(A)$. 
+\end{proof}
+
+We have seen that the stability of $A\D$ depends on the speed of decay of the singular values $(\sigma_j)$. We formalise this:
+\begin{definition}
+    Let $A \in \KKK(\XXX, \YYY)$ have singular values $(\sigma_j)$. Then the ill-posed inverse problem $Au = f$ is called \emph{mildly ill-posed} if the $\sigma_j$ decay polynomially (i.e., $\frac{1}{\sigma_n} \leq C n^\gamma$ for some $C, \gamma$) and \emph{severely ill-posed} otherwise. 
+\end{definition}
+
+\begin{example}
+    Consider the heat equation with initial conditions and boundary values:
+    \[
+    \begin{cases}
+        v_t - v_{xx} = 0 &(x, t) \in (0, \pi) \times \RR_{>0}, \\
+        v(0, t) = v(\pi, t) = 0 &t \geq 0, \\
+        v(x, 0) = u(x) &x \in (0, \pi), \\
+        v(x, T) = f(x) &x \in (0, \pi). 
+    \end{cases}
+    \]
+    Then the forward problem is to determine $f$ given $u$, while the inverse problem is to determine $u$ given $f$. The solution for the foward problem is given by
+    \[
+    f = Au \ceq \sum_{j=1}^\infty e^{-j^2T} \ang{u, \sin(jx)}  \sin(jx), 
+    \]
+    and the eigenvalues are therefore $\sigma_j = e^{-j^2T}$. Since these clearly decay exponentially, this problem is severely ill-posed. 
+\end{example}

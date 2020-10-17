@@ -1,0 +1,263 @@
+\section{Distributions}
+%\begin{recap}
+%    A \emph{topological field} $\KK$ is a field endowed with a topology such that addition, multiplication, and inversion are continuous.
+%    
+%    A \emph{topological vector space} $V$ over a topological field $\KK$ is a vector space endowed with a topology such that vector addition and scalar multiplication are continuous. 
+%    
+%    The \emph{topological dual space} $V^*$ of $V$ is the set of all continuous linear maps from $V$ to $\KK$. 
+%\end{recap}
+\subsection{Test functions and distributions}
+\begin{definition}
+    Let $X \subseteq \RR^n$ be open, then we define the set of \emph{test functions} on $X$ as
+    \[
+    \Cal D(X) \ceq C^\infty_0(X) = \qty{f \colon X \to \CC \mid f \text{ is smooth with compact support}}. 
+    \]
+\end{definition}
+
+\begin{definition} \label{def:test_convergence}
+    Let $(\phi_m) \subseteq \Cal D(X)$. We say that $(\phi_m) \to 0$ in $\Cal D(X)$ if
+    \begin{enumerate}
+        \item  there exists a compact $K \subseteq X$ such that $\supp\phi_m \subseteq K$ for all $m$;
+        \item $\pt^\alpha \phi_m \to 0$ uniformly for each multi-index $\alpha$.
+    \end{enumerate}
+\end{definition}
+
+Note that, for any $\phi, \psi \in \Cal D(X)$ and any multi-index $\alpha$ we have
+\[
+\int_X \phi\cdot  \pt^\alpha \psi \dd{x} = (-1)^{\abs{\alpha}} \int_X \psi \cdot \pt^\alpha \phi \dd{x}, 
+\]
+which follows from partial integration and the fact that all boundary terms vanish since $\phi$ and $\psi$ have compact support. 
+
+Also, by Taylor's theorem, for any $\phi \in \Cal D(X)$, $x, h \in X$ and $N \in \NN$ we have
+\[
+\phi(x + h) = \sum_{\abs{\alpha} \leq N} \frac{h^\alpha}{\alpha!} \pt^\alpha \phi(x) + R_N(x, h) \quad\text{where } R_N(x, h) = o(\abs{h}^N) \text{ uniformly in $x$}. 
+\]
+
+\begin{definition}
+    A \emph{distribution} on $X$ is a linear map $u \colon \Cal D(X) \to \CC$ if for every compact set $K \subseteq X$ there exist constants $C, N$ such that for all $\phi \in \Cal D(X)$ with $\supp\phi\subseteq K$ we have
+    \begin{equation} \label{eq:seminorm_cond}
+        \abs{u(\phi)} \leq C \sum_{\abs{\alpha} \leq N} \sup \abs{\pt^\alpha \phi}.
+    \end{equation}
+
+Condition \ref{eq:seminorm_cond} is called the \emph{seminorm condition}. If, in the seminorm condition, the same $N$ can be used for every compact set $K \subseteq X$, then the least such $N$ is called the \emph{order} of $u$, written $\ord(u)$. 
+
+The set of all distributions in $X$ is denoted $\Cal D'(X)$. 
+\end{definition}
+
+If $u \in \DD'(X)$ and $\phi \in \DD(X)$, then instead of $u(\phi)$ we usually write $\ang{u, \phi}$.
+
+\begin{recap}
+    A function $f \colon X \to \CC$ is called \emph{locally integrable} if $\int_K \abs{f} \dd{x} < \infty$ for all compact $K \subseteq X$. 
+    
+    The set of locally integrable functions on $X$ is denoted $\locint(X)$. 
+\end{recap}
+
+\begin{example}
+    Let $M \in \NN$ and let $f_\alpha \in \locint(X)$ for all $\abs{\alpha} \leq M$. Define the linear map $T \colon \DD(X) \to \CC$ by
+    \[
+    \ang{T, \phi} \ceq \sum_{\abs{\alpha} \leq M} \int_X f_\alpha \cdot \pt^\alpha \phi \dd{x}. 
+    \]
+    It is trivial that $T$ is linear, and we verify that $T$ is a distribution as follows: take $\phi \in \Cal D(X)$ with $\supp\phi \subseteq K$. Then we have
+    \begin{align*}
+        \abs{\ang{T, \phi}} &\leq \sum_{\abs{\alpha} \leq M} \int_K \abs{f_\alpha} \cdot \abs{\pt^\alpha \phi} \dd{x} \\
+        &\leq \sum_{\abs{\alpha} \leq M} \sup \abs{\pt^\alpha \phi} \cdot \int_K \abs{f_\alpha} \dd{x} \\
+        &\leq \qty(\max_\alpha \int_K \abs{f_\alpha} \dd{x})   \sum_{\abs{\alpha} \leq M} \sup \abs{\pt^\alpha \phi}. 
+    \end{align*}
+Therefore, the seminorm condition is satisfied with $N = M$. From this, it also follows that $\ord(T) \leq M$. 
+\end{example}
+
+A special case of the previous example is the case $M = 0$: in this case the distribution simply becomes
+\[
+\ang{T_f, \phi} = \int_X f \phi \dd{x}. 
+\]
+Henceforth we will abuse notation: if $f \in \locint(X)$, then we will write $f$ instead of $T_f$, i.e., $\ang{f, \phi} = \int_X f\phi \dd{x}$. 
+
+\begin{lemma}
+    Let $u \colon \DD(X) \to \CC$ be a linear map. Then $u$ is a distribution if and only if, for every sequence $(\phi_j) \subseteq \DD(X)$ with $\phi_j \to 0$ as in \cref{def:test_convergence}, we have $\ang{u, \phi_m} \to 0$. 
+\end{lemma}
+
+\begin{proof}
+    `$\implies$' If $u$ is a distribution and $(\phi_m) \to 0$, then $\supp\phi_m \subseteq K$ for some compact $K$, and by \cref{eq:seminorm_cond} there exist $C, N$ such that
+    \[
+    \abs{\ang{u, \phi_m}} \leq C \sum_{\abs{\alpha} \leq N} \sup \abs{\pt^\alpha \phi_m} \to 0. 
+    \]
+    
+    `$\impliedby$' Suppose there is a compact set $K$ such that \cref{eq:seminorm_cond} is not valid for any $C, N$. Let $m \in \NN$ and $C = N = m$, then there is some $\phi_m$ with $\supp(\phi_m) \subseteq K$, and 
+    \[
+    \abs{\ang{u, \phi_m}} > m \sum_{\abs{\alpha} \leq m} \sup \abs{\pt^\alpha \phi_m}. 
+    \]
+    By dividing $\phi_m$ by $\ang{u, \phi_m} \neq 0$, we may assume w.l.o.g.\ that $\ang{u, \phi_m} = 1$. 
+    We now have a sequence $(\phi_m)$ such that
+    \[
+    \frac1m > \sum_{\abs{\alpha} \leq m} \sup \abs{\pt^\alpha \phi_m} \implies  \abs{\pt^\alpha \phi_m} < \frac1m \quad\text{ for $\abs{\alpha} \leq m$} \implies \pt^\alpha \phi_m \to 0 \text{ uniformly for all $\alpha$}. 
+    \]
+    Since each $\phi_m$ also satisfies $\supp\phi_m\subseteq K$, by \cref{def:test_convergence} we have that $\phi_m \to 0$, but also $\ang{u, \phi_m} \to 1$, a contradiction. 
+\end{proof}
+
+\subsection{Limits in $\DD'(X)$}
+\begin{definition}
+    We say that a sequence $(u_m) \subseteq \DD'(X)$ converges to $u \in \DD'(X)$ and write $u_m \to u$ if 
+    \[
+    \ang{u_m, \phi} \to \ang{u, \phi} \quad\text{for all $\phi \in \DD(X)$}. 
+    \]
+\end{definition}
+
+\begin{mdframed}
+The following theorem is non-examinable but interesting: 
+\begin{theorem}
+    Let $(u_m)$ be a sequence in $\DD'(X)$ such that $\lim\limits_{m\to\infty} \ang{u_m, \phi}$ exists for all $\phi \in \DD(X)$. Then the map $\ang{u, \phi} \ceq \lim\limits_{m\to\infty} \ang{u_m, \phi}$ is a distribution in $X$.
+\end{theorem}
+
+\begin{proof}
+    This is a direct application of the uniform boundedness principle. 
+\end{proof}
+\end{mdframed}
+
+\begin{example}
+    Let $X = \RR$ and consider the sequence of functions $u_m \in \locint(\RR)$ defined by $u_m(x) = \sin(mx)$. Then, for all $\phi \in \DD(\RR)$, we have
+    \[
+    \ang{u_m, \phi} = \int_\RR \sin(mx) \phi(x) \dd{x} = \frac1m \int_\RR \cos(mx) \phi'(x) \dd{x} \leq \frac1m \int \abs{\phi'(x)} \dd{x} \to 0.   \]
+    Therefore, it holds that $u_m \to 0$ in $\DD'(\RR)$. With our abuse of notation we write this as $\lim\limits_{m\to\infty} \sin(mx) = 0$ in $\DD'(\RR)$. 
+\end{example}
+
+\subsection{Basic operations}
+
+\subsubsection{Differentiation and multiplication by smooth functions}
+For $u \in C^\infty(X)$ and $\phi \in \DD(X)$, we have noted that
+\[
+\ang{\pt^\alpha u, \phi} = \int_X \pt^\alpha u \cdot \phi \dd{x} = (-1)^\abs{\alpha}  \int_X u \cdot \pt^\alpha \phi \dd{x} = \ang{u, (-1)^\abs{\alpha} \pt^\alpha \phi}. 
+\]
+
+Since the RHS makes sense for any distribution $u$, we define 
+\begin{definition}
+    For $f \in C^\infty(X)$, $u \in \DD'(X)$, we define $\pt^\alpha(fu)$ by
+    \[
+    \ang{\pt^\alpha(fu), \phi}  \ceq \ang{u, (-1)^\abs{\alpha} f \cdot  \pt^\alpha \phi}
+    \]
+\end{definition}
+
+\begin{remark}
+    This definition outlines a more general pattern when working with distributions: first we take some well-defined operator on the collection of smooth maps, then we rewrite it to a form that is sensible for any distribution, and then we \emph{define} that new form as the operator on distributions. This process is called \emph{extending the definition by duality}.
+\end{remark}
+
+\begin{example}
+    Let $u = \delta_x$, then we have
+    \[
+    \ang{\pt^\alpha \delta_x, \phi} = \ang{\delta_x, (-1)^\abs{\alpha} \pt^\alpha\phi} = (-1)^\abs{\alpha} \pt^\alpha \phi(x)
+    \]
+    
+    Furthermore, consider the Heaviside function $H(x) = \ind_{x \geq 0}$. We have
+    \[
+    \ang{H', \phi} = - \ang{H, \phi'} = -\int_\RR H(x) \phi'(x) \dd{x} = - \int_0^\infty \phi'(x) \dd{x} = \phi(0) = \ang{\delta_0, \phi}, 
+    \]
+    so we write $H'= \delta_0$ \emph{in the distributional sense}. 
+\end{example}
+
+\begin{lemma}
+    Suppose $u' \in \DD'(\RR)$ satisfies $u' = 0$. Then $u$ is constant (i.e., $\ang{u, \phi} = \ang{c, \phi} = c \int_\RR \phi \dd{x}$ for some $c$). 
+\end{lemma}
+
+\begin{proof}
+    Fix  any $\theta \in \DD(\RR)$ with $\ang{1, \theta} = 1$. Let $\phi \in \DD(\RR)$ and define
+    \[
+    \phi_A \ceq \phi - \ang{1, \phi}\theta, \quad \phi_B \ceq \ang{1, \phi}\theta \quad\text{such that }\phi = \phi_A + \phi_B.
+    \]
+    
+    Note that $\ang{1, \phi_A} = \ang{1, \phi} - \ang{1, \phi}\ang{1, \theta} = 0$.
+    
+    We claim that the function $\Phi_A(x) \ceq \int_{-\infty}^x \phi_A(y) \dd{y}$ has compact support: since $\supp\phi_A \subseteq [a, b]$ for some $a, b \in \RR$, clearly $\Phi_A(x) = 0$ for $x < a$, while for $x > b$ we have $\Phi_A(x) = \ang{1, \phi_A} = 0$. 
+    Obviously, it holds that $\Phi_A' = \phi_a$. Now we compute
+    \[
+    \ang{u, \phi} = \ang{u, \phi_A} + \ang{u, \phi_B} = \ang{u, \Phi_A'} + \ang{1, \phi}\ang{u, \theta} = - \ang{u', \Phi_A} + c \ang{1, \phi} = \ang{c, \phi}. 
+    \]
+    Since $\phi$ was chosen arbitrarily this shows that $u$ is constant. 
+\end{proof}
+
+\subsubsection{Reflection and translation} 
+For $\phi \in \DD(\RR^n), h \in \RR^n$, define the \emph{translation of $\phi$ by $h$} by 
+\[
+(T_h\phi)(x) \ceq \phi(x - h),
+\]
+and the \emph{reflection of $\phi$} by $\refl\phi(x) \ceq \phi(-x)$. 
+
+Extending the definitions of translation and reflection by duality yields the following:
+\begin{definition}
+    For $u \in \DD'(\RR^n)$, $h \in \RR^n$, $\phi \in \DD(\RR^n)$, define
+    \[
+    \ang{T_hu, \phi} \ceq \ang{u, T_{-h}\phi} \quad\text{and}\quad \ang{\refl u, \phi} \ceq \ang{u, \refl{\phi}}. 
+    \]
+\end{definition}
+
+\begin{lemma}
+    For $u \in \DD'(\RR^n)$, define $V_h \in \DD'(\RR^n)$ for $0 \neq h \in \RR^n$ by
+    \[
+    V_h \ceq \frac{T_{-h}u - u}{\norm{h}}
+    \]
+    If $(h_j) \subseteq \RR^n$ is a sequence for which $\lim_{j \to \infty} \frac{h_j}{\norm{h_j}} = m \in S^{n-1}$, then $V_{h_j} \to \sum_i m_i \pdv{u}{x_i}$ in $\DD'(\RR^n)$. 
+\end{lemma}
+
+\begin{proof}
+    By definition, we can write $\ang{V_h, \phi} = \frac{1}{\norm{h}} \ang{u, T_h\phi - \phi}$. Now Taylor's theorem tells us that
+    \[
+    (T_h\phi - \phi)(x) = \phi(x - h) - \phi(x) = - \sum_i h_i \pdv{\phi}{x_i}(x) + R(x, h),
+    \]
+    where $R(x, h) = o(\norm{h})$ in $D(\RR^n)$ (exercise sheet 1, question 2). 
+    
+    By sequential continuity, we have
+    \[
+    \lim_{j \to \infty} \ang{V_{h_j}, \phi} = \ang{u, - \sum_i m_i \pdv{\phi}{x_i}} = \ang{\sum_i m_i \pdv{u}{x_i}, \phi}, 
+    \]
+    which shows that $V_{h_j} \to \sum_i m_i \pdv{u}{x_i}$ in $\DD'(\RR^n)$. 
+\end{proof}
+
+\subsubsection{Convolution}
+For $\phi \in \DD(\RR^n)$, note that $(T_x \refl\phi)(y) = \refl\phi(y-x) = \phi(x-y)$. 
+\begin{definition}
+    For $u \in C^\infty(\RR^n), \phi \in \DD(\RR^n)$, we define the \emph{convolution} $u * \phi \colon \RR^n \to \CC$ as
+    \[
+    (u * \phi)(x) \ceq \int_{\RR^n} u(x-y) \phi(y) \dd{y} = \int_{\RR^n} u(y) \phi(x - y) \dd{y} = \ang{u, T_x \refl\phi}. 
+    \]
+    Since the RHS makes sense for any $u \in \DD'(\RR^n)$, we extend the definition this way: for $u \in \DD'(\RR^n), \phi \in \DD(\RR^n)$, we define the convolution $u * \phi$ as
+    \[
+    (u * \phi)(x) \ceq \ang{u, T_x\refl\phi}. 
+    \]
+\end{definition}
+
+
+\begin{lemma}
+    Let $\phi \in C^\infty(\RR^n \times \RR^m)$ and define $\Phi_x(y) \ceq \phi(x, y)$. Suppose for any $x \in \RR^n$ there exists a neighbourhood $N(x)$ and a compact $K \subseteq \RR^m$ such that $\phi(x, y)$ for all $x \in N(x), y \notin K$. 
+    
+    Then $x \mapsto \ang{u, \Phi_x}$ is differentiable with
+    \[
+    \pt_x^\alpha \ang{u, \Phi_x} = \ang{u, \pt_x^\alpha \Phi_x}
+    \]
+    for any $u \in \DD'(\RR^m)$. 
+\end{lemma}
+
+\begin{proof}
+    Fix $x \in \RR^n$, then by Taylor's formula we have
+    \[
+    \Phi_{x + h}(y) = \Phi_x(y) + \sum_{i=1}^n h_i \pdv{\phi}{x_i} (x, y)+ R(x, y, h), 
+    \]
+    where $\pt_y^\alpha R(x, y, h) = o(\norm{h})$, uniformly in $y$, for any multi-index $\alpha$. Furthermore, by assumption there exists a compact $K$ such that for $h$ small enough, $\supp R(x, \cdot, h) \subseteq K$. Therefore, $R(x, \cdot, h)$ is a test function for $h$ small enough.
+    
+    Combining the previous two facts shows that $R(x, \cdot, h) = o(\norm{h})$ in $\DD(\RR^m)$ as $h \to 0$. 
+    
+    Let $u \in \DD'(\RR^m)$, then we find by sequential continuity that $\ang{u, R(x, \cdot, h)}$ is also $o(\norm{h})$, and therefore
+    \[
+    \ang{u, \Phi_{x+h}} = \ang{u, \Phi_x} + \sum_{i=1}^n h_i \ang{u, \pdv{\Phi_x}{x_i}} + o(\norm{h}). 
+    \]
+    This shows that $x \mapsto \ang{u, \Phi_x}$ is differentiable with 
+    \[
+    \pdv{x_i} \ang{u, \Phi_x}  = \ang{u, \pdv{\Phi_x}{x_i}}. 
+    \]
+    From this the result follows. 
+\end{proof}
+
+\begin{corollary}
+    If $u \in \DD'(\RR^n)$, $\phi \in \DD(\RR^n)$, then $u * \phi$ is differentiable with $\pt^\alpha (u * \phi) = u * \pt^\alpha\phi$. 
+\end{corollary}
+
+\begin{proof}
+    Apply the previous lemma with $\Phi_x(y) \ceq  \phi(x-y)$. 
+\end{proof}
