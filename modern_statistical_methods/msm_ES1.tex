@@ -109,11 +109,7 @@ Now, differentiating w.r.t.\ $\mu$ yields
 \end{align*}
 since $\sum_{i=1}^p X_{ij} = 0$ for all $i$ by assumption. Now, setting the derivative to 0 shows that $\hat\mu = \frac1n \sum_{i=1}^n Y_i = \bar Y$ is the minimiser. Since the second derivative of the objective function is constantly $+2$, this $\hat\mu$ is indeed a minimum. 
 
-To compute $\hat\beta$, we differentiate the objective function w.r.t.\ $\beta$: 
-\begin{align*}
-    \nabla_\beta \norm{Y- \mu \vec 1 - X\beta}_2^2 + \lambda \norm{\beta}_2^2 &= ...
-\end{align*}
-\TODO Finish
+The computation of $\hat\beta$ is given in the lecture notes. 
 \end{solution}
 
 \begin{question}
@@ -204,5 +200,40 @@ which is exactly our ridge regression objective function.
     \end{enumerate}
 \end{solution}
 
+\begin{question}
+	Prove Proposition 4 in the notes. \emph{Hint: for part (ii) it may help to consider the eigendecompositions of positive semi-definite matrices $K^{(1)}$ and $K^{(2)}$ derived from kernels $k_1$ and $k_2$ in the form $K^{(1)} = PDP\T = \sum_{i=1}^n P_iP_i\T D_{ii}$ for example. }
+\end{question}
 
+\begin{proof}
+	Proposition 4 is the following:
+	\begin{mdframed}
+		Suppose $k_1, k_2, \dotsc$ are kernels. 
+		\begin{enumerate}[(i)]
+			\item If $\alpha_1, \alpha_2 \geq 0$ then $\alpha_1 k_1 + \alpha_2 k_2$ is a kernel. If $\lim_{k\to\infty} k(x, x') \eqqcolon k(x, x')$ exists for all $x, x' \in \Cal X$, then $k$ is a kernel. 
+			\item The pointwise product $k = k_1k_2$ is a kernel.
+		\end{enumerate}
+	\end{mdframed}
+
+Let $x_1, \dotsc, x_n \in \Cal X$ and define the positive definite matrix $K^{(m)}$ by $K^{(m)}_{i, j} = k_m(x_i, x_j)$. 
+\begin{enumerate}[(i)]
+	\item Since $(\alpha_1 k_1 + \alpha_2 k_2)(x_i, x_j) = \alpha_1 k_1(x_i, x_j) + \alpha_2 k_2(x_i, x_j)$, the kernel matrix $K_{ij} \ceq (\alpha_1 k_1 + \alpha_2 k_2)(x_i, x_j)$ equals $\alpha_1 K_1 + \alpha_2 K_2$, and is therefore clearly symmetric positive semi-definite. This shows that $\alpha_1 k_1 + \alpha_2 k_2$ is a kernel. 
+	
+	For the second part (the pointwise limit of kernels is a kernel), it suffices to show that the entrywise limit of positive semi-definite matrices is again positive semidefinite. But this is clear: if $K^{(m)} \to K$ entrywise, then for any $\vec x \in \RR^n$ we have
+	\[
+	\vec x\T K \vec x = \vec x\T (\lim_{m\to\infty} K^{(m)}) \vec x = \lim_{m\to\infty} \vec x\T K^{(m)}\vec x \geq 0,
+	\]
+	so $K$ is positive semi-definite.
+	
+	\item Let $K^{(1)}$ and $K^{(2)}$ be positive semi-definite, then we must show that the pointwise product $K^{(1)} \circ K^{(2)}$ is positive semi-definite as well. Write $K^{(1)} = \sum_{\ell=1}^n \lambda_\ell P_\ell P_\ell\T$ and $K^{(2)} = \sum_{\ell=1}^n \mu_\ell Q_\ell Q_\ell\T$, where $\lambda_i, \mu_i \geq 0$ and $\qty{P_\ell}$, $\qty{Q_\ell}$ are orthonormal bases of $\RR^n$. 
+	
+	Then we find
+	\begin{align*}
+	(K^{(1)} \circ K^{(2)})_{ij} &= \qty(\sum_m \lambda_m P_{im} P_{jm}) \qty(\sum_\ell \mu_\ell Q_{i\ell} Q_{j\ell}) = \sum_{m, \ell} \lambda_m \mu_\ell (P_{im} P_{jm} Q_{i\ell} Q_{j\ell}) \\
+	&= \sum_{m, \ell} \lambda_m \mu_\ell \qty[(P_m \circ Q_\ell)(P_m \circ Q_\ell)\T]_{ij},
+	\end{align*}
+	
+	and therefore $K^{(1)} \circ K^{(2)} = \sum_{m, \ell} \lambda_m \mu_\ell \qty[(P_m \circ Q_\ell)(P_m \circ Q_\ell)\T]$, which is a nonnegative combination of positive semi-definite matrices and therefore positive semi-definite. 
+\end{enumerate}
+
+\end{proof}
 \end{document}

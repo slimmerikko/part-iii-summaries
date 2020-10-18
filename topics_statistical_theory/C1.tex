@@ -251,6 +251,24 @@ We turn our attention to concentration inequalities, with a focus on finite-samp
 \end{definition}
 Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\mu, \sigma^2)$ distribution is given by $t \mapsto \exp(\mu t + \sigma^2 t^2 /2)$. 
 
+\begin{recap}
+	Recall the \emph{tail bound formula} for the expectation: if $X$ is a nonnegative random variable, then 
+	\[
+	\EE[X] = \int_0^\infty \PP(X > x) \dd{x}. 
+	\]
+	
+	Furthermore, recall that the \emph{gamma function} is defined for $z \in (0, \infty)$ by
+	\[
+	\Gamma(z) = \int_0^\infty x^{z-1} e^{-x} \dd{x}
+	\]
+	and satisfies $\Gamma(n) = (n-1)!$ for all $n \in \NN$. 
+	
+	Finally, recall the following inequality: for all $a, b \in \RR$ and $p \geq 1$
+	\[
+	(a+b)^p \leq 2^{p-1} (a^p + b^p). 
+	\]
+	This follows from the convexity of the function $x \mapsto x^p$. 
+\end{recap}
 
 \begin{proposition}We consider some characterisations of sub-Gaussianity: 
     \begin{enumerate}[(a)]
@@ -269,18 +287,7 @@ Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\m
 
 \end{proposition}
 
-\begin{recap}
-    Recall the \emph{tail bound formula} for the expectation: if $X$ is a nonnegative random variable, then 
-    \[
-    \EE[X] = \int_0^\infty \PP(X > x) \dd{x}. 
-    \]
-    
-    Furthermore, recall that the \emph{gamma function} is defined for $z \in (0, \infty)$ by
-    \[
-    \Gamma(z) = \int_0^\infty x^{z-1} e^{-x} \dd{x}
-    \]
-    and satisfies $\Gamma(n) = (n-1)!$ for all $n \in \NN$. 
-\end{recap}
+
 \begin{proof}
     \begin{enumerate}[(a)]
         \item We first consider $\PP(X \geq x)$. 
@@ -308,6 +315,46 @@ Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\m
     &= 2^{q+1} q \sigma^{2q} \Gamma(q) = 2 \cdot q! (2\sigma)^q. 
     \end{align*}
 
-\item Note that $x \mapsto e^{-tx}$ is convex for every $t \in \RR$, so $\EE(e^{-tX}) \geq e^{-t \EE(X)} \geq 1$ by Jensen's inequality.
+\item Note that $x \mapsto e^{-tx}$ is convex for every $t \in \RR$, so $\EE(e^{-tX}) \geq e^{-t \EE(X)} = e^{0} = 1$ by Jensen's inequality. Let $X'$ denote an independent copy of $X$: then $X - X'$ has a symmetric distribution, so all its odd moments vanish. Therefore we find
+\begin{align*}
+	\EE[e^{tX}] &\leq \EE[e^{-tX'}] \EE[e^{tX}] = \EE[e^{t(X - X')}] = \EE \sum_{q=0}^\infty \qty[\frac{t^{2q} (X - X')^{2q}}{(2q)!}] \\
+	&= \sum_{q=0}^\infty \frac{t^{2q} \EE[(X - X')^{2q}]}{(2q)!} \leq \sum_{q=0}^\infty \frac{2^{2q-1} t^{2q} \qty(\EE[X^{2q}] + \EE[(X')^{2q}])}{(2q)!} \\
+	&\leq \sum_{q=0}^\infty  \frac{2^{2q - 1}t^{2q} 2 q! C^{2q}}{(2q)!} =\sum_{q=0}^\infty  \frac{(2tC)^{2q}q!}{(2q)!} = \sum_{q=0}^\infty \frac{(2tC)^{2q}}{\prod_{j=1}^q (q+j)} \\
+	&\leq \sum_{q=0}^\infty \frac{(2tC)^{2q}}{\prod_{j=1}^q (2j)} = \sum_{q=1}^\infty \frac{(2t^2C^2)^q}{q!} = e^{2t^2C^2}.
+\end{align*}
+This shows that $X$ is sub-Gaussian with parameter $4C^2$. 
     \end{enumerate}
+\end{proof}
+
+Note that the proposition is not an ``if and only if''-type theorem: suppose we start with a sub-Gaussian variable $X$ with parameter $\sigma^2$. Then by (b), we have $\EE[X^{2q}] \leq q!(2\sigma)^{2q}$, and (c) then implies that $X$ is sub-Gaussian with parameter $16\sigma^2$. 
+
+\begin{theorem}[Hoeffding's inequality]
+	Let $X_1, \dotsc, X_n$ be independent sub-Gaussian random variables, with $X_i$ having parameter $\sigma_i^2$. Then $\bar X$ is sub-Gaussian with parameter $\overline{\sigma^2}$. In particular, we have
+	\[
+	\max\qty{\PP(\bar X \geq x), \PP(\bar X \leq -x)} \leq e^{-nx^2/(2\overline{\sigma^2})}.
+	\]
+\end{theorem}
+
+\begin{proof}
+	For $t \in \RR$, we have
+	\[
+	\EE[e^{t\bar X}] = \EE[e^{(t/n)\sum_i X_i}] = \prod_{i=1}^n \EE[e^{(t/n)X_i}] \leq \prod_{i=1}^n e^{t^2\sigma_i^2/(2n^2)} = e^{t^2\overline{\sigma^2}/(2n)},
+	\]
+	which shows $\bar X$ is sub-Gaussian with parameter $\overline{\sigma^2}/n$. Applying part (a) of the previous proposition shows the second result. 
+\end{proof}
+
+\begin{remark}
+	A direct consequence of Hoeffding's inequality is that
+	\[
+	\PP(\abs{\bar X} \geq x) \leq 2 e^{-nx^2/(2\overline{\sigma^2})}.
+	\]
+	The inequality is often stated in this weaker way. 
+\end{remark}
+
+\begin{lemma}[Hoeffding's lemma]
+	Let $X$ be a random variable with $\EE X = 0$ that satisfies $a \leq X \leq b$. Then $X$ is sub-Gaussian with parameter $(b-a)^2/4$. 
+\end{lemma}
+
+\begin{proof}
+	See Example Sheet 1, question 2. 
 \end{proof}

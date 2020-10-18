@@ -99,20 +99,38 @@
 \end{question}
 
 \begin{solution}
-    First we compute the distribution function of $X_{(j)}$. If $X_{(j)} \leq x$, then at least $j$ of the $X_i$ must be $\leq x$. 
+%    First we compute the distribution function of $U_{(j)}$. If $U_{(j)} \leq x$, then at least $j$ of the $U_{i}$ must be $\leq x$. 
+%
+%For $k = j, j+1, \dotsc, n$, there are $\binom{n}{k}$ ways to choose $k$ of the $U_{i}$'s that must be $\leq j$. Fix $x \in [0, 1]$, then we have
+%\begin{align*}
+%    \PP(U_{(j)} \leq x) &= \sum_{k=j}^n \binom{n}{k} \PP(X_1 \leq x, \dotsc, X_k \leq x, X_{k+1} > x, \dotsc, X_n > x) \\
+%    &= \sum_{k=j}^n \binom{n}{k} (F(x))^k \cdot (1 - F(x))^{n-k} \\
+%    &=  \sum_{k=j}^n \binom{n}{k} x^k (1-x)^{n-k}.
+%\end{align*}
+%
+%Now, the density function of $X_{(k)}$ is given by the derivative of $F$. This is a hefty calculation, see for example \href{https://math.stackexchange.com/a/1179378/696417}{this StackExchange link}, but it turns out to be
+%\[
+%\dv{x} F_{(j)}(x) = f_{(j)}(x) = \frac{n!}{(j-1)!(n-j)!} x^{j-1}(1-x)^{n-j},
+%\]
+%which is also the density function of the $\Rm{Beta}(j, n-j+1)$ distribution.
 
-For $k = j, j+1, \dotsc, n$, there are $\binom{n}{k}$ ways to choose $k$ of the $X_i$'s that must be $\leq j$. Fix $x \in [0, 1]$, then we have
-\begin{align*}
-    \PP(X_{(j)} \leq x) &= \sum_{k=j}^n \binom{n}{k} \PP(X_1 \leq x, \dotsc, X_k \leq x, X_{k+1} > x, \dotsc, X_n > x) \\
-    &= \sum_{k=j}^n \binom{n}{k} (F(x))^k \cdot (1 - F(x))^{n-k} \\
-    &=  \sum_{k=j}^n \binom{n}{k} x^k (1-x)^{n-k}.
-\end{align*}
-
-Now, the density function of $X_{(k)}$ is given by the derivative of $F$. This is a hefty calculation, see for example \href{https://math.stackexchange.com/a/1179378/696417}{this StackExchange link}, but it turns out to be
+We compute the density function of $U_{(j)}$ as follows: let $x \in (0, 1)$, then we know that 
 \[
-\dv{x} F_{(j)}(x) = f_{(j)}(x) = \frac{n!}{(j-1)!(n-j)!} x^{j-1}(1-x)^{n-j},
+f_{(j)}(x) = \dv{x} F_{(j)}(x) = \lim_{h\to 0} \frac{F_{(j)}(x+h) - F_{(j)}(x)}{h} = \lim_{h \to 0} \frac{\PP(x < U_{(j)} \leq x + h)}{h}. 
 \]
-which is also the density function of the $\Rm{Beta}(j, n-j+1)$ distribution.
+The probability $\PP(x < U_{(j)} \leq x + h)$ is the probability that exactly $j-1$ of the $U_{i}$ are less than $x$, and that at least one of the $U_{i}$ is in $(x, x+ h]$. 
+
+The probability that two or more of the $U_{i}$ lie in $(x, x+h]$ is $O(h^2)$ and therefore negligible, so we must compute the probability that exactly $j-1$ of the $U_{i}$ are smaller than $x$, one of the $U_{i}$ is in $(x, x+h]$, and the other $U_{i}$ are greater than $x+h$. This is easily seen to be
+\begin{align*}
+&\binom{n}{j-1} \PP(U \leq x)^{j-1} \cdot (n - j + 1) \PP(x < U \leq x + h) \cdot \PP(U > x + h)^{n-j} \\
+&= \frac{n!}{(j-1)!(n-j+1)!} (n-j+1) x^{j-1} h (1 - x - h)^{n-j} \\
+&= \frac{n!}{(j-1)!(n-j)!} x^{j-1} (1-x-h)^{n-j} h. 
+\end{align*}
+Therefore, we easily compute
+\[
+f_{(j)}(x) = \lim_{h \to 0} \frac{\frac{n!}{(j-1)!(n-j)!} x^{j-1} (1-x-h)^{n-j} h}{h} = \frac{n!}{(j-1)!(n-j)!} x^{j-1} (1-x)^{n-j}. 
+\]
+This is also the density function of a $\Beta(j, n-j+1)$ distribution. 
 
 Finally, define $T = S_{n+1} - S_j$, so that $S_j$ and $T$ are independent. It is known that $S_j \sim \Gam(j, 1)$, $T \sim \gamma(n - j + 1)$, and furthermore that
 \[
@@ -158,7 +176,7 @@ Note that $\frac{\alpha e^u}{\beta + \alpha e^u} \in [0, 1]$ since $\alpha, \bet
 \end{proof}
 
 \begin{question}
-    Let $X_1, \dotsc, X_n$ be independent with distribution $P$ on a measurable space $(\Cal X, \Cal A)$, and let $\hat P_n$ be the empirical measure of $X_1, \dotsc, X_n$; thus $\hat P_n(A) = n^{-1} \sum_{i=1}^n \ind_{X_i \in A}$. Show that, for all $\eps > 0$ and $A \in \Cal A$, we have
+    Let $X_1, \dotsc, X_n$ be independent with distribution $P$ on a measurable space $(\Cal X, \Cal A)$, and let $\hat P_n$ be the empirical measure of $X_1, \dotsc, X_n$; thus $\hat P_n(A) = n^{-1} \sum_{i=1}^n \ind_{U_{i} \in A}$. Show that, for all $\eps > 0$ and $A \in \Cal A$, we have
     \[
     \PP\qty(\abs{\hat P_n(A) - P(A)} > \eps) \leq 2 e^{-2n\eps^2}. 
     \]
@@ -179,7 +197,7 @@ Note that $\frac{\alpha e^u}{\beta + \alpha e^u} \in [0, 1]$ since $\alpha, \bet
     \]
     and thus for $y = 0$ we have
     \[
-    \hat F_n(0) = \frac1n \sum_{i=1}^n \ind_{Y_i \leq 0} = \frac1n \sum_{i=1}^n \ind_{X_i \in A} = \hat P_n(A).
+    \hat F_n(0) = \frac1n \sum_{i=1}^n \ind_{Y_i \leq 0} = \frac1n \sum_{i=1}^n \ind_{U_{i} \in A} = \hat P_n(A).
     \]
     
     The result now follows from the DKW inequality. \TODO make more precise. 
