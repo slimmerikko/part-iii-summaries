@@ -1,0 +1,84 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage{mathtools, amsmath, amssymb, amsthm, enumerate, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\title{... --- Example Sheet ...} % subject
+\author{Lucas Riedstra}
+\date{...} % date
+
+\begin{document}
+\maketitle
+\end{document}

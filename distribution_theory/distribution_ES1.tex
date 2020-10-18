@@ -1,0 +1,160 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage{mathtools, amsmath, amssymb, amsthm, mathabx, enumerate, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+\newcommand{\DD}{\Cal D}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+\newcommand\pt\partial
+\newcommand\locint{L^1_{\Rm{loc}}}
+\newcommand\refl\widecheck
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\ord}{ord}
+
+\newcommand\clos\overline
+
+\title{Distribution Theory and Applications --- Example Sheet 1} % subject
+\author{Lucas Riedstra}
+\date{...} % date
+
+\begin{document}
+\maketitle
+
+\begin{question}
+	Construct a non-zero element of $\DD(\RR)$ that vanishes outside $(0, 1)$. Construct a non-zero of $\DD(\RR^n)$ that vanishes outside the ball $B_\eps = \qty{x \in \RR^n : \norm{x} < \eps}$. 
+\end{question}
+
+\begin{proof}
+	It is well-known that the function 
+	\[
+	\phi \colon \RR \to \RR \colon x \mapsto \begin{cases}
+		0 &\text{if $x \leq 0$}; \\
+		e^{-1/x} &\text{if $x > 0$},
+	\end{cases}
+	\]
+	is smooth and vanishes outside $(0, \infty)$. The function $\psi(x) \ceq \phi(x)\phi(1-x)$ is therefore also smooth and vanishes outside $(0, 1)$.  
+	
+	Since $\psi$ vanishes outside $(0, 1)$, the function $\psi(x/\eps)$ vanishes outside $(0, \eps)$, and therefore the function $\vec x \mapsto \psi(\norm{\vec x}/\eps)$ vanishes outside $B_\eps$. 
+\end{proof}
+
+\begin{question}
+	Given $\phi \in \DD(X)$, Taylor's theorem gives
+	\[
+	\phi(x+h) = \sum_{\abs{\alpha} \leq N} \frac{h^\alpha}{\alpha!} \pt^\alpha \phi(x) + R_N(x, h).
+	\]
+	Prove that $\supp(R_N)$ is contained in some fixed compact $K \subseteq X$ for $\abs{h}$ sufficiently small. Show also that $\pt^\alpha R_N = o(\abs{h}^N)$ uniformly in $x$ for each multi-index $\alpha$, i.e.\ prove 
+	\[
+	\lim_{\abs{h}\to 0} \frac{\sup_x \abs{\pt^\alpha R_N(x, h)}}{\abs{h}^N} = 0
+	\]
+	for each multi-index $\alpha$.  
+	
+	\emph{Hint: you may find it convenient to use the following form of the remainder}
+	\[
+	R_N(x, h) = \sum_{\abs{\alpha} = N+1} \frac{h^\alpha}{\alpha!}(N+1)\int_0^1 (1-t)^N (\pt^\alpha\phi)(x + th)\dd{t},
+	\]
+	\emph{and note that} $(N+1)! \sum_{\abs{\alpha} = N+1} \frac{h^\alpha}{\alpha!} = (h_1 + \dotsb + h_n)^{N+1}$. 
+\end{question}
+
+\begin{solution}
+	Since $\phi \in \DD(X)$, we know that $\supp\phi \subseteq \clos{B_N}$ for some $N \in \NN$. Now, suppose $\norm{h} < 1$, then
+	\[
+	\phi(x+h) \neq 0 \implies \norm{x + h} \leq N \implies \norm{x} \leq \norm{x + h} + \norm{h} \leq N + 1, 
+	\]
+	so if we define $\psi_h(x) = \phi(x+h)$ then we know that $\supp\phi_h \subseteq \clos{B_{N+1}}$. 
+	
+	By Taylor's theorem, we have
+	\[
+	\phi(x+h) = \sum_{\abs{\alpha} \leq N} \frac{h^\alpha}{\alpha!} \pt^\alpha \phi(x) + R_N(x, h),  
+	\]
+	and since $\sum_{\abs{\alpha} \leq N} \frac{h^\alpha}{\alpha!} \pt^\alpha \phi(x)$ vanishes for $x \notin \clos{B_N}$, it is clear that $\supp(R_N(\cdot, h))$ must also be contained in $\clos{B_{N+1}}$ (again, for $\norm{h} \leq 1$). This shows that $\supp(R_N)$ is contained in $\clos{B_{N+1}}$ for $\abs{h}$ sufficiently small. 
+	
+	Now let $\beta$ be a multi-index and define $C \ceq \frac{1}{N!} \max_{\abs{\alpha} = N+1, x \in \RR^n} \abs{(\pt^{\alpha + \beta})\phi(x)}$ (note that $C$ exists and is finite since all partial derivatives of $\phi$ have compact support), then we have
+	\begin{align*}
+	\abs{\pt^\beta R_N(x, h)} &= \abs{\pt^\beta \sum_{\abs{\alpha} = N+1} \frac{h^\alpha}{\alpha!}(N+1)\int_0^1 (1-t)^N (\pt^\alpha\phi)(x + th)\dd{t}} \\
+	%&= \abs{\sum_{\abs{\alpha} = N+1} \frac{h^\alpha}{\alpha!}(N+1) \cdot \pt^\beta\int_0^1 (1-t)^N (\pt^\alpha\phi)(x + th)\dd{t}} \\
+	&\overset\star= \abs{\sum_{\abs{\alpha} = N+1} \frac{h^\alpha}{\alpha!}(N+1) \int_0^1 (1-t)^N (\pt^{\alpha + \beta}\phi)(x + th)\dd{t}} \\
+	&\leq \sum_{\abs{\alpha} = N+1} \frac{\abs{h^\alpha}}{\alpha!}(N+1) \int_0^1 (1-t)^N \abs{\qty(\pt^{\alpha + \beta}\phi)(x+th)} \dd{t} \\
+	&\leq \qty[\max_{\abs{\alpha} = N+1, x \in \RR^n} \abs{(\pt^{\alpha + \beta})\phi(x)}] \sum_{\abs{\alpha} = N+1} \frac{\abs{h^\alpha}}{\alpha!} (N+1) \\
+	&\leq C (N+1)! \sum_{\abs{\alpha}= N+1}\frac{\abs{h^\alpha}}{\alpha!} = C(\abs{h_1} + \dotsb + \abs{h_n})^{N+1}.
+\end{align*}
+Since this upper bound does not depend on $x$, we also have
+\[
+\sup_x \abs{\pt^\beta R_N(x, h)} \leq C(\abs{h_1} + \dotsb + \abs{h_n})^{N+1}, 
+\]
+and we conclude that
+\[ 
+\frac{\sup_x \abs{\pt^\beta R_N(x, h)}}{\norm{h}^N} \leq \frac{C(\abs{h_1} + \dotsb + \abs{h_n})^{N+1}}{\norm{h}^N} \leq \frac{C N^{N+1} \norm{h}^{N+1}}{\norm{h}^N} = CN^{N+1} \norm{h} \to 0, 
+\]
+and therefore that $\pt^\beta R_N(x, h) = o(\norm{h}^n)$ for all multi-indices $\beta$. 
+\end{solution}
+\end{document}
