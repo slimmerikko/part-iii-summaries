@@ -42,7 +42,7 @@ Note that if $\tilde\beta$ is unbiased, the second term will disappear and the M
 
 \subsection{Ridge regression}
 \begin{definition}
-    Let $\lambda \geq 0$, and let $\Bf 1 \in \RR^n$ be the all-ones vector. Then we define the \emph{Ridge regression} estimators
+    Let $\lambda \geq 0$, and let $\Bf 1 \in \RR^n$ be the all-ones vector. Then we define the \emph{ridge regression} estimators
     \[
     (\hat\mu_\lambda^\Rm{R}, \hat\beta_\lambda^\Rm{R}) \ceq \argmin_{(\mu, \beta) \in \RR \times \RR^p} \qty{ \norm{Y - \mu\Bf 1 - X\beta}^2 + \lambda \norm{\beta}^2}, 
     \]
@@ -75,7 +75,7 @@ Since $Q(\beta)$ is convex quadratic, there is a unique root, and to find it we 
 \nabla_\beta Q(\beta) = 2 X\T (Y - X \beta) + 2\lambda\beta = 0 \iff \beta = (X\T X + \lambda I)^{-1} X\T Y. 
 \]
 
-We conclude that $\hat\beta^\Rm{R}_\lambda = (X\T X + \lambda I)^{-1} X\T Y$. Note that, even if $X$ does not have full column rank, this estimator exists for all $\lambda > 0$.  In fact, for $\lambda$ sufficiently small, the Ridge estimator outperforms the MLE in terms of mean squared error:
+We conclude that $\hat\beta^\Rm{R}_\lambda = (X\T X + \lambda I)^{-1} X\T Y$. Note that, even if $X$ does not have full column rank, this estimator exists for all $\lambda > 0$.  In fact, for $\lambda$ sufficiently small, the ridge estimator outperforms the MLE in terms of mean squared error:
 \begin{theorem}
     Fix $\beta^0, \sigma^2$, and assume that $\hat\beta^\Rm{OLS}$ exists (i.e., $X$ has full column rank). For some $\lambda > 0$ sufficiently small, it holds that the MSE of $\hat\beta^\Rm{OLS}$ minus the MSE of $\hat\beta^\Rm{R}_\lambda$ is positive definite. 
 \end{theorem}
@@ -91,7 +91,7 @@ We conclude that $\hat\beta^\Rm{R}_\lambda = (X\T X + \lambda I)^{-1} X\T Y$. No
     If $n > p$, we can replace $U$ by its first $p$ columns and $D$ by its first $p$ rows to produce the so-called \emph{thin SVD} of $X$. Then $U \in \RR^{n \times p}$ has orthogo nal columns (so $U\T U = I$) and $D \in \RR^{p \times p}$ is square and diagonal. 
 \end{recap}
 
-Suppose $n \geq p$ and let $X = UDV\T$ be the thin SVD of our design matrix $X$. Then we can write the fitted values from the Ridge regression as follows: 
+Suppose $n \geq p$ and let $X = UDV\T$ be the thin SVD of our design matrix $X$. Then we can write the fitted values from the ridge regression as follows: 
 \begin{align*}
     X\hat\beta_\lambda^\Rm{R} &= X(X\T X + \lambda I)^{-1} X\T Y \\
     &= UDV\T (VD^2V\T + \lambda I)^{-1} VDU\T Y \\
@@ -115,7 +115,7 @@ Writing $a = V\T v$ (with $\norm{a} = 1$), we find
 
 Therefore, we see that the above is maximised if $a = \pm e_1$, or equivalently $v = \pm V_1$. Therefore, $V_1$ determines which combination of columns of $X$ has the largest variance (subject to having norm 1), and $XV_1 = D_{11} U_1$ is known as the \emph{first principal component} of $X$. Analogously, it can be shown that $D_{22} U_2, \dotsc, D_{pp} U_p$ have maximum variance $D_{jj}^2 / n$, subject to being orthonormal to all earlier principal components. 
 
-We see that Ridge regression shrinks $Y$ most in the smaller principal components of $X$. Therefore it will work well if most of the information is in the larger principal components of $X$. 
+We see that ridge regression shrinks $Y$ most in the smaller principal components of $X$. Therefore it will work well if most of the information is in the larger principal components of $X$. 
 
 \paragraph{A comment on computation}
 By analogous calculations as before, one cam compute $\hat\beta_\lambda^\Rm{R} = V(D^2 + \lambda I)^{-1} DU\T Y$. Since calculating the inverse of a diagonal matrix is trivial, we see that the complexity of computing $\hat\beta_\lambda^\Rm{R}$ for any $\lambda$ lies in $O(np)$. Of course, this is after computation of the SVD of $X$, which lies in $O(np \min(n, p))$. 
@@ -199,13 +199,13 @@ Two important remarks:
 The general point of the previous example is that we can bypass the features $x_i$ entirely and instead think directly of $K = XX\T$ where an entry $K_{ij}$ represents similarity between the inputs of the $i$-th and $j$-th samples. This leads to the notion of a kernel in general.
 
 \subsection{Kernels}
-We will assume our inputs $x_1, \dotsc, x_n$ live in an abstract space $\XXX$. 
+We will assume our inputs $x_1, \dotsc, x_n$ live in an abstract space $\XX$. 
 \begin{definition}
-    A (\emph{positive-definite}) \emph{kernel} is a symmetric map $k \colon \XXX^2 \to \RR$ such that for all $n \in \NN$ and all $x_1, \dotsc, x_n \in \XXX$, the matrix $K \in \RR^{n \times n}$ with $K_{ij} = k(x_i, x_j)$ is positive semi-definite. 
+    A (\emph{positive-definite}) \emph{kernel} is a symmetric map $k \colon \XX^2 \to \RR$ such that for all $n \in \NN$ and all $x_1, \dotsc, x_n \in \XX$, the matrix $K \in \RR^{n \times n}$ with $K_{ij} = k(x_i, x_j)$ is positive semi-definite. 
 \end{definition}
 
 \begin{proposition}[Cauchy-Schwarz for kernels] \label{prop:kernel_cs}
-    Let $k$ be a kernel and $x, x' \in \XXX$, then 
+    Let $k$ be a kernel and $x, x' \in \XX$, then 
     \[
     k(x, x')^2 \leq k(x, x) k(x', x'). 
     \]
@@ -215,18 +215,19 @@ We will assume our inputs $x_1, \dotsc, x_n$ live in an abstract space $\XXX$.
     The matrix $\smqty(k(x, x) & k(x, x') \\ k(x', x) & k(x', x'))$ must be positive semi-definite so its determinant must be non\-negative. 
 \end{proof}
 
-In our old models, the data points $x_i$ were vectors in $\RR^p$. Now we try to think of them as points in an abstract space with an associated \emph{feature map} $\phi \colon \XXX \to \HHH$ (with $\HHH$ an inner product space), and a kernel $k(x, x')$ gives a measure of similarity between $\phi(x)$ and $\phi(x')$. In this case, we have the following: 
+In our old models, the data points $x_i$ were vectors in $\RR^p$. Now we try to think of them as points in an abstract space with an associated \emph{feature map} $\phi \colon \XX \to \HH$ (with $\HH$ an inner product space), and a kernel $k(x, x')$ gives a measure of similarity between $\phi(x)$ and $\phi(x')$. In this case, we have the following: 
 \begin{proposition} \label{prop:ip_kernel}
-    Let $\HHH$ be an inner product space,  $\phi \colon \XXX \to \HHH$ and define $k(x, x') \ceq \ang{\phi(x), \phi(x')}$. Then $k$ is a kernel. 
+    Let $\HH$ be an inner product space,  $\phi \colon \XX \to \HH$ and define $k(x, x') \ceq \ang{\phi(x), \phi(x')}$. Then $k$ is a kernel. 
 \end{proposition}
 
 \begin{proof}
-    We have, for all $x_1, \dotsc, x_n \in \XXX$ and $\alpha \in \RR^n$ that
+    We have, for all $x_1, \dotsc, x_n \in \XX$ and $\alpha \in \RR^n$ that
     \[
     \alpha\T K \alpha = \sum_{i, j} K_{ij} \alpha_i \alpha_j = \sum_{i, j} \ang{\phi(x_i), \phi(x_j)} \alpha_i \alpha_j = \norm{\sum_i \alpha_i \phi(x_i)}^2 \geq 0. 
     \]
 \end{proof}
 
+\subsubsection{Examples of kernels}
 The following proposition shows how to make new kernels from old:
 \begin{proposition}
     Suppose $k_1, k_2, \dotsc$ are kernels. Then:
@@ -243,9 +244,9 @@ The following proposition shows how to make new kernels from old:
 
 \begin{example} Let us consider some examples of kernels:
     \begin{enumerate}
-        \item For $\XXX = \RR^p$ we have already seen the \emph{linear kernel} $k(x, x') = x\T x'$. 
-        \item For $\XXX = \RR^p$, the \emph{polynomial kernel} is defined as $k(x, x') = (1 + x\T x')^d$. This is a kernel since it is a power of a sum of two kernels. 
-        \item For $\XXX = \RR^p$, the \emph{Gaussian kernel} is defined by
+        \item For $\XX = \RR^p$ we have already seen the \emph{linear kernel} $k(x, x') = x\T x'$. 
+        \item For $\XX = \RR^p$, the \emph{polynomial kernel} is defined as $k(x, x') = (1 + x\T x')^d$. This is a kernel since it is a power of a sum of two kernels. 
+        \item For $\XX = \RR^p$, the \emph{Gaussian kernel} is defined by
         \[
         k(x, x') = \exp\qty( - \frac{\norm{x - x'}_2^2}{2\sigma^2}).
         \]
@@ -255,8 +256,8 @@ The following proposition shows how to make new kernels from old:
         \]
         Clearly $k_1$ is the kernel induced by the feature map $\phi(x) = \exp(-\norm{x}^2/(2\sigma^2))$, while $k_2$ can be seen to be a kernel by using the Taylor expansion, which shows that $k_2$ is a limit of nonnegative linear combinations of kernels. 
         
-        \item For $\XXX = [0, 1]$, define the \emph{Sobolev kernel} $k(x, x') = \min(x, x')$. The proof that this is a kernel is on example sheet 1. 
-        \item For $\XXX = \pow(\qty{1, \dotsc, p})$, define the \emph{Jaccard kernel}
+        \item For $\XX = [0, 1]$, define the \emph{Sobolev kernel} $k(x, x') = \min(x, x')$. The proof that this is a kernel is on example sheet 1. 
+        \item For $\XX = \pow(\qty{1, \dotsc, p})$, define the \emph{Jaccard kernel}
         \[
         k(x, x') = \frac{\abs{x \cap x'}}{\abs{x \cup x'}} \quad\text{where $0/0 \ceq 1$}. 
         \]
@@ -264,25 +265,26 @@ The following proposition shows how to make new kernels from old:
     \end{enumerate}
 \end{example}
 
-By \cref{prop:ip_kernel}, we see that every feature map $\phi \colon \XXX \to \HHH$ gives rise to a kernel. In the next (important!) theorem, we will see that every kernel is in fact induced by a feature map.
+\subsubsection{Reproducing kernel Hilbert spaces}
+By \cref{prop:ip_kernel}, we see that every feature map $\phi \colon \XX \to \HH$ gives rise to a kernel. In the next (important!) theorem, we will see that every kernel is in fact induced by a feature map.
 
-\begin{theorem} \label{thm:kernel_ip}
-    Let $k$ be a kernel, then there exists an inner product space $\HHH$ and a feature map $\phi \colon \XXX \to \HHH$ such that 
+\begin{theorem} \label{thm:kernel_ip} 
+    Let $k$ be a kernel, then there exists an inner product space $\HH$ and a feature map $\phi \colon \XX \to \HH$ such that 
     \[
-    k(x, x') = \ang{\phi(x), \phi(x')} \quad\text{for all $x, x' \in \XXX$}. 
+    k(x, x') = \ang{\phi(x), \phi(x')} \quad\text{for all $x, x' \in \XX$}. 
     \]
 \end{theorem}
 
 \begin{proof}
-    We will construct $\HHH$ and $\phi$ explicitly. First we define the function space
+    We will construct $\HH$ and $\phi$ explicitly. First we define the function space
     \[
-    \HHH = \qty{ \sum_{i=1}^n \alpha_i k(\cdot, x_i) \mid n \in \NN,  \alpha_i \in \RR, x_i \in \XXX}. 
+    \HH = \qty{ \sum_{i=1}^n \alpha_i k(\cdot, x_i) \mid n \in \NN,  \alpha_i \in \RR, x_i \in \XX}. 
     \]
-    Let $f = \sum_{i=1}^n \alpha_i k(\cdot, x_i)$ and $g = \sum_{j=1}^n \beta_j k(\cdot, x_j')$, then the inner product on $\HHH$ is given by
+    Let $f = \sum_{i=1}^n \alpha_i k(\cdot, x_i)$ and $g = \sum_{j=1}^n \beta_j k(\cdot, x_j')$, then the inner product on $\HH$ is given by
     \[
     \ang{f, g} = \ang*{\sum_{i=1}^n \alpha_i k(\cdot, x_i), \sum_{j=1}^m \beta_j k(\cdot, x_j')} \ceq \sum_{i=1}^n \sum_{j=1}^m \alpha_i \beta_j k(x_i, x_j'). 
     \]
-    We define $\phi \colon \XXX \to \HHH$ as $\phi(x) = k(\cdot, x)$. 
+    We define $\phi \colon \XX \to \HH$ as $\phi(x) = k(\cdot, x)$. 
     
     We must check that the inner product does not depend on the choice of representation of $f$ and $g$. For this, note that 
     \[
@@ -290,11 +292,11 @@ By \cref{prop:ip_kernel}, we see that every feature map $\phi \colon \XXX \to \H
     \]
     which holds by symmetry of the kernel. Since $\sum_i \alpha_i g(x_i)$ is independent of the representation of $g$, while $\sum_j \beta_j f(x_j')$ is independent of the representation of $f$, we conclude that the entire expression is independent of both representations. 
     
-    Secondly, we must verify that the formula $k(x, x') = \ang{\phi(x), \phi(x')}$ indeed holds. For any $f \in \HHH, x \in \XXX$ we have
+    Secondly, we must verify that the formula $k(x, x') = \ang{\phi(x), \phi(x')}$ indeed holds. For any $f \in \HH, x \in \XX$ we have
     \begin{equation}
     \ang{k(\cdot, x), f} = \sum_{i=1}^n \alpha_i k(x_i, x) = f(x),
     \end{equation}
-    i.e., evaluation of a function is a linear functional in $\HHH$. 
+    i.e., evaluation of a function is a linear functional in $\HH$. 
     
     In particular, we have 
     \[
@@ -305,42 +307,160 @@ By \cref{prop:ip_kernel}, we see that every feature map $\phi \colon \XXX \to \H
     \[
    \ang{f, f} = \sum_{i=1}^n \sum_{j=1}^n \alpha_i \alpha_j k(x_i, x_j) = \alpha\T K\alpha \geq 0
     \]
-    by the fact that $k$ is a kernel. We must now only show that $f \neq 0 \implies \ang{f, f} > 0$. For this, note that $\ang{\cdot, \cdot}$ is a kernel on $\HHH$, so by \cref{prop:kernel_cs} (Cauchy-Schwarz) we have
+    by the fact that $k$ is a kernel. We must now only show that $f \neq 0 \implies \ang{f, f} > 0$. For this, note that $\ang{\cdot, \cdot}$ is a kernel on $\HH$, so by \cref{prop:kernel_cs} (Cauchy-Schwarz) we have
     \[
     f(x)^2 = \ang{k(\cdot, x), f}^2 \leq \ang{k(\cdot, x), k(\cdot, x)} \ang{f, f}, 
     \]
     and therefore if $f$ is nonzero anywhere, $\ang{f, f}$ must also be nonzero. 
 \end{proof}
 
-While $\HHH$ constructed in the proof is an inner product space, it is not necessarily a Hilbert space. Let $(f_n) \subseteq \HHH$ be Cauchy, then by Cauchy-Schwarz for kernels we find
+While $\HH$ constructed in the proof is an inner product space, it is not necessarily a Hilbert space. Let $(f_n) \subseteq \HH$ be Cauchy, then by Cauchy-Schwarz for kernels we find
 \[
 f_m(x) - f_n(x) = (f_m - f_n)(x) = \ang{k(\cdot, x), f_m - f_n} \leq \sqrt{k(x, x)} \norm{f_n - f_m}. 
 \]
-We can do an analogous computation for $f_n - f_m$ to conclude that $\abs{f_m(x) - f_n(x)} \leq \sqrt{k(x, x)} \norm{f_n - f_m}$, and therefore, if $(f_n)$ is Cauchy, then it converges pointwise to some $f^* \colon \XXX \to \RR$. We will not prove the following theorem:
-\begin{theorem}
-    The inner product space $\HHH$ constructed in the proof of \cref{thm:kernel_ip} can be extended to a Hilbert space by adding all pointwise limits $f^*$ of Cauchy sequences $(f_n) \subseteq \HHH$. 
+We can do an analogous computation for $f_n - f_m$ to conclude that $\abs{f_m(x) - f_n(x)} \leq \sqrt{k(x, x)} \norm{f_n - f_m}$, and therefore, if $(f_n)$ is Cauchy, then it converges pointwise to some $f^* \colon \XX \to \RR$. We will not prove the following theorem:
+\begin{theorem} \label{thm:kernel_ip_hilbert}
+    The inner product space $\HH$ constructed in the proof of \cref{thm:kernel_ip} can be extended to a Hilbert space by adding all pointwise limits $f^*$ of Cauchy sequences $(f_n) \subseteq \HH$. 
 \end{theorem}
 
-The completion of $\HHH$ is a special type of Hilbert space:
+The completion of $\HH$ is a special type of Hilbert space:
 \begin{definition}
-    A Hilbert space $\BBB$ of functions $f \colon \XXX \to \RR$ is called a \emph{reproducing kernel Hilbert space} (RKHS) if for all $x \in \XXX$, there exists $k_x \in \BBB$ such that 
+    A Hilbert space $\BB$ of functions $f \colon \XX \to \RR$ is called a \emph{reproducing kernel Hilbert space} (RKHS) if for all $x \in \XX$, there exists $k_x \in \BB$ such that 
     \[
     f(x) = \ang{k_x, f}, 
     \]
     i.e., evaluation of functions is a linear functional. 
     
-    The function $k(x, x') = \ang{k_x, k_{x'}}$ is known as the \emph{reproducing kernel} of $\BBB$ (induced by the feature map $\phi(x) = k_x$). 
+    The function $k(x, x') = \ang{k_x, k_{x'}}$ is known as the \emph{reproducing kernel} of $\BB$ (induced by the feature map $\phi(x) = k_x$). 
 \end{definition}
 
-If we start with a kernel $k$, construct the corresponding RKHS $\BBB$, then it is easily checked that $k$ is indeed the reproducing kernel of $\BBB$. 
+If we start with a kernel $k$, construct the corresponding RKHS $\BB$, then it is easily checked that $k$ is indeed the reproducing kernel of $\BB$. 
 
 \begin{example}[Linear kernel]
     Let $X = \RR^p$ and $k(x, x') = x\T x'$. Then we have 
     \[
-    \HHH = \qty{x \mapsto \sum_{i=1}^n \alpha_i x\T x_i = x\T \qty(\sum_i \alpha_i x_i) \mid \alpha_i \in \RR, x_i \in \RR^p} = \qty{x \mapsto x\T \beta \mid \beta \in \RR^p},
+    \HH = \qty{x \mapsto \sum_{i=1}^n \alpha_i x\T x_i = x\T \qty(\sum_i \alpha_i x_i) \mid \alpha_i \in \RR, x_i \in \RR^p} = \qty{x \mapsto x\T \beta \mid \beta \in \RR^p},
     \]
     and if $f(x) = x\T\beta$, $g(x) = x\T \beta'$, then 
     \[
-    \ang{f, g} = k(\beta, \beta') = \beta\T \beta' \quad\text{so } \norm{f}_\HHH = \norm{\beta}_2. 
+    \ang{f, g} = k(\beta, \beta') = \beta\T \beta' \quad\text{so } \norm{f}_\HH = \norm{\beta}_2. 
     \]
 \end{example}
+
+\subsubsection{The representer theorem}
+We started with data $(Y_i, x_i)$ in a model where our fitted values depend only on $XX\T = K$, where $K$ is the kernel matrix derived from the kernel $k(x_i, x_j) = \ang{x_i, x_j} = x_i\T x_j$. Suppose we change the kernel to some $\tilde k$, and replace $K$ by $\tilde K$ accordingly. Then by \cref{thm:kernel_ip} this is equivalent by replacing our predictors $x_i$ by $\phi(x_i)$ for some feature map $\phi$. 
+
+Recall that the ridge regression objective function is given by
+\[
+\min_{\beta \in \RR^p} \sum_{i=1}^n (Y_i - x_i\T \beta)^2 + \lambda\norm{\beta}^2. 
+\]
+Let $\HH$ be the RKHS of the linear kernel, then the above is equivalent to
+\begin{equation} \label{eq:objective_ridge_rkhs}
+\min_{f \in \HH} \sum_{i=1}^n (Y_i - f(x_i))^2 + \lambda \norm{f}^2. 
+\end{equation}
+
+We will show that in general, if we change our predictors $x_i$ to $\phi(x_i)$, and update the corresponding RKHS in \cref{eq:objective_ridge_rkhs}, then \cref{eq:objective_ridge_rkhs} solves our new problem. Note that there are no references to the feature map $\phi$ in \cref{eq:objective_ridge_rkhs}. 
+
+\begin{theorem}[Representer theorem]
+Let:
+\begin{itemize}
+	\item $(Y_i, x_i)_{i=1}^n$ be our data with $x_i \in \XX$;
+	\item $c \colon \RR^n \times \XX^n \times \RR^n \to \RR$ be an arbitrary loss function;
+	\item $J \colon \RR_{\geq 0} \to \RR$ strictly increasing;
+	\item $k$ a kernel with RKHS $\HH$ and kernel matrix $K_{ij} = k(x_i, x_j)$. 
+\end{itemize}
+Then $\hat f \in \HH$ minimises
+\begin{equation*} % \label{eq:mini_q1}
+Q_1(f) \ceq c(Y, x_1, \dotsc, x_n, f(x_1), \dotsc, f(x_n))
+\end{equation*}
+if and only if $\hat f(\cdot) = \sum_{i=1}^n \hat\alpha_i k(\cdot, x_i)$, where $\hat\alpha \in \RR^n$ minimises
+\begin{equation*} % \label{eq:mini_q2}
+Q_2(\alpha) \ceq c(Y, x_1, \dotsc, x_n, K\alpha) + J(\alpha\T K\alpha). 
+\end{equation*}
+\end{theorem}
+
+\begin{proof}
+	Let $f \in \HH$ and $U = \Span\qty{k(\cdot, x_1), \dotsc, k(\cdot, x_n)} \subseteq \HH$, then $U$ is closed since it is finite-dimensional so we can write $f = u + v$ with $u \in U, v \in U\P$. Note that
+	\[
+	f(x_i) = \ang{k(\cdot, x_i), u+v} = \ang{k(\cdot, x_i), u} = u(x_i) \quad(i = 1, \dotsc, n),
+	\]
+	so minimisation of $Q_1$ is equivalent to minimisation of
+	\begin{equation} \label{eq:mini_proof_representer}
+	c(Y, x_1, \dotsc, x_n, u(x_1), \dotsc, u(x_n)) + J(\norm{u}^2 + \norm{v}^2)
+	\end{equation}
+	w.r.t.\ $u \in U$, $v \in U\P$. Now, since $J$ is strictly increasing, any minimiser $(u, v)$ of  \cref{eq:mini_proof_representer} will satisfy $v = 0$.
+	
+	Write $u(\cdot) = \sum_{i=1}^n \alpha_i k(\cdot, x_i) \in U$, then clearly
+	\[
+	\mqty[ u(x_1) \\ \vdots \\ u(x_n)] = \mqty[ \sum_i \alpha_i k(x_1, x_i) \\ \vdots \\ \sum_i \alpha_i k(x_n, x_i)] = K\alpha \quad\text{and}\quad\norm{u}^2 = \sum_{i, j} \alpha_i \alpha_j k(x_i, x_j) = \alpha\T K \alpha. 
+	\]
+	
+	This shows that minimisation of \cref{eq:mini_proof_representer} is equivalent to minimisation of
+	\[
+	c(Y, x_1, \dotsc, x_n, K\alpha) + J(\alpha\T K\alpha) = Q_2(\alpha), 
+	\]
+	which completes the proof. 
+\end{proof}
+
+\begin{example}
+	In ridge regression, the representer theorem tells us that minimising \cref{eq:objective_ridge_rkhs} is equivalent to minimising $\norm{Y - K\alpha}^2 + \lambda \alpha\T K\alpha$, and indeed it can be shown (example sheet 1) that the minimiser satisfies $K\hat\alpha = K(K+\lambda I)^{-1} Y = X\hat\beta_\lambda^R$. Since $\HH$ may be infinite-dimensional, this gives a way to rewrite an infinite-dimensional optimization problem to a finite-dimensional optimisation problem. 
+\end{example}
+
+\subsection{Kernel ridge regression}
+We have now defined kernel ridge regression and shown how the estimator may be computed, but we have yet to assess its predictive performance. We consider the model
+\[
+Y_i = f^0(x_i) + \eps_i, \quad \EE[\eps] = 0, \Var[\eps] = \sigma^2 I, 
+\]
+where we assume $f^0 \in \HH$ where $\HH$ is an RKHS with reproducing kernel $k$. By scaling the equation on both sides we may assume $\norm{f^0} \leq 1$ (note that this changes $\Var[\eps]$). Let $K$ be the kernel matrix with eigenvalues $d_1 \geq \dotsb \geq d_n \geq 0$, and let $\hat f = \hat f_\lambda$ be the estimated regression function, so
+\[
+\hat f_\lambda = \argmin_{f \in \HH} \qty(\sum_{i=1}^n (Y_i - f(x_i))^2 + \lambda \norm{f}^2). 
+\]
+
+\begin{theorem}
+	The mean squared prediction error (MSPE) satisfies
+	\begin{align*}
+		\frac1n \EE\qty[ \sum_{i=1}^n \qty(f^0(x_i) - \hat f_\lambda(x_i))^2] &\leq \frac{\sigma^2}{n} \sum_{i=1}^n \frac{d_i^2}{(d_i + \lambda)^2} + \frac\lambda{4n} \\
+		&\leq \frac{\sigma^2}{n \lambda} \sum_{i=1}^n \min\qty(\frac{d_i}{4}, \lambda) + \frac{\lambda}{4n}. 
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	The representer theorem tells us that $(\hat f(x_1), \dotsc, \hat f(x_n))\T = K(K + \lambda I)^{-1} Y$. By projecting $f^0$ onto $\Span{k(\cdot, x_1), \dotsc, k(\cdot, x_n)}$ it is easily seen that there exists $\alpha \in \RR^n$ such that
+	\[
+	(f^0(x_1), \dotsc, f^0(x_n))\T = K\alpha \quad\text{and}\quad \norm{f^0}^2 \geq \alpha\T K\alpha. 
+	\]
+	
+	Write $K = UDU\T$ where $D_{ii} = d_i$ and define $\theta \ceq U\T K\alpha = DU\T \alpha$ (note $U\theta = K\alpha$ and note that $d_i = 0 \implies \theta_i =0$). Then we have
+	\begin{align*}
+		 \EE\qty[ \sum_{i=1}^n \qty(f^0(x_i) - \hat f_\lambda(x_i))^2] &= \EE \norm{K\alpha - K(K + \lambda I)^{-1} Y}^2 \\
+		 &= \EE \norm{K(K + \lambda I)^{-1} (U\theta + \eps) - U\theta}^2 \\
+		 &= \EE\norm{DU\T (UDU\T + \lambda I)^{-1} (U\theta + \eps) - \theta}^2 \\
+		 &= \EE \norm{D(D + \lambda I)^{-1} (\theta + U\T \eps) - \theta}^2 \\
+		 &= \EE \norm{\qty[D(D + \lambda I)^{-1} - I]\theta + D(D + \lambda I)^{-1} U\T \eps}^2 \\
+		 &= \norm{\qty[D(D + \lambda I)^{-1} - I]\theta}^2 + \EE \norm{D(D+ \lambda I)^{-1} U\T\eps}^2. 
+	\end{align*}
+Note that the cross-term in the final equality disappears since it is the  expectation of a linear combination of $\eps$, which is 0. 
+
+The first term is a deterministic quantity, which equals
+\[
+\norm{\qty[D(D + \lambda I)^{-1} - I]\theta}^2 = \sum_{i=1}^n \qty(\qty(\frac{d_i}{d_i + \lambda} - 1)\theta)^2 = \sum_{i=1}^n \frac{\lambda^2\theta_i^2}{(d_i + \lambda)^2}. 
+\]
+Let $D^+$ be the diagonal matrix with $D_{ii}^+ = d_i^{-1}$ if $d_i \neq 0$ and 0 else. Then we have
+\[
+\sum_{i: d_i > 0} \frac{\theta_i^2}{d_i} = \theta\T D^+\theta  = \alpha\T K U D^+ U\T K\alpha = \alpha\T UDD^+ DU\T \alpha = \alpha\T UDU\T \alpha = \alpha\T K\alpha \geq 1,
+\]
+Using this, we can bound the first term by
+\[
+\sum_{i=1}^n \frac{\lambda^2\theta_i^2}{(d_i + \lambda)^2} = \sum_{i: d_i \neq 0} \frac{\theta_i^2}{d_i} \frac{d_i\lambda^2}{(d_i + \lambda)^2} \leq \max_i \frac{d_i \lambda^2}{(d_i + \lambda)^2} \leq \max_i \frac{d_i\lambda^2}{4 \lambda d_i} \leq\frac\lambda4. 
+\]
+
+To compute the second term, we use the \emph{trace trick}:
+\begin{align*}
+	\EE \norm{D(D + \lambda I)^{-1} U\T \eps}^2 &= \EE\qty[ \qty(D(D + \lambda I)^{-1} U\T \eps)\T \qty(D(D + \lambda I)^{-1} U\T \eps)] \\
+	&= \EE \qty[\tr\qty[D(D + \lambda I)^{-1} U\T \eps \eps\T U (D + \lambda I)^{-1} D]] \\
+	&= \tr\qty[ D(D + \lambda I)^{-1} U\T \EE(\eps\eps\T) U (D + \lambda I)^{-1} D] \\
+	&= \sigma^2 \tr \qty[ D^2 (D + \lambda I)^{-2}] = \sigma^2 \sum_{i=1}^n \frac{d_i^2}{(d_i + \lambda)^2}.
+\end{align*}
+
+This gives our first inequality $MSPE \leq \frac{\sigma^2}{n} \sum_{i=1}^n \frac{d_i^2}{(d_i + \lambda)^2} + \frac\lambda{4n}$. For the second inequality, note that $\frac{d_i^2}{(d_i + \lambda)^2} \leq 1$ and also $\frac{d_i^2}{(d_i + \lambda)^2} \leq \frac{d_i^2}{4 d_i\lambda} = \frac{d_i}{4\lambda}$. Therefore, we can write $\frac{d_i^2}{(d_i + \lambda)^2} \leq \frac1\lambda \min(\lambda, \frac{d_i}{4})$ which proves the second inequality. 
+\end{proof}
