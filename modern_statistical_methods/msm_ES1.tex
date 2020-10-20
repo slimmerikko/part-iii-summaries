@@ -339,6 +339,16 @@ Since $K$ and $(K + \lambda)^{-1}$ are simultaneously diagonalisable, they commu
 \end{question}
 
 \begin{solution}
-	Let $\XX = [0, 1]$ and $k(x, x') = \min(x, x')$ the Sobolev kernel. We must then show that for any $x_1, \dotsc, x_n \in \XX$, the matrix $K_{ij} = \min(x_i, x_j)$ is positive semi-definite. 
+	Let $\XX = [0, 1]$ and $k(x, x') = \min(x, x')$ the Sobolev kernel. We must then show that for any $x_1, \dotsc, x_n \in \XX$, the matrix $K_{ij} = \min(x_i, x_j)$ is positive semi-definite (symmetry of $k$ is clear). 
+	
+	To this end, assume $x_1 \leq \dotsb \leq x_n$ (this may require relabeling of the $x_i$ which does not affect positive semi-definiteness of $K$). Now let $\vec f_i$ denote the vector $f_{i1}, \dotsc, f_{i(i-1)} = 0$, $f_{ii}, \dotsc, f_{in} = 1$. 
+	\[
+	K = \mqty[ x_1 & x_1 & x_1 & \cdots & x_1 \\
+	x_1 & x_2 & x_2 & \dotsb & x_2 \\
+	x_1 & x_2 & x_3 & \dotsb & x_3 \\
+	\vdots & \vdots & \vdots & \ddots & \vdots \\
+	x_1 & x_2 & x_3 & \cdots & x_n] = x_1 \vec f_1 \vec f_1\T + (x_2 - x_1) \vec f_2 \vec f_2\T + \dotsb + (x_n - x_{n-1}) \vec f_n \vec f_n\T. 
+	\]
+	Since this is a nonnegative combination of positive semidefinite matrices, we conclude that $K$ is positive semidefinite. 
 \end{solution}
 \end{document}

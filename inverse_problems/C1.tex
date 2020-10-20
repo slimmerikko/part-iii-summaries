@@ -9,13 +9,13 @@ A problem is called \emph{well-posed} if a unique solution exists that depends c
     \begin{enumerate}
         \item     An linear operator $A \colon \XX \to \YY$ is called \emph{bounded} if
         \[
-        \norm{A}_{\LL(\XX, \YY)} \ceq \sup_{u \neq 0} \frac{\norm{Au}_\YY}{\norm{u}_\XX} = \sup_{\norm{u}_\XX \leq 1} < \infty. 
+        \norm{A}_{\BB(\XX, \YY)} \ceq \sup_{u \neq 0} \frac{\norm{Au}_\YY}{\norm{u}_\XX} = \sup_{\norm{u}_\XX \leq 1} < \infty. 
         \]
-            It is known that a linear operator between normed spaces is continuous if and only if it is bounded. The set of bounded linear operators from $\XX$ to $\YY$ is denotes $\LL(\XX, \YY)$. 
+            It is known that a linear operator between normed spaces is continuous if and only if it is bounded. The set of bounded linear operators from $\XX$ to $\YY$ is denotes $\BB(\XX, \YY)$. 
             \item 
         We let $\Dom(A)$, $\Nul(A)$ and  $\Ran(A)$ denote the domain, null space, and range of $A$ respectively. 
         
-        \item     We will assume $\XX$ and $\YY$ are Hilbert spaces, so there is an inner product $\ang{\cdot, \cdot}$ and any bounded operator $A \in \LL(\XX, \YY)$ has a unique adjoint $A^* \in \LL(\YY, \XX)$ which satisfies
+        \item     We will assume $\XX$ and $\YY$ are Hilbert spaces, so there is an inner product $\ang{\cdot, \cdot}$ and any bounded operator $A \in \BB(\XX, \YY)$ has a unique adjoint $A^* \in \BB(\YY, \XX)$ which satisfies
         \[
         \ang{Au, v}_\YY = \ang{u, A^* v}_\XX \quad\text{for all $u \in \XX$, $v \in \YY$.}
         \]
@@ -34,7 +34,7 @@ A problem is called \emph{well-posed} if a unique solution exists that depends c
             \item $x = P_{\XX'}u$ if and only if $x \in \XX'$ and $u - x \in (\XX')\P$. 
         \end{enumerate}
     
-    \item For any $A \in \LL(\XX, \YY)$ we have
+    \item For any $A \in \BB(\XX, \YY)$ we have
     \[
     \Ran(A)\P = \Nul(A^*) \quad\text{and}\quad \Nul(A)\P = \clos{\Ran(A^*)}. 
     \]
@@ -43,7 +43,7 @@ A problem is called \emph{well-posed} if a unique solution exists that depends c
 \end{recap}
 
 \begin{lemma}
-    For any $A \in \LL(\XX, \YY)$ we have $\clos{\Ran(A^*A)} = \clos{\Ran(A^*)}$. 
+    For any $A \in \BB(\XX, \YY)$ we have $\clos{\Ran(A^*A)} = \clos{\Ran(A^*)}$. 
 \end{lemma}
 
 \begin{proof}
@@ -61,7 +61,7 @@ A problem is called \emph{well-posed} if a unique solution exists that depends c
 \subsection{Generalised inverses}
 We consider the equation \begin{equation} \label{eq:basic_ip}
     Au = f,
-\end{equation} $A \in \LL(\XX, \YY)$, $f$ is known, and we wish to find $u$. 
+\end{equation} where $A \in \BB(\XX, \YY)$ and $f$ are known, and we wish to find $u$. 
 \begin{definition}
     An element $u \in \XX$ is called a \emph{least-squares solution} of \cref{eq:basic_ip} if $u$ is a minimiser of the function $v \mapsto \norm{Av - f}_\YY$. It is called a \emph{minimal-norm solution} of \cref{eq:basic_ip} if it has minimal norm among all least-squares solutions. 
 \end{definition}
@@ -69,7 +69,7 @@ We consider the equation \begin{equation} \label{eq:basic_ip}
 Note that a least-squares solution may not exist. If a least-squares solution $u$ exists, then the affine subspace of all least-squares solutions is given by $u + \Nul(A)$. By writing $u = u\D + v$ for $u\D \in \Nul(A)\P$, $v \in \Nul(A)$, we find that the space of least-squares solutions is given by $u\D + \Nul(A)$, and it is now clear that $u\D$ is the unique minimum-norm solution. 
 
 \begin{theorem}
-    Let $f \in \YY$ and $A \in \LL(\XX, \YY)$. Then the following are equivalent:
+    Let $f \in \YY$ and $A \in \BB(\XX, \YY)$. Then the following are equivalent:
     \begin{enumerate}
         \item $u \in \XX$ satisfies $Au = P_{\clos{\Ran(A)} }f$;
         \item $u$ is a least-squares solution of $\cref{eq:basic_ip}$:
@@ -126,7 +126,7 @@ In particular, this holds if $\Ran(A)$ is finite-dimensional. Therefore, if eith
 We have already seen that if a least-squares solution $u$ exists, then the affine subspace of all least-sqares solutions is $u + \Nul(A)$, and the unique minimum-norm solution is the projection of 0 onto this affine subspace, which is the unique element of $u + \Nul(A)$ that lies in $\Nul(A)\P$. 
 
 \begin{definition}
-    Let $A \in \LL(\XX, \YY)$, and define
+    Let $A \in \BB(\XX, \YY)$, and define
     \[
     \tilde A \ceq A \restr_{\Nul(A)\P} \colon \Nul(A)\P \to \Ran(A). 
     \]
@@ -197,11 +197,11 @@ The Moore-Penrose inverse has the important property that it maps every $f$ in i
 
 \subsection{Compact operators}
 \begin{definition}
-    Let $A \in \LL(\XX, \YY)$. Then $A$ is called \emph{compact} if for any bounded $B \subseteq \XX$, the image $A(B)$ is precompact in $\YY$. The set of compact operators in $\LL(\XX, \YY)$ is denoted $\KK(\XX, \YY)$. 
+    Let $A \in \BB(\XX, \YY)$. Then $A$ is called \emph{compact} if for any bounded $B \subseteq \XX$, the image $A(B)$ is precompact in $\YY$. The set of compact operators in $\BB(\XX, \YY)$ is denoted $\KK(\XX, \YY)$. 
 \end{definition}
 
 \begin{lemma}
-    Let $A \in \LL(\XX, \YY)$. Then $A$ is compact if and only if, for every bounded sequence $(x_n) \subseteq X$, the sequence $(Ax_n) \subseteq Y$ has a convergent subsequence. 
+    Let $A \in \BB(\XX, \YY)$. Then $A$ is compact if and only if, for every bounded sequence $(x_n) \subseteq X$, the sequence $(Ax_n) \subseteq Y$ has a convergent subsequence. 
 \end{lemma}
 
 \begin{theorem}

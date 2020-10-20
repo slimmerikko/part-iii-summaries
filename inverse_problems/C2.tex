@@ -1,4 +1,59 @@
-%\section{Classical regularisation theory}
-%\begin{definition}
-%    Let $A \in
-%\end{definition}
+\section{Classical regularisation theory}
+Let $A \in \BB(\XX, \YY)$ such that $\Ran(A)$ is not closed (this happens for example when $A$ is compact and does not have finite rank), and consider the inverse problem $Au = f$. Suppose we measure not $f$, but noisy data $f_\delta$ such that $\norm{f_\delta - f} \leq \delta$. Then since $A\D$ is discontinuous, we cannot expect that $A\D f_\delta \to A\D f$ as $\delta \to 0$. Therefore, we must replace $A\D$ by operators that approximate it.
+
+\begin{definition}
+	Let $A\in \BB(\XX, \YY)$. A family $(R_\alpha)_{\alpha > 0}$ of continuous operators is called a \emph{regularisation} of $A\D$ if
+	\[
+	\lim_{\alpha \to 0} R_\alpha f = A\D f \quad\text{for all $f \in \Dom(A\D)$}. 
+	\]
+	If all $R_\alpha$ are linear, then we speak of a \emph{linear regularisation} of $A\D$. 
+\end{definition}
+
+\begin{theorem}[Banach-Steinhaus]
+	Let $\XX, \YY$ be Hilbert spaces and $\qty{A_\alpha} \subseteq \BB(\XX, \YY)$ a family of pointwise bounded operators. Then $\qty{A_\alpha}$ is bounded in norm. 
+\end{theorem}
+
+\begin{corollary} \label{cor:bounded_converge}
+	Let $\XX, \YY$ be Hilbert spaces and $(A_j) \subseteq \BB(\XX, \YY)$. Then $(A_j)$ converges pointwise to some $A \in \BB(\XX, \YY)$ if and only if $\qty{A_j}$ is norm-bounded and converges pointwise on some dense subset $\XX' \subseteq \XX$. 
+\end{corollary}
+
+\begin{theorem}
+	Let $\XX, \YY$ be Hilbert spaces, $A \in \BB(\XX, \YY)$ and $(R_\alpha)_{\alpha > 0}$ a linear regularisation. If $A\D$ is not continuous, $(R_\alpha)$ is not norm-bounded. In particular, there exists $f \in \YY$ with $\norm{R_\alpha f} \to \infty$. 
+\end{theorem}
+
+\begin{proof}
+	Suppose $(R_\alpha)$ is norm-bounded. Let $\alpha_j \to 0$, then we know that $R_{\alpha_j} \to A\D$ pointwise on $\Dom(A\D)$. Since $\Dom(A\D)$ is dense in $\YY$, \cref{cor:bounded_converge} then  tells us that $A\D$ is bounded and therefore continuous, a contradiction. 
+	
+	By the Banach-Steinhaus theorem, if $(R_\alpha)$ is not norm-bounded, it is not pointwise bounded, so there must exist $f \in \YY$ such that $\qty{\norm{R_\alpha f}}$ is not bounded. 
+\end{proof}
+
+\begin{recap}
+	Recall that any bounded sequence in a Hilbert space has a weakly convergent subsequence. 
+\end{recap}
+\begin{theorem}
+	Let $A \in \BB(\XX, \YY)$ and $(R_\alpha)$ a linear regularisation of $A\D$. If $\qty{\norm{A R_\alpha}}_{\alpha > 0}$ is bounded, then $\norm{R_\alpha f} \to \infty$ as $\alpha \to 0$ for every $f \notin \Dom(A\D)$. 
+\end{theorem}
+
+\begin{proof}
+	Define $u_\alpha \ceq R_\alpha f$ for $f \notin \Dom(A\D)$, and assume there exists a sequence $\alpha_k \to 0$ such that $\qty{\norm{u_{\alpha_k}}}$ is bounded. After taking a subsequence if necessary, we may assume that $u_{\alpha_k} \rightharpoonup u$ for some $u \in \XX$, and therefore we also have $Au_{\alpha_k} \rightharpoonup Au$. 
+	
+	We also have $\lim_{\alpha \to 0} A R_\alpha f = AA\D f = P_{\clos{\Ran(A)}}f$ for $f \in \Dom(A\D)$, and since we assumed $\qty{A R_\alpha}$ was norm-bounded, by \cref{cor:bounded_converge} we have $\lim_{\alpha \to 0} AR_\alpha f = P_{\clos{\Ran(A)}} f$ for all $f \in \YY$. 
+	
+	Since $Au_{\alpha_k}$ is convergent and has weak limit $Au$, it must also have limit $Au$, so we find $Au = P_{\clos{\Ran(A)}} f$ so $f \in \Dom(A\D)$, a contradiction. 
+\end{proof}
+
+We need some process to choose a parameter. To this end, note that we have
+\[
+\norm{R_\alpha f_\delta - A\D f} \leq \norm{R_\alpha (f_\delta - f)} + \norm{(R_\alpha - A\D) f} \\
+\leq  \norm{R_\alpha} \norm{f_\delta - f} + \norm{f} \norm{R_\alpha - A\D}. 
+\]
+The first term is called the \emph{data error} and is unbounded for $\alpha \to 0$, and the second term is called the \emph{approximation error} which does vanish for $\alpha \to 0$. Therefore, we want to choose $\alpha$ small enough to have a low approximation error, while keeping the data error at bay. We define this formally:
+
+\begin{definition}
+	A function $\alpha \colon  \RR_{> 0} \times \YY \to \RR_{> 0} \colon (\delta, f_\delta) \mapsto \alpha(\delta, f_\delta)$ is called a \emph{parameter choice rule} (PCR). We distinguish three types:
+	\begin{enumerate}
+		\item An \emph{a priori} PCR depends only on $\delta$;
+		\item An \emph{a posteriori} PCR depends on both $\delta$ and $f_\delta$;
+		\item A \emph{heuristic} PCR depends only on $f_\delta$. 
+	\end{enumerate}
+\end{definition}
