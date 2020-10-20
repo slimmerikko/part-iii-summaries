@@ -299,7 +299,7 @@ Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\m
         \[
         \PP(X \geq x) \leq \inf_{t \in \RR} e^{-tx + t^2\sigma^2/2} = e^{-x^2/(2\sigma^2)}, 
         \]
-        since the infimum of $t^2\sigma^2/2 - tx$ is attained at $t = x/\sigma^2$. 
+        since the infimum of $t^2\sigma^2/2 - tx$ is attained at $t = x/\sigma^2$ (this method is called \emph{Chernoff bounding}). 
         
         For $\PP(X \leq -x) = \PP(-X \geq x)$ we can use the fact that $-X$ is also sub-Gaussian with parameter $\sigma^2$. 
         
@@ -328,7 +328,7 @@ This shows that $X$ is sub-Gaussian with parameter $4C^2$.
 
 Note that the proposition is not an ``if and only if''-type theorem: suppose we start with a sub-Gaussian variable $X$ with parameter $\sigma^2$. Then by (b), we have $\EE[X^{2q}] \leq q!(2\sigma)^{2q}$, and (c) then implies that $X$ is sub-Gaussian with parameter $16\sigma^2$. 
 
-\begin{theorem}[Hoeffding's inequality]
+\begin{theorem}[Hoeffding's inequality] \label{thm:hoeffding}
 	Let $X_1, \dotsc, X_n$ be independent sub-Gaussian random variables, with $X_i$ having parameter $\sigma_i^2$. Then $\bar X$ is sub-Gaussian with parameter $\overline{\sigma^2}$. In particular, we have
 	\[
 	\max\qty{\PP(\bar X \geq x), \PP(\bar X \leq -x)} \leq e^{-nx^2/(2\overline{\sigma^2})}.
@@ -357,4 +357,129 @@ Note that the proposition is not an ``if and only if''-type theorem: suppose we 
 
 \begin{proof}
 	See Example Sheet 1, question 2. 
+\end{proof}
+
+\begin{corollary}
+	Let $X_1, \dotsc, X_n$ be independent random variables where $\EE[X_i] = \mu_i$ and $a_i \leq X_i \leq b_i$. Then we have
+	\[
+	\PP(\bar X - \bar \mu \geq x) \leq \exp\qty(-\frac{2n^2x^2}{\sum_{i=1}^n (b_i - a_i)^2}). 
+	\]
+\end{corollary}
+
+\begin{proof}
+	By Hoeffding's lemma, $X_i - \mu_i$ is sub-Gaussian with parameter $(b_i - a_i)^2/4$ for each $i$. The result now follows from \cref{thm:hoeffding}.
+\end{proof}
+
+Note that when $X$ takes values in $[a, b]$, its variance is at most $(b-a)^2$. However, when $\Var(X_i) \ll (b_i - a_i)^2$, Hoeffding's inequality can be loose (for example, when $X_i \sim \Rm{Bern}(p_i)$ with $p_i$ small). In such circumstances, Bennett's or Bernstein's inequality may give better results. 
+
+\begin{theorem}[Bennett's inequality]
+	Let $X_1, \dotsc, X_n$ be independent random variables with $\EE[X_i] = 0$, $\sigma_i^2 \ceq \Var(X_i) < \infty$, and $X_i \leq b$ for some $b > 0$. Define  $S \ceq \sum_{i=1}^n X_i$, $\nu \ceq \nu$ and $\phi \colon \RR \to \RR$ by $\phi(u) \ceq e^u - 1 - u = \sum_{k=2}^\infty \frac{u^k}{k!}$, then for every $t > 0$ we have
+	\[
+	\log\EE[e^{tS}] \leq \frac{n \nu }{b^2} \phi(bt). 
+	\]
+	
+	Defining $h \colon (0, \infty) \to [0, \infty)$ by $h(u) \ceq (1+u)\log(1+u) - u$, we have for every $x > 0$ that
+	\[
+	\PP(\bar X \geq x) \leq \exp\qty(-\frac{n \nu}{b^2} h\qty(\frac{bx}{\nu})). 
+	\]
+\end{theorem}
+
+\begin{proof}
+	Define $g \colon \RR \to \RR$ by 
+	\[
+	g(u) \ceq \sum_{k=0}^\infty \frac{u^k}{(k+2)!} = \begin{cases}
+		\frac{\phi(u)}{u^2}&\text{if $u \neq 0$}, \\
+		\frac12 &\text{if $u = 0$}. 
+	\end{cases} 
+	\]
+	Then one can check that $g$ is increasing on $\RR$, so 
+	\[
+	e^{tX_i} - 1 - t X_i = t^2 X_i^2 g(tX_i) \leq t^2 X_i^2 g(tb) = X_i^2 \frac{\phi(bt)}{b^2},
+	\]
+	and therefore
+	\[
+	e^{tX_i} \leq 1 + tX_i + X_i^2 \frac{\phi(bt)}{b^2} \implies \EE[e^{tX_i}] \leq 1 + \EE[X_i^2] \frac{\phi(bt)}{t^2} = 1 + \Var(X_i) \frac{\phi(bt)}{b^2}. 
+	\]
+	
+	Hence for $t > 0$ we have
+	\begin{align*}
+		\log \EE[e^{tS}] &= \sum_{i=1}^n \log\EE[e^{tX_i}] \leq n \cdot \frac1n\sum_{i=1}^n \log\qty(1 + \Var(X_i) \frac{\phi(bt)}{b^2}) \\
+		&\overset*\leq n \log(1 + \frac{\nu \phi(bt)}{b^2}) \overset{**}\leq  \frac{n\nu}{b^2}\phi(bt).
+	\end{align*}
+Here, $(*)$ follows from the fact that $\log$ is a concave function while $(**)$ follows from the fact that $\log(1+u) \leq u$ for all $u \geq 0$. This concludes the proof for the first part of the theorem.
+
+Now, we apply the method of Chernoff bounding and find
+\[
+\PP(\bar X \geq x) = \PP(S \geq nx) \leq \inf_{t > 0} e^{-ntx} \EE[e^{t S}] \leq \inf_{t > 0} e^{-ntx + n\nu \phi(bt)/b^2} = \exp\qty(-\frac{n\nu}{b^2} h\qty(\frac{bx}{\nu})),
+\]
+since once can check that the infimum is attained at $t = b^{-1} \log(1 + bx/\nu)$. 
+\end{proof}
+
+\begin{definition}
+	A random variable $X$ with $\EE X = 0$ is called \emph{sub-Gamma in the right tail} with variance factor $\sigma^2 > 0$ and scale $c > 0$ if
+	\[
+	\EE[e^{tX}] \leq \exp\qty(\frac{\sigma^2 t^2}{2(1 - ct)})
+	\]
+	for all $t \in [0, 1/c)$. 
+\end{definition}
+
+Note that this definition looks like that of sub-Gaussianity, except that $e^{tX}$ can explode as $t$ approaches $1/c$. We give some characteristics of sub-Gamma distributions:
+
+\begin{definition}
+	For any $x \in \RR$ we define $x_+ \ceq \max(x, 0)$. 
+\end{definition}
+
+\begin{proposition}
+\begin{enumerate}[(a)]
+\item Let $X$ be sub-Gamma in the right tail with variance factor $\sigma^2$ and scale $c$. Then 
+\[
+\PP(X \geq x) \leq \exp\qty(-\frac{x^2}{2(\sigma^2 + cx)})
+\]
+for all $x \geq 0$.
+
+\item Let $X$ be a random variable with $\EE X = 0$, $\EE[X^2] \leq \sigma^2$ and $\EE[(X_+)^q] \leq q! \sigma^2 c^{q-2}/2$ for all $q \geq 3$. Then $X$ is sub-Gamma in the right tail with variance factor $\sigma^2$ and scale parameter $c$. 
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\begin{enumerate}[(a)]
+\item Again, we apply a Chernoff bound: we have
+\begin{align*}
+\PP(X \geq x) \leq \inf_{t \in [0, 1/c)} e^{-tx} \EE[e^{tX}] &\leq \inf_{t \in [0, 1/c)} \exp(-tx + \frac{\sigma^2t^2}{2(1 - ct)}) \\
+&\leq \exp(- \frac{x^2}{2(\sigma^2 + cx)}),
+\end{align*}
+where we have set $t = x/(\sigma^2 + cx) \in [0, 1/c)$ in the final step. 
+
+\item Recall from the proof of Bennett's inequality that $g$ is increasing and therefore for $u \leq 0$ we have $\phi(u) = u^2 g(u) \leq u^2 g(0) = \frac{u^2}{2}$. Therefore, for every $u \in \RR$ we have
+\[
+\phi(u) \leq \frac{u^2}{2} + \sum_{q=3}^\infty \frac{(u_+)^q}{q!}.
+\]
+We deduce that for $t \in [0, 1/c)$ we have (note $\log(x) \leq x - 1$ for all $x$):
+\[
+\log \EE[e^{tX}] \leq \EE(e^{tX}) - 1 = \EE[\phi(tX)] \leq \EE \qty[\frac{t^2X^2}{2} + \sum_{q=3}^\infty \frac{t^q X_+^q}{q!}].
+\]
+By Fubini's theorem, since the infinite sum has only positive terms we may interchange sum and expectation to obtain
+\[
+\EE \qty[\frac{t^2X^2}{2} + \sum_{q=3}^\infty \frac{t^q \EE[X_+^q]}{q!}] =  \frac{t^2 \Var[X]}{2} + \sum_{q=3}^\infty \frac{t^q \EE[X_+^q]}{q!} \leq \frac{\sigma^2 t^2}{2} \sum_{q=2}^\infty t^{q-2} c^{q-2} = \frac{\sigma^2t^2}{2(1-ct)}. 
+\]
+\end{enumerate}
+\end{proof}
+
+Following this proposition, we can prove Bernstein's inequality:
+\begin{theorem}[Bernstein's inequality]
+	Let $X_1, \dotsc, X_n$ be independent random variables with $\EE[X] = 0$, $\frac1n\sum_{i=1}^n \Var(X_i) \leq \sigma^2$ and $\frac1n \sum_{i=1}^n \EE[(X_i)_+^q] \leq q! \sigma^2 c^{q-2}/2$ some $\sigma, c > 0$ and for all $q \geq 3$. Then $S \ceq \sum_{i=1}^n X_i$ is sub-Gamma in the right tail with variance factor $n\sigma^2$ and scale parameter $c$. In particular we have
+	\[
+	\PP(\bar X \geq x) \leq \exp\qty(- \frac{nx^2}{2(\sigma^2 + cx)}). 
+	\]
+\end{theorem}
+
+\begin{proof}
+	We have by part (b) of the previous proposition
+	\[
+	\log\EE[e^{tS}] = \sum_{i=1}^n \log \EE[e^{tX_i}] \leq n \frac{\sigma^2 t^2}{2(1 - ct)},
+	\]
+	and the second claim follows from part (a) of the previous proposition:
+	\[
+	\PP(\bar X \geq x) = \PP(S \geq nx) \leq \exp\qty(- \frac{nx^2}{2(\sigma^2 + cx)}). 
+	\]
 \end{proof}
