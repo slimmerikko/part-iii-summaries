@@ -57,3 +57,14 @@ The first term is called the \emph{data error} and is unbounded for $\alpha \to 
 		\item A \emph{heuristic} PCR depends only on $f_\delta$. 
 	\end{enumerate}
 \end{definition}
+
+\begin{definition}
+	Let $(R_\alpha)_{\alpha > 0}$ be a regularisation of $A\D$ and $\alpha$ a parameter choice rule. We call $(R_\alpha, \alpha)$ a \emph{convergent regularisation} if
+	\[
+	\lim_{\delta \to 0} \sup_{f_\delta : \norm{f - f_\delta} \leq \delta} \norm{R_\alpha f_\delta - A\D f} = 0
+	\]
+	and
+	\[
+	\lim_{\delta \to 0} \sup_{f_\delta : \norm{f - f_\delta} \leq \delta} \alpha(\delta, f_\delta) = 0. 
+	\]
+\end{definition}
