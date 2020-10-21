@@ -82,6 +82,7 @@
 \DeclareMathOperator\Exp{Exp}
 \DeclareMathOperator\Beta{Beta}
 \DeclareMathOperator\Gam{Gamma}
+\DeclareMathOperator\Cov{Cov}
 
 \title{Topics in Statistical Theory --- Example Sheet 1} % subject
 \author{Lucas Riedstra}
@@ -132,7 +133,7 @@ f_{(j)}(x) = \lim_{h \to 0} \frac{\frac{n!}{(j-1)!(n-j)!} x^{j-1} (1-x-h)^{n-j} 
 \]
 This is also the density function of a $\Beta(j, n-j+1)$ distribution. 
 
-Finally, define $T = S_{n+1} - S_j$, so that $S_j$ and $T$ are independent. It is known that $S_j \sim \Gam(j, 1)$, $T \sim \gamma(n - j + 1)$, and furthermore that
+Finally, define $T_j = S_{n+1} - S_j$, so that $S_j$ and $T_j$ are independent. It is known that $S_j \sim \Gam(j, 1)$, $T_j \sim \gamma(n - j + 1, 1)$, and furthermore that
 \[
 \frac{S_j}{S_{n+1}} = \frac{S_j}{S_j + T} \deq \frac{\Gamma(j, 1)}{\Gamma(j, 1) + \Gamma(n - j + 1, 1)} \sim \Beta(j, n - j + 1). 
 \]
@@ -189,17 +190,148 @@ Note that $\frac{\alpha e^u}{\beta + \alpha e^u} \in [0, 1]$ since $\alpha, \bet
         0 &\text{$y < 0$}; \\
         P(A) &\text{$y \in [0, 1)$}; \\
         1 &y \geq 1. 
-    \end{cases}, \quad F_Y(0) = P(A). 
+    \end{cases}
     \]
+    
     The empirical distribution function of $Y_1, \dotsc, Y_n \iid Y$ is given by
     \[
     \hat F_n(y) = \frac1n \sum_{i=1}^n \ind_{Y_i \leq y},
     \]
-    and thus for $y = 0$ we have
+    and thus for $y \in [0, 1)$ we have
     \[
-    \hat F_n(0) = \frac1n \sum_{i=1}^n \ind_{Y_i \leq 0} = \frac1n \sum_{i=1}^n \ind_{U_{i} \in A} = \hat P_n(A).
+    \hat F_n(y) = \frac1n \sum_{i=1}^n \ind_{Y_i \leq y} = \frac1n \sum_{i=1}^n \ind_{X_i \in A} = \hat P_n(A).
     \]
     
-    The result now follows from the DKW inequality. \TODO make more precise. 
+    By the DKW inequality we find
+    \begin{align*}
+    	\PP\qty(\abs{\hat P_n(A) - P(A)} > \eps) = \PP \qty(\sup_{y \in \RR} \abs{\hat F_n(y) - F(y)} > \eps) \leq 2e^{-2n\eps^2}.
+    \end{align*}
 \end{proof}
+
+\begin{question}
+	Let $X \sim \Rm{Bin}(n, p)$. Compare the Hoeffding, Bennett, and Bernstein upper bounds on $\PP(X/n \geq \frac12)$ as $p \to 0$. 
+\end{question}
+
+\begin{solution}
+	Note that $X/n$ is the average of $n$ i.i.d.\ random variables $Y_i \sim \Rm{Bern}(p)$, where $Y_i \in [0, 1]$ for all $i$.  
+	
+	We start with Hoeffding's inequality. In this case, we have
+	\[
+	\PP(X/n - p \geq x) \leq \exp(-\frac{2n^2(1/2)^2}{n}) = \exp(- \frac n2),
+	\]
+	and this bound also holds as $p \to 0$. 
+	
+	We continue with Bennett's inequality. We consider the random variables $Y_i - p$, which are bounded from above by $b = 1 - p$. Now Bennett's inequality tells us, with $\sigma_p^2 = \Var(Y_i - p) = p(1-p)$ that
+	\begin{align*}
+		\PP(X/n \geq x) &\leq \exp(- \frac{n}{(1-p)^2} h\qty(\frac{1-p}{2p(1-p)})) = \exp\qty(- \frac{n}{(1-p)^2} h\qty(\frac{1}{2p})).
+	\end{align*}
+We compute
+\[
+h\qty(\frac1{2p}) = (1 + \frac1{2p}) \log(1 + \frac1{2p}) - \frac1{2p} = \log(1 + \frac1{2p}) + \frac1{2p} \qty(\log(1 + \frac1{2p}) - 1) \overset{p \downarrow 0}\to +\infty. 
+\]
+Since $\frac{n}{(1-p)^2}$ is clearly bounded by $n$, we conclude that 
+\[
+\PP(X/n \geq x) \to e^{-\infty} = 0. 
+\]
+	
+%   Bennett's inequality tells us that
+%	\[
+%	\PP(X/n \geq \frac12) \leq \exp\qty(- n\nu h(1/(2\nu))), 
+%	\]
+%	where $h(u) = (1 + u) \log(1+ u)$ and $\nu = p(1-p)$. Plugging this in yields
+%	\[
+%	\exp(-n\nu h(x/\nu)) = \exp(-n p(1-p) \qty(1 + \frac{1}{2p(1-p)})\log(1 + \frac{1}{2p(1-p)}))
+%	\]
+
+We finish with Bernstein's inequality.  We have for $q \geq 3$ and $p \leq\frac12$ that 
+\begin{align*}
+	\EE[(Y_i - p)_+^q] &= p(1-p)^q = \sigma_p^2 (1-p)^{q-1} = (q! \sigma_p^2 (1-p)^{q-2}/2)\cdot (2(1-p)/q!) \\
+	&\leq q!\sigma_p^2 ((1-p)/3)^{q-2}/2.
+\end{align*}
+
+Now Bernstein's inequality tells us that
+\[
+\PP(X/n \geq \frac12 \leq \exp\qty(- \frac{n(1/2)^2}{2(\sigma_p^2 + (1-p)/6)}) = \exp(- \frac{n}{8\sigma_p^2 + 4(1-p)/3}) \overset{p \to 0}{\to} \exp(-\frac{3n}{4}). \]
+
+Of course, the true limit is 0 for any $n$, which is only given by Bennett's inequality. We also see that Hoeffding's inequality gives the worst result. 
+\end{solution}
+
+\begin{question}
+	Derive the following alternative form of Bernstein's inequality: under the same conditions, 
+	\[
+	\PP\qty(\bar X \geq \sqrt{\frac{2\sigma^2 \log(1/\delta)}{n}} + \frac cn \log(1/\delta)) \leq \delta
+	\]
+	for every $\delta \in (0, 1]$. 
+\end{question}
+
+\begin{proof}
+	We have 
+	\[
+	\PP(\bar X \geq x) \leq \exp(- \frac{nx^2}{2(\sigma^2 + cx)}) \eqqcolon \delta. 
+	\]
+	Now we just need express $x$ in terms of $\delta$: taking logarithms on both sides we obtain
+	\[
+	- \frac{nx^2}{2(\sigma^2 + cx)} = \log(\delta) \implies nx^2 = 2(\sigma^2 + cx) \log(1/\delta) \implies nx^2 - 2c\log(1/\delta) x - 2\sigma^2\log(1/\delta) = 0.
+	\]
+	
+	Using the abc-formula with the fact that $x \geq 0$ yields 
+	\begin{align*}
+	x &= \frac{2c \log(1/\delta) + \sqrt{4c^2\log^2(1/\delta) + 8n\sigma^2\log(1/\delta)}}{2n} \\
+	&= \frac cn \log(1/\delta) + \sqrt{\frac{c^2}{n^2}\log^2(1/\delta) + \frac{2\sigma^2}{n} \log(1/\delta)} \\
+	&= ???? 
+	\end{align*}
+\end{proof}
+
+\begin{question}
+	\begin{enumerate}[(a)]
+		\item Let $X_1, \dotsc, X_n \iid F$ and let $\hat F_n$ denote their empirical distribution function. For $t_1 < \dotsb < t_k$, write down the distribution of 
+		\[
+		n\qty(\hat F_n(t_1), \hat F_n(t_2) - \hat F_n(t_1), \dotsc, \hat F_n(t_k) - \hat F_n(t_{k-1}), 1 - \hat F_n(t_k)). 
+		\]
+		\item Find the asymptotic distribution of $n^{1/2} (\hat F_n(t_1) - F(t_1), \dotsc, \hat F_n(t_k) - F(t_k))$. 
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[(a)] \item
+	Write $n \hat F_n(t) = \sum_{i=1}^n \ind_{X_i \leq t} = \# \qty{i \mid X_i \leq t}$, and analogously, for $t < u$, 
+	$n (\hat F_n(u) - \hat F_n(t)) = \#\qty{i \mid t < X_i \leq u}$. 
+	
+	Then, defining $t_0 = -\infty$ and $t_{k+1} = \infty$,  we find that
+	\begin{gather*}
+	\PP\qty[ n \qty(\hat F_n(t_1), \dotsc, 1 - \hat F_n(t_k)) (a_1, \dotsc, a_{n+1})] \\ = \PP[\text{exactly $a_i$ of the $X_i$ lie in $(t_{i-1}, t_i]$ for $i = 1, \dotsc, n$}].
+	\end{gather*}
+
+This probability is 0 unless all $a_i$ are nonnegative integers with $\sum_i a_i = n$. In this case, we can first choose $a_1$ of the $X_i$ which must lie in $(\infty, t_1]$, then we choose $a_2$ of the remaining $X_i$ which must lie in $(t_1, t_2]$ and so forth. We find that the above probability equals
+\[
+\binom{n}{a_1} (F(t_1))^{a_1} \binom{n - a_1}{a_2} (F(t_2) - F(t_1))^{a_2} \dotsb \binom{a_k + a_{k_1}}{a_k} (F(t_k) - F(t_{k-1}))^{a_k} \cdot (1 - F(t_k))^{a_{k+1}}. 
+\]
+
+\item By the central limit theorem, the asymptotic distribution is $N(0, \Sigma)$, where $\Sigma$ is the covariance matrix of $(\hat F_n(t_1), \dotsc, \hat F_n(t_k))$. We will compute the entries of $\Sigma$. 
+
+Choose $t \in \RR$ arbitrarily. Then we have
+\begin{align*}
+	\Var(\hat F_n(t)) &= \EE[\hat F_n^2(t)] - \EE[\hat F_n(t)]^2 = \EE\qty[\qty(\frac1n\sum_i \ind_{X_i \leq t})^2] - F^2(t) \\
+	&= \frac1{n^2}\EE\qty[\sum_i \ind_{X_i \leq t} + 2\sum_{i < j} \ind_{X_i \leq t} \ind_{X_j \leq t}] - F^2(t) \\
+	&= \frac{F(t) + (n-1) F^2(t)}{n} - F^2(t) = \frac{F(t)(1 - F(t))}{n},
+\end{align*}
+so we have computed the diagonal entries $\Sigma_{ii} = \frac{F(t_i)(1 - F(t_i))}{n}$. 
+
+Now we must compute the covariances: assume $s < t$, then  
+\begin{align*}
+	\Cov(\hat F_n(s), \hat F_n(t)) &= \EE[\hat F_n(s) \hat F_n(t)] - \EE[\hat F_n(s)] \EE[\hat F_n(t)] \\
+	&= \frac1{n^2} \sum_{i, j} \EE[\ind_{X_i \leq s} \ind_{X_j \leq t}] - F(s)F(t) \\
+	&= \frac1{n^2} \qty(n F(s) + n(n-1) F(s)F(t)) - F(s)F(t) \\
+	&= \frac{F(s) + (n-1) F(s) F(t)}{n} - F(s)F(t) = \frac{F(s) - F(s)F(t)}{n}. 
+\end{align*}
+This gives the diagonal entries $\Sigma_{ij} = \frac{F(t_i) - F(t_i)F(t_j)}{n}$ for $i < j$. 
+In the end, we find
+\[
+\Sigma_{ij} = \frac1n \cdot \begin{cases}
+	F(t_i)(1 - F(t_i)) &\text{if $i = j$}, \\
+	F(t_{\min(i, j)}) - F(t_i) F(t_j) &\text{if $i \neq j$}. 
+\end{cases}
+\]
+\end{enumerate} 
+\end{solution}
 \end{document}

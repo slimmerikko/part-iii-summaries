@@ -373,7 +373,7 @@ Note that the proposition is not an ``if and only if''-type theorem: suppose we 
 Note that when $X$ takes values in $[a, b]$, its variance is at most $(b-a)^2$. However, when $\Var(X_i) \ll (b_i - a_i)^2$, Hoeffding's inequality can be loose (for example, when $X_i \sim \Rm{Bern}(p_i)$ with $p_i$ small). In such circumstances, Bennett's or Bernstein's inequality may give better results. 
 
 \begin{theorem}[Bennett's inequality]
-	Let $X_1, \dotsc, X_n$ be independent random variables with $\EE[X_i] = 0$, $\sigma_i^2 \ceq \Var(X_i) < \infty$, and $X_i \leq b$ for some $b > 0$. Define  $S \ceq \sum_{i=1}^n X_i$, $\nu \ceq \nu$ and $\phi \colon \RR \to \RR$ by $\phi(u) \ceq e^u - 1 - u = \sum_{k=2}^\infty \frac{u^k}{k!}$, then for every $t > 0$ we have
+	Let $X_1, \dotsc, X_n$ be independent random variables with $\EE[X_i] = 0$, $\sigma_i^2 \ceq \Var(X_i) < \infty$, and $X_i \leq b$ for some $b > 0$. Define  $S \ceq \sum_{i=1}^n X_i$, $\nu \ceq \overline{\Var(X_i)}$ and $\phi \colon \RR \to \RR$ by $\phi(u) \ceq e^u - 1 - u = \sum_{k=2}^\infty \frac{u^k}{k!}$, then for every $t > 0$ we have
 	\[
 	\log\EE[e^{tS}] \leq \frac{n \nu }{b^2} \phi(bt). 
 	\]
@@ -469,8 +469,9 @@ Following this proposition, we can prove Bernstein's inequality:
 \begin{theorem}[Bernstein's inequality]
 	Let $X_1, \dotsc, X_n$ be independent random variables with $\EE[X] = 0$, $\frac1n\sum_{i=1}^n \Var(X_i) \leq \sigma^2$ and $\frac1n \sum_{i=1}^n \EE[(X_i)_+^q] \leq q! \sigma^2 c^{q-2}/2$ some $\sigma, c > 0$ and for all $q \geq 3$. Then $S \ceq \sum_{i=1}^n X_i$ is sub-Gamma in the right tail with variance factor $n\sigma^2$ and scale parameter $c$. In particular we have
 	\[
-	\PP(\bar X \geq x) \leq \exp\qty(- \frac{nx^2}{2(\sigma^2 + cx)}). 
+	\PP(\bar X \geq x) \leq \exp\qty(- \frac{nx^2}{2(\sigma^2 + cx)}),
 	\]
+	for all $x \geq 0$. 
 \end{theorem}
 
 \begin{proof}
