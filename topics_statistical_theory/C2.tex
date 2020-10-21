@@ -1,0 +1,83 @@
+\section{Kernel density estimation}
+Let $X_1, \dotsc, X_n \iid f$, and suppose we wish to estimate the density function $f$. The oldest way to do this is with a histogram: we divide $\RR$ into equally sized intervals or \emph{bins}, and let $I_x$ denote the bin containing $x \in \RR$.
+\begin{definition}
+	The \emph{histogram density estimator} $\hat f_n^H$ with bin width $b > 0$ is given by
+	\[
+	\hat f_n^H(x) \ceq \frac{1}{nb} \sum_{i=1}^n \ind_{X_i \in I_x}.  
+	\]
+\end{definition}
+
+There are a few major drawbacks to using histograms: it is difficult to choose $b$ and the positioning of bin edges, the theoretical performance is suboptimal (mostly due to their discontinuity) and graphical display in the multivariate case is difficult. 
+
+\subsection{The univariate kernel density estimator}
+\begin{definition}
+	A Borel measurable function $k \colon \RR \to \RR$ is called a \emph{kernel} if it satisfies $\int_\RR K(x) \dd{x} = 1$. 
+	
+	A \emph{univariate kernel density estimator} of $f$ with kernel $K$ and \emph{bandwidth} $h > 0$ is defined as
+	\[
+	\hat f_n(x) \ceq \frac1{nh} \sum_{i=1}^n K\qty(\frac{x - X_i}{h}).
+	\]
+	Defining $K_h(x) \ceq \frac1h K\qty(\frac xh)$, we can rewrite this as
+	\[
+	\hat f_n(x) \ceq \frac1n \sum_{i=1}^n K_h(x - X_i). 
+	\]
+\end{definition}
+
+Usually $K$ is chosen to be non-negative (which ensures that $K$ itself and $\hat f_n$ are themselves density functions), and $K$ is often chosen to be symmetric about 0. Generally, the choice of kernel $K$ is much less important than the choice of bandwidth $h$. 
+
+If we consider $\hat f_n(x)$ as a point estimator of $f(x)$, we typically wish to minimise the \emph{mean squared error}
+\[
+\MSE(\hat f_n(x)) \ceq \EE\qty[(\hat f_n(x) - f(x))^2]. 
+\]
+Other possibilities include the mean absolute error which (unlike the MSE) is scale-invariant. However, the MSE has an appealing decomposition into variance and bias terms:
+\[
+\MSE(\hat f_n(x)) = \Var(\hat f_n(x)) + \Bias^2(\hat f_n(x)). 
+\]
+
+We can express the MSE in terms of convolutions: 
+\begin{definition}
+	Let $g_1, g_2 \colon \RR \to \RR$ be measurable. Then the \emph{convolution} of $g_1$ and $g_2$, denoted $g_1 * g_2$, is defined by
+	\[
+	(g_1 * g_2)(x) \ceq \int_\RR g_1(x - z) g(z) \dd{z}. 
+	\]
+\end{definition}
+We can compute 
+\begin{align*}
+\Bias \hat f_n(x) &= \EE[\hat f_n(x)] - f(x) = \EE[K_h(x - X_1)] - f(x) = \int_\RR  K_h(x - z) f(z) \dd{z} \\
+&= (K_h * f)(x) - f(x). 
+\end{align*}
+
+Analogously, letting $\xi_i \ceq K_h(x - X_i)$ (note that these are i.i.d.\ random variables), we have
+\begin{equation} \label{eq:variance_computation}
+	\Var \hat f_n(x) = \frac1n \Var(\xi_1) = \frac1n \qty(\EE[\xi_1^2] - \EE^2[\xi_1]) = \frac1n \qty[(K_h^2 * f)(x) - (K_h * f)^2(x)].
+\end{equation}
+
+To assess performance of $h$ and $K$, we want to assess the performance of $\hat f_n$ as an estimation of $f$ as a function. This gives the following definition:
+\begin{definition}
+	We define the \emph{mean integrated squared error} or MISE as\[
+	\MISE(\hat f_n) \ceq \EE\qty(\int_\RR \qty(\hat f_n(x) - f(x))^2 \dd{x}) \overset\star= \int_\RR \MSE(\hat f_n(x)) \dd{x}, 
+	\]
+	where $\star$ follows from Fubini's theorem since the integrand is nonnegative. 
+\end{definition}
+
+We now aim to find bounds on the bias and the variance of $\hat f_n$ in order to choose $h$ and $K$ appropriately.
+
+\subsection{Bounds on variance and bias}
+\begin{definition}
+	For a kernel $K$, define $R(K) \ceq \int_\RR K^2(u) \dd{u}$. 
+\end{definition}
+
+\begin{proposition}
+	Let $\hat{f_n}$ be the kernel density estimator with kernel $K$ and bandwidth $h > 0$ constructed from $X_1, \dotsc, X_n \iid f$. Then for any $x \in \RR, h > 0, n \in \NN$ we have
+	\[
+	\Var \hat f_n(x) \leq \frac{1}{nh} \norm{f}_\infty R(K). 
+	\]
+\end{proposition}
+
+\begin{proof}
+	By \cref{eq:variance_computation} we have
+	\begin{align*}
+	\Var \hat f_n(x) &\leq \frac1n (K_h^2 * f)(x) = \frac{1}{nh^2} \int_\RR K^2\qty(\frac{x - z}{h}) f(z) \dd{z} = \frac{1}{nh} \int_\RR K^2(u) f(x - uh) \dd{u} \\
+	&\leq \frac1{nh} \norm{f}_\infty \int_\RR K^2(u) \dd{u} = \frac{1}{nh} \norm{f}_\infty R(K). 
+	\end{align*}
+\end{proof}

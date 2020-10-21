@@ -68,9 +68,9 @@ Therefore, the seminorm condition is satisfied with $N = M$. From this, it also 
 
 A special case of the previous example is the case $M = 0$: in this case the distribution simply becomes
 \[
-\ang{T_f, \phi} = \int_X f \phi \dd{x}. 
+\ang{\tau_f, \phi} = \int_X f \phi \dd{x}. 
 \]
-Henceforth we will abuse notation: if $f \in \locint(X)$, then we will write $f$ instead of $T_f$, i.e., $\ang{f, \phi} = \int_X f\phi \dd{x}$. 
+Henceforth we will abuse notation: if $f \in \locint(X)$, then we will write $f$ instead of $\tau_f$, i.e., $\ang{f, \phi} = \int_X f\phi \dd{x}$. 
 
 \begin{lemma}
     Let $u \colon \DD(X) \to \CC$ be a linear map. Then $u$ is a distribution if and only if, for every sequence $(\phi_j) \subseteq \DD(X)$ with $\phi_j \to 0$ as in \cref{def:test_convergence}, we have $\ang{u, \phi_m} \to 0$. 
@@ -176,7 +176,7 @@ Since the RHS makes sense for any distribution $u$, we define
 \subsubsection{Reflection and translation} 
 For $\phi \in \DD(\RR^n), h \in \RR^n$, define the \emph{translation of $\phi$ by $h$} by 
 \[
-(T_h\phi)(x) \ceq \phi(x - h),
+(\tau_h\phi)(x) \ceq \phi(x - h),
 \]
 and the \emph{reflection of $\phi$} by $\refl\phi(x) \ceq \phi(-x)$. 
 
@@ -184,22 +184,22 @@ Extending the definitions of translation and reflection by duality yields the fo
 \begin{definition}
     For $u \in \DD'(\RR^n)$, $h \in \RR^n$, $\phi \in \DD(\RR^n)$, define
     \[
-    \ang{T_hu, \phi} \ceq \ang{u, T_{-h}\phi} \quad\text{and}\quad \ang{\refl u, \phi} \ceq \ang{u, \refl{\phi}}. 
+    \ang{\tau_hu, \phi} \ceq \ang{u, \tau_{-h}\phi} \quad\text{and}\quad \ang{\refl u, \phi} \ceq \ang{u, \refl{\phi}}. 
     \]
 \end{definition}
 
 \begin{lemma}
     For $u \in \DD'(\RR^n)$, define $V_h \in \DD'(\RR^n)$ for $0 \neq h \in \RR^n$ by
     \[
-    V_h \ceq \frac{T_{-h}u - u}{\norm{h}}
+    V_h \ceq \frac{\tau_{-h}u - u}{\norm{h}}
     \]
     If $(h_j) \subseteq \RR^n$ is a sequence for which $\lim_{j \to \infty} \frac{h_j}{\norm{h_j}} = m \in S^{n-1}$, then $V_{h_j} \to \sum_i m_i \pdv{u}{x_i}$ in $\DD'(\RR^n)$. 
 \end{lemma}
 
 \begin{proof}
-    By definition, we can write $\ang{V_h, \phi} = \frac{1}{\norm{h}} \ang{u, T_h\phi - \phi}$. Now Taylor's theorem tells us that
+    By definition, we can write $\ang{V_h, \phi} = \frac{1}{\norm{h}} \ang{u, \tau_h\phi - \phi}$. Now Taylor's theorem tells us that
     \[
-    (T_h\phi - \phi)(x) = \phi(x - h) - \phi(x) = - \sum_i h_i \pdv{\phi}{x_i}(x) + R(x, h),
+    (\tau_h\phi - \phi)(x) = \phi(x - h) - \phi(x) = - \sum_i h_i \pdv{\phi}{x_i}(x) + R(x, h),
     \]
     where $R(x, h) = o(\norm{h})$ in $D(\RR^n)$ (exercise sheet 1, question 2). 
     
@@ -211,15 +211,15 @@ Extending the definitions of translation and reflection by duality yields the fo
 \end{proof}
 
 \subsubsection{Convolution}
-For $\phi \in \DD(\RR^n)$, note that $(T_x \refl\phi)(y) = \refl\phi(y-x) = \phi(x-y)$. 
+For $\phi \in \DD(\RR^n)$, note that $(\tau_x \refl\phi)(y) = \refl\phi(y-x) = \phi(x-y)$. 
 \begin{definition}
     For $u \in C^\infty(\RR^n), \phi \in \DD(\RR^n)$, we define the \emph{convolution} $u * \phi \colon \RR^n \to \CC$ as
     \[
-    (u * \phi)(x) \ceq \int_{\RR^n} u(x-y) \phi(y) \dd{y} = \int_{\RR^n} u(y) \phi(x - y) \dd{y} = \ang{u, T_x \refl\phi}. 
+    (u * \phi)(x) \ceq \int_{\RR^n} u(x-y) \phi(y) \dd{y} = \int_{\RR^n} u(y) \phi(x - y) \dd{y} = \ang{u, \tau_x \refl\phi}. 
     \]
     Since the RHS makes sense for any $u \in \DD'(\RR^n)$, we extend the definition this way: for $u \in \DD'(\RR^n), \phi \in \DD(\RR^n)$, we define the convolution $u * \phi$ as
     \[
-    (u * \phi)(x) \ceq \ang{u, T_x\refl\phi}. 
+    (u * \phi)(x) \ceq \ang{u, \tau_x\refl\phi}. 
     \]
 \end{definition}
 
@@ -261,3 +261,70 @@ For $\phi \in \DD(\RR^n)$, note that $(T_x \refl\phi)(y) = \refl\phi(y-x) = \phi
 \begin{proof}
     Apply the previous lemma with $\Phi_x(y) \ceq  \phi(x-y)$. 
 \end{proof}
+
+Due to the previous corollary, we often call $u * \phi$ a \emph{regularisation} of $u$. 
+
+\begin{convention}
+	If $u \in \DD'(X)$ and $\phi \in \DD(X)$, then instead of $\ang{u, \phi}$ we also write $\ang{u(t), \phi(t)}$ (or with any other dummy variable) when the variable used for $\phi$ is not directly clear. 
+\end{convention}
+
+\subsection{Density of $\DD(\RR^n)$ in $\DD'(\RR^n)$}
+\begin{lemma}
+	If $u \in \DD'(\RR^n)$ and $\phi, \psi \in \DD(\RR^n)$, then
+	\[
+	(u * \phi) * \psi = u * (\phi * \psi). 
+	\]
+\end{lemma}
+
+\begin{proof}
+	Fix $x \in \RR^n$. Now we write
+	\begin{align*}
+		((u * \phi) * \psi)(x) &= \int_{\RR^n} \ang{u(z), (\tau_y \refl\phi)(z)} \cdot \psi(x-y) \dd{y} \\
+		&= \int_{\RR^n} \ang{u(z), (\tau_{x-y}\refl\phi)(z)} \cdot \psi(y) \dd{y} \\
+		&= \int_{\RR^n} \ang{u(z), \psi(y) (\tau_{x-y} \refl\phi)(z)} \dd{y}.
+	\end{align*}
+We would like to interchange integral and application of $u$, and we will have to justify this using Riemann sums: 
+\begin{align*}
+\int_{\RR^n} \ang{u(z), \psi(y) (\tau_{x-y} \refl\phi)(z)} \dd{y} &= \lim_{\eps \downarrow 0} \sum_{m \in \ZZ^n} \ang{u(z), \psi(\eps m) \phi(x - z - \eps m)} \eps^n \\
+&\overset*= \lim_{\eps\downarrow0} \ang{u(z), \sum_{m \in \ZZ^n} \psi(\eps m) \phi(x - z - \eps m)\eps^n } \\
+&\overset{**}= \ang*{u(z), \int_{\RR^n} \psi(y) \phi(x - z - y) \dd{y}} \\
+&= \ang{u(z), (\phi * \psi)(x - z)} = \ang{u(z), (\tau_x\widecheck{\phi * \psi})(z)} = (u * (\phi * \psi))(x). 
+\end{align*}
+Here, $*$ is by the fact that the sum is finite since $\psi$ has compact support, while $**$ is by sequential continuity of $u$ and the fact that the Riemann sum converges to the convolution integral \emph{in the space of test functions} (non-examinable fact). 
+\end{proof}
+
+\begin{theorem}
+	If $u \in \DD'(\RR^n)$, there exists a sequence $(\phi_k) \subseteq \DD(\RR^n)$ such that $\phi_k \to u$ in $\DD'(\RR^n)$. 
+\end{theorem}
+
+\begin{proof}
+	Fix $\psi \in \DD(\RR^n)$ with $\int_{\RR^n} \psi \dd{x} = 1$, and set $\psi_k(x) \ceq k^n \psi(kx)$. Note that $\int_{\RR^n} \psi_k \dd{x} = 1$.
+	
+	Now, fix any $\chi \in \DD(\RR^n)$ with $\chi \equiv 1$ on $\qty{\norm{x} < 1}$ and $\chi \equiv 0$ on $\qty{\norm{x} < 2}$. Define $\chi_k(x) \ceq \chi(x/k)$, so that $\lim_{k\to\infty} \chi_k(x) = 1$ for all $x$. We will set
+	\[
+	\phi_k(x) \ceq \chi_k(x) (u * \psi_k)(x). 
+	\]
+	Clearly we have $\phi_k \in \DD(\RR^n)$ since each $\chi_k$ has compact support. 
+	
+	Note that $\ang{u, \phi} = (u * \refl\phi)(0)$ by definition. Now, take any $\theta \in \DD(\RR^n)$, then we have
+	
+	\begin{align*}
+		\ang{\phi_k, \theta} &= \ang{\chi_k (u * \psi_k), \theta} = \ang{u * \psi_k, \chi_k \theta} = \qty[ (u * \psi_k) * \refl{\chi_k\theta}](0) \\
+		&= \qty[u * \qty(\psi_k * \refl{\chi_k \theta})](0).
+	\end{align*}
+
+	Now we compute $\psi_k * \refl{\chi_k\theta}$: note that 
+	\begin{align*}
+		(\psi_k * \refl{\chi_k\theta})(x) &= \int_{\RR^n} k^n\psi(k(x-y)) \chi\qty(-\frac yk) \theta(-y) \dd{y} \\
+		&= \int_{\RR^n} \psi(y) \chi\qty(\frac{y}{k^2} - \frac xk) \theta(\frac yk - x) \dd{y} \\
+		&= \theta(-x) + R_k(-x) = (\refl{\theta + R_k})(x)
+	\end{align*}
+where $R_k(x) = \int_{\RR^n} \psi(y) \qty[ \chi\qty(\frac y{k^2} + \frac xk) \theta\qty(\frac yk + x )- \theta(x)] \dd{y}$.
+
+So \[
+\ang{\phi_k, \theta} = (u * (\refl{\theta + R_k}))(0) = (u *\refl\theta)(0) + (u * \refl{R_k})(0) = \ang{u, \theta} + \ang{u, R_k}. 
+\]
+
+We must now only prove that $R_k \to 0$ in $\DD(\RR^n)$, and then by sequential continuity it follows that $\phi_k \to u$  in $\DD'(\RR^n)$. 
+\end{proof}
+

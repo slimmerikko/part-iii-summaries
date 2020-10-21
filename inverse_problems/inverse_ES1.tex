@@ -205,8 +205,21 @@ where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ f
 	%\[
 	%(A s_n)(y) = \int_0^y s_n(x) \dd{x} = \sqrt 2 \int_0^y \sin(nx) \dd{x} = \frac{\sqrt 2}{n} \qty(1 - \cos(ny)) = \frac{\sqrt 2}{n} c_0(y) - \frac1n c_n(y) 
 	%\]
-	\item Clearly, any operator in $\Ran(A)$ is continuous by the fundamental theorem of calculus. Since $f$ is not continuous (also not up to a measure zero set), we conclude $f \notin \Ran(A)$ and therefore $f \in \clos{\Ran(A)} \setminus \Ran(A)$.
+	\item To apply the Picard criterion we must find the singular values and right singular vectors of $A$, which are equal to the square roots of the eigenvalues of $AA^*$ and the eigenvectors of $AA^*$. 
 	
+	Note that 
+	\begin{align*}
+		\ang{Au, v} &= \int_0^1 (Au)(y)\cdot v(y) \dd{y} \\
+		&= \int_0^1 \int_0^y u(x) \dd{x} v(y) \dd{y} \\
+		&= \int_0^1 \int_0^y u(x) v(y) \dd{x} \dd{y} \\
+		&= \int_0^1 \int_x^1 u(x) v(y) \dd{y} \dd{x} \\ 
+		&= \int_0^1 u(x) \int_x^1 v(y) \dd{y} \dd{x} \\
+		&= \ang{u, A^* v}
+	\end{align*}
+where $v(x) = \int_x^1 v(y) \dd{y}$.  Therefore, we find
+\begin{align*}
+	(AA^* u)(x) = \int_0^y \int_x^1 u(x) \dd{x} \dd{y}
+\end{align*}
 	\end{enumerate}
 \end{solution}
 \end{document}

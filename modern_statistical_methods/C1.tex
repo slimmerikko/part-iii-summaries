@@ -462,5 +462,91 @@ To compute the second term, we use the \emph{trace trick}:
 	&= \sigma^2 \tr \qty[ D^2 (D + \lambda I)^{-2}] = \sigma^2 \sum_{i=1}^n \frac{d_i^2}{(d_i + \lambda)^2}.
 \end{align*}
 
-This gives our first inequality $MSPE \leq \frac{\sigma^2}{n} \sum_{i=1}^n \frac{d_i^2}{(d_i + \lambda)^2} + \frac\lambda{4n}$. For the second inequality, note that $\frac{d_i^2}{(d_i + \lambda)^2} \leq 1$ and also $\frac{d_i^2}{(d_i + \lambda)^2} \leq \frac{d_i^2}{4 d_i\lambda} = \frac{d_i}{4\lambda}$. Therefore, we can write $\frac{d_i^2}{(d_i + \lambda)^2} \leq \frac1\lambda \min(\lambda, \frac{d_i}{4})$ which proves the second inequality. 
+This gives our first inequality $\MSPE \leq \frac{\sigma^2}{n} \sum_{i=1}^n \frac{d_i^2}{(d_i + \lambda)^2} + \frac\lambda{4n}$. For the second inequality, note that $\frac{d_i^2}{(d_i + \lambda)^2} \leq 1$ and also $\frac{d_i^2}{(d_i + \lambda)^2} \leq \frac{d_i^2}{4 d_i\lambda} = \frac{d_i}{4\lambda}$. Therefore, we can write $\frac{d_i^2}{(d_i + \lambda)^2} \leq \frac1\lambda \min(\lambda, \frac{d_i}{4})$ which proves the second inequality. 
 \end{proof}
+
+We can now ask ourselves if kernel ridge regression is optimal in any sense. To this end, we define $\hat \mu_i \ceq d_i / n$ and $\lambda_n \ceq \lambda/n$. Then we can rewrite the upper bound from our precious theorem as
+
+\[
+\MSPE \leq \frac{\sigma^2}{n \lambda_n} \sum_{i=1}^n \min(\frac{\hat \mu_i}{4}, \lambda_n) + \frac{\lambda_n}{4} \eqqcolon \delta_n(\lambda_n).  
+\]
+
+Now, instead of taking $x_1, \dotsc, x_n \in \XX$ to be fixed, assume that they are i.i.d.\ random variables (then $K$ is random, so the $\hat\mu_i$ are random as well), and taking an expectation on both sides yields
+\[
+\EE[\MSPE] \leq \EE[\delta_n(\lambda_n)]. 
+\]
+
+We want to bound $\delta_n(\lambda_n)$ by some function of $n$. For this we will use Mercer's theorem:
+\begin{theorem}[Mercer]
+	Let $\XX = [a, b]$. If $k$ is a continuous kernel on $\XX$, then there exists an orthonormal basis $(e_i)$ of $L^2[a, b]$ such that
+	\[
+	k(x, x') = \sum_{j=1}^\infty \mu_j e_j(x) e_j(x')
+	\]
+	as well as a sequence of nonnegative eigenvalues $(\mu_j)$ such that
+	\[
+	\int_a^b k(x, x') e_j(x) \dd{x} = \mu_j e_j(x). 
+	\]
+\end{theorem}
+
+Applying Mercer's theorem to $k$, it can be proved that for some $C> 0$ we have
+\[
+\EE\qty[\frac1n \sum_{i=1}^n \min(\frac{\hat \mu_i}{4}, \lambda_n)] \leq \frac Cn \sum_{i=1}^\infty \min(\frac{\mu_i}{4}, \lambda_n).
+\]
+
+\begin{example}
+	Let $k$ be the Sobolev kernel. Then the eigenvalues satisfy 
+	\[
+	\frac{\mu_j}{4} = \frac{1}{\pi^2(2j - 1)^2}, 
+	\]
+	and with some calculations it can be shown that $\sum_{i=1}^\infty \min(\frac{\mu_i}{4}, \lambda_n) = O(\sqrt{\lambda_n})$ as $\lambda_n \to 0$. Combining this with the rest of the bound shows
+	\[
+	\EE[\delta_n(\lambda_n)] = O\qty(\frac{\sigma^2}{n} \lambda_n^{-1/2} + \lambda_n). 
+	\]
+	The optimal scaling $\lambda_n \sim (\sigma^2/n)^{2/3}$ gives an error rate of order $(\sigma^2/n)^{2/3}$. 
+	
+	It has been shown that this is in fact the optimal rate for estimating a function $f^0 \in \HH$ (up to multiplicative constants). 
+\end{example}
+
+\subsection{Other kernel machines}
+
+\subsubsection{The support vector machine}
+Consider a \emph{classification problem} with data $x_1, \dotsc, x_n \in \RR^p$ and binary response $Y_i \in \qty{\pm 1}$. Furthermore assume that $x_1, \dotsc, x_n$ are separated by a hyperplane through the origin, that is, for some  $\beta \in \RR^p$ we have $Y_i x_i\T \beta > 0$ for all $i$. 
+
+To choose between different planes that separate the classes, we pick the hyperplane with the highest margin: that is, we compute
+\[
+\max_{\beta \in \RR^p, M \geq 0} M \qquad\text{such that } \frac{Y_i x_i\T\beta}{\norm{\beta}} \geq M \quad (i = 1,\dotsc, n). 
+\]
+When the classes are not separable, we can penalise according to the distance of a point ``over the margin''. The penalty should be 0 if $x$ is on the correct side and should equal the distance over the boundary otherwise, measured in units of $M$. In this case, by considering minimisation of $1/M^2$ instead of maximisation of $M$ we find
+\[
+\argmin_{M \geq 0, \beta \in \RR^p} \frac1{M^2} + \lambda \sum_{i=1}^n \qty(1 - \frac{Y_i x_i\T \beta}{\norm{\beta} M})_+. 
+\]
+Since the above equation is independent of the norm of $\beta$, we may set $\norm{\beta} = 1/M$ and remove $M$ from the equation entirely, thus obtaining
+\[
+\argmin_{\beta \in \RR^p} \norm{\beta}^2 + \lambda \sum_{i=1}^n (1 - Y_i x_i\T \beta)_+.
+\]
+Replacing $\lambda$ by $\frac1\lambda$ and multiplying the equation with $\lambda$ we obtain
+\[
+\argmin_{\beta \in \RR^p} \sum_{i=1}^n (1 - Y_i x_i\T \beta)_+ + \lambda \norm{\beta}^2. 
+\]
+Finally, if we lift the restriction that the hyperplane must go through the origin, we find the objective function
+\begin{equation} \label{eq:support_vector_classifier}
+(\hat \mu, \hat\beta) = \argmin_{\mu \in \RR, \beta \in \RR^p} \sum_{i=1}^n (1 - Y_i (x_i\T\beta + \mu))_+ + \lambda  \norm{\beta}^2. 
+\end{equation}
+The solution to this problem is known as the \emph{support vector classifier}.  
+
+\paragraph{Introducing kernels}
+Now we introduce kernels to the problem. Letting $k$ be the linear kernel and $\HH$ the corresponding RKHS, we can rewrite \cref{eq:support_vector_classifier} as
+\[
+(\hat \mu, \hat f) = \argmin_{\mu \in \RR, f \in \HH} \sum_{i=1}^n (1 - Y_i\T (f(x_i) + \mu))_+ + \lambda \norm{f}^2.
+\]
+Suppose we change $\HH$ to a different RKHS with a different kernel $k$. By a variant of the representer theorem (Example Sheet 1, question 10) the solution is equivalent to
+\[
+(\hat\mu, \hat\alpha) = \argmin_{\mu \in \RR, \alpha \in \RR^n} \sum_{i=1}^n (1 - Y_i (K_i\T \alpha + \mu))_+ + \lambda \alpha\T K\alpha, 
+\]
+and the solution to the above problem is called the \emph{support vector machine}.  Predictions at a new point $x^*$ are given by
+\[
+\sign(\hat\mu + \sum_{i=1}^n \hat\alpha_i k(x^*, x_i)) \in \pm 1. 
+\]
+\begin{remark}
+Note that the support vector machine can correspond to a nonlinear boundary: the boundary is a hyperplane \emph{in the corresponding RKHS}, but can be nonlinear in the space $\XX$ where the data points live. This also makes it easy to overfit. 
+\end{remark}
