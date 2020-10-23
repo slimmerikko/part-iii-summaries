@@ -550,3 +550,70 @@ and the solution to the above problem is called the \emph{support vector machine
 \begin{remark}
 Note that the support vector machine can correspond to a nonlinear boundary: the boundary is a hyperplane \emph{in the corresponding RKHS}, but can be nonlinear in the space $\XX$ where the data points live. This also makes it easy to overfit. 
 \end{remark}
+
+\subsubsection{Logistic regression}
+\begin{recap}
+	The \emph{standard logistic regression} model is motivated by assuming 
+	\[
+	\log\qty(\frac{\PP(Y_i = 1)}{\PP(Y_i = -1)}) = x_i\T \beta^0. 
+	\]
+	The maximum-likelihood estimator $\hat\beta$ is given by (Example sheet 2, question 4)
+	\[
+	\hat\beta \ceq \argmin_{\beta \in \RR^p} \sum_{i=1}^n \log\qty(1 + \exp(- Y_i x_i\T\beta)). 
+	\]
+\end{recap}
+
+Just like in ridge regression, we will try to lower the variance of $\hat\beta$ by penalising large values, i.e.,
+\begin{align*}
+\hat\beta_\lambda &\ceq \argmin_{\beta \in \RR^p} \sum_{i=1}^n\log(1 + \exp(-Y_i x_i\T\beta)) + \lambda \norm{\beta}^2 \\
+&= \argmin_{f \in \HH} \sum_{i=1}^n \log(1 + \exp(- Y_i f(x_i))) + \lambda \norm{f}^2,
+\end{align*}
+where $\HH$ is the RKHS corresponding to the linear kernel. 
+
+Note that this is exactly the same as the support vector machine, but with a different loss function. The loss function in the support vector machine is called ``hinge loss'', while the loss function in logistic regression is called ``logistic loss''. The main differences are:
+\begin{enumerate}
+	\item The logistic loss function increases much quicker for incorrectly classified data. 
+	\item Even when a point is correctly classified, the logistic loss function decreases the further the datapoint is from the boundary. The hinge loss function will always be 0 if a point is correctly classified and lies outside of the margin.
+\end{enumerate}
+
+The second point also explains the name \emph{support vector machine}: the only points that contribute to the loss function are those that either violate the boundary of are within the margin (the \emph{support vectors}), and perturbing any of the other points does not change the boundary. Because of this property, SVM's tend to be more stable. 
+
+\subsection{Large scale kernel machines}
+We have seen that kernels give very flexible regression and classification estimators, and that the parameter $\lambda$ helps us with the bias-variance tradeoff. Also, when $p \gg n$, using the kernel matrix saves computational effort. 
+
+We now turn to the case $n \gg p$. In this case, both kernel ridge regression and the SVM are very expensive to compute: the former has cost $O(n^3)$, while the latter can be computed using an iterative algorithm where every iteration has cost $O(n^2)$. 
+
+One approach to speed this process up is that of \emph{random feature maps}: we develop a random map $\hat\phi \colon \XX \to \RR^b$ (with $b$ small) such that $\EE[\hat\phi(x)\T\hat\phi(x')] = k(x, x')$ for all $x, x' \in \XX$. Then we consider $L$ i.i.d.\ copies of $\hat\phi$ (denotes $\hat\phi_1, \dotsc, \hat\phi_n$), and we consider the feature map
+\[
+\psi(x) = L^{-1/2} (\hat\phi_1(x), \dotsc, \hat \phi_L(x))\T \in \RR^{Lb}, \text{ so that } \psi(x)\T\psi(x') = \frac1L \sum_{i=1}^L \hat\phi_i(x)\T \hat\phi_i(x'). 
+\]
+Letting $\Phi$ be the matrix with rows $\psi(x_1)\T, \dotsc, \psi(x_n)\T$, we find that $\EE(\Phi\Phi\T)_{ij} = k(x_i, k_j)$, and that $\Var(\Phi\Phi\T)_{ij}$ decreases with speed $L^{-1}$. So $\Phi\Phi\T$ is a good approximation for $K$ when $L$ is moderately large.  
+
+One specific example for shift-invariant kernels ($k(x, x') = h(x - x')$ for all $x, x' \in \XX$) is based on the work of Rahimi and Recht. 
+\begin{theorem}[Bochner]
+	Let $k \colon \RR^p \times \RR^p \to \RR$ be a continuous kernel. Then $k$ is shift-invariant if and only if, for some $c > 0$ and some distribution $F$ on $\RR^p$, it holds for all $W \sim F$ that
+	\[
+	k(x, x') = c \EE\qty[ \exp(i(x - x')\T W)] = c\EE\qty[ \cos((x - x')\T W)]. 
+	\]
+\end{theorem}
+
+To make use of this theorem, we let $u \sim U[-\pi, \pi]$, and it can then be computed (using $u \overset d= -u$ and $\cos(u) \overset d= \sin(u)$ that
+\[
+2\EE\qty[\cos(x + u) \cos(y + u)] = \cos(x - y).  
+\]
+Therefore, given a shift-invariant kernel $k$ with associated distribution $F$, we define for $W \sim F$ the feature map
+\[
+\hat\phi(x) = \sqrt{2c} \cos(W\T x + u) \in \RR, 
+\]
+so that
+\[
+\EE\hat\phi(x) \hat\phi(x') = 2c \EE\qty[ \EE[ \cos(W\T x + u)\cos(W\T x' + u) \mid W]] = c \EE \cos((x - x\T)W) = k(x, x'). 
+\]
+
+\begin{example}
+	Let $k$ be the Gaussian kernel $k(x, x') = e^{-\norm{x - x'}/(2\sigma^2)}$. Let $W \sim N(0, \sigma^{-2}I)$, then using the characteristic function of a normal distribution we find that
+	\[
+	\EE\qty(e^{i(x - x')\T W}) = \exp(- \norm{x - x'}^2/(2\sigma^2)) = k(x, x'), 
+	\]
+	so we can set $c = 1$, i.e., define the feature map $\hat\phi(x) = \sqrt 2 \cos(W\T x + u)$. 
+\end{example}
