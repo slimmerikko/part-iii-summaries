@@ -539,7 +539,7 @@ Now we introduce kernels to the problem. Letting $k$ be the linear kernel and $\
 \[
 (\hat \mu, \hat f) = \argmin_{\mu \in \RR, f \in \HH} \sum_{i=1}^n (1 - Y_i\T (f(x_i) + \mu))_+ + \lambda \norm{f}^2.
 \]
-Suppose we change $\HH$ to a different RKHS with a different kernel $k$. By a variant of the representer theorem (Example Sheet 1, question 10) the solution is equivalent to
+Suppose we change $\HH$ to a different RKHS with a different kernel $k$. By a variant of the representer theorem (Example Sheet 1, question 9) the solution is equivalent to
 \[
 (\hat\mu, \hat\alpha) = \argmin_{\mu \in \RR, \alpha \in \RR^n} \sum_{i=1}^n (1 - Y_i (K_i\T \alpha + \mu))_+ + \lambda \alpha\T K\alpha, 
 \]

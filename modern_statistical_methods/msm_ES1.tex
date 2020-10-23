@@ -52,6 +52,7 @@
 \newcommand{\EE}{\Bb E}
 
 \newcommand\XX{\Cal X}
+\newcommand\HH{\Cal H}
 
 % Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
 % For other delimiters: use \qty from the physics package (i.e., \qty(...))
@@ -68,6 +69,7 @@
 \newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
 \newcommand\restr{\mathord\restriction}
 \newcommand\TODO{{\color{red} TODO: }}
+\renewcommand\P{^\perp}
 
 % Functions that appear frequently
 \DeclareMathOperator{\sign}{sign}
@@ -249,7 +251,7 @@ Let $x_1, \dotsc, x_n \in \Cal X$ and define the positive definite matrix $K^{(m
 	\[
 	\phi \colon (-\infty, 1) \to \RR \colon x \mapsto (1-x)^{-\alpha}. 
 	\]
-	Then $\phi$ is continuous, and we can compute its Taylor series around 0. It is computed that 
+	Then $\phi$ is smooth, and we can compute its Taylor series around 0. It is computed that 
 	\[
 	\phi^{(k)}(x) = (1-x)^{-\alpha - k} \prod_{j=0}^{k-1}(\alpha + j) \implies \phi^{(k)}(0) = \prod_{j=0}^{k-1} (\alpha + j). 	\]
 	Therefore, the Taylor series of $\phi$ is given by
@@ -319,19 +321,46 @@ Since $K$ and $(K + \lambda)^{-1}$ are simultaneously diagonalisable, they commu
 \end{solution}
 
 \begin{question}
-	...
+	Consider minimising
+	\[
+	c(Y, X, f(x_1) + \mu, \dotsc, f(x_n) + \mu) + J(\norm{f}^2_\HH),
+	\]
+	over $f \in \HH$ and $\mu \in \RR$ where $\HH$ is an RKHS. Here $c$ is an arbirary loss function and $J$ is strictly increasing. Let $k$ be the reproducing kernel of $\HH$. Show that any minimiser $\hat g(\cdot) = \hat f(\cdot) + \hat \mu$ may be written as
+	\[
+	\hat g(\cdot) = \hat \mu + \sum_{i=1}^n \hat\alpha_i k(\cdot, x_i)
+	\]
+	where $\hat\alpha_i \in \RR$ for $i = 1, \dotsc, n$. 
 \end{question}
 
 \begin{proof}
-	content...
+	As in the proof of the representer theorem, we project $f$ onto $U = \Span\qty{k(\cdot, x_1), \dotsc, k(\cdot, x_n)}$, and find that the problem is equivalent to finding
+	\[
+	\argmin_{u \in U, \mu \in \RR} c(Y, X, u(x_1) + \mu, \dotsc, u(x_n) + \mu) + J(\norm{u}^2),
+	\]
+	and writing $u = \sum_{i=1}^n \alpha_i k(\cdot, x_i)$, we find that any minimiser $\hat g$ satisfies
+	\[
+	\hat g(\cdot) = \hat \mu +  \sum_{i=1}^n \hat\alpha_i k(\cdot, x_i)
+	\]
+	as required. 
 \end{proof}
 
 \begin{question}
-	...
+	This question proves a result needed for Theorem 7 in the notes. Let $\HH$ be a RKHS of functions on $\XX$ with reproducing kernel $k$ and suppose $f^0 \in \HH$. Let $x_1, \dotsc, x_n \in \XX$ and let $K$ be the kernel matrix $K_{ij} = k(x_i, x_j)$. Show that
+	\[
+	\qty(f^0(x_1), \dotsc, f^0(x_n))\T = K\alpha,
+	\]
+	for some $\alpha \in \RR^n$ and moreover that $\norm{f^0}^2_\HH \geq \alpha\T K\alpha$. 
 \end{question}
 
 \begin{proof}
-	...
+	Let $U = \Span\qty{k(\cdot, x_1), \dotsc, k(\cdot, x_n)}$. Then we have $f^0 = u + v$ for some $u \in U, v \in U\P$, and writing $u = \sum_{m=1}^n \alpha_m k(\cdot, x_m)$ we see that 
+		\[
+	f^0(x_i) = \ang{k(\cdot, x_i), u + v} = \ang{k(\cdot, x_i), u} = u(x_i) = \sum_{m=1}^n \alpha_m k(x_i, x_m) = (K\alpha)_i,
+	\]
+	and from this it follows immediately that 
+	\[
+	\norm{f^0}^2 = \norm{u}^2 + \norm{v}^2 \geq \norm{u}^2 = \sum_{i, j} \alpha_i \alpha_j k(x_i, x_j) = \alpha\T K\alpha. 
+	\]
 \end{proof}
 
 \begin{question}
@@ -351,4 +380,32 @@ Since $K$ and $(K + \lambda)^{-1}$ are simultaneously diagonalisable, they commu
 	\]
 	Since this is a nonnegative combination of positive semidefinite matrices, we conclude that $K$ is positive semidefinite. 
 \end{solution}
+
+\begin{question}
+	Let $\HH$ be a RKHS with reproducing kernel $k$. Show that if $h_x \in \HH$ has the property that $\ang{h_x, f} = f(x)$ for all $f \in \HH$, then $h_x(\cdot) = k(\cdot, x)$. 
+\end{question}
+
+\begin{proof}
+	For any $y \in \XX$ we have
+	\[
+	h_x(y) = \ang{k(\cdot, y), h_x} = \ang{h_x, k(\cdot, y)} = k(x, y) = k(y, x),
+	\]
+	from which it follows that $h_x(\cdot) = k(\cdot, x)$. 
+\end{proof}
+
+\begin{question}
+	Prove that if $k$ is a reproducing kernel for RKHS's $\HH_1$ and $\HH_2$, then $\HH_1 = \HH_2$, so the RKHS is uniquely determined by $k$. \emph{Hint: First argue that it is enough to show the result for $\HH_1 \subseteq \HH_2$. Next consider decomposing each $f \in \HH_2$ as $f = u+ v$ with $u \in \HH_1, v \in \HH_1\P$ and argue that $v = 0$. }
+\end{question}
+
+\begin{proof}
+	Without loss of generality we can assume $\HH_1 = \HH$, where $\HH$ is the RKHS constructed in the proof of Theorem 5, so $\HH$ is the completion of $\Span\qty{k(\cdot, x) \mid x \in \XX}$. Now we can embed $\HH$ into $\HH_2$ by mapping $k(\cdot, x)$ to $k_x$. Clearly this mapping respects the inner product by construction, so this is a linear embedding. Therefore, we may assume $\HH_1 \subseteq \HH_2$. 
+	
+	Now suppose $\HH_1 \subseteq \HH_2$ and decompose each $f \in \HH_2$ as $f = u + v$ with $u \in \HH_1$, $v \in \HH_1\P$. By the previous question we know that for every $x$ there exists a unique $k_x$ with $\ang{k_x, f} = f(x)$ for all $f$, and clearly we have $k_x \in \HH_1$. 
+	
+	Then for each $f \in \HH_2, x \in \XX$ we have (since $k_x \in \HH_1$) that
+	\[
+	f(x) = \ang{k_x, f} = \ang{k_x, u} + \ang{k_x, v} = \ang{k_x, u} = u(x),
+	\]
+	which implies $v = 0$. Since this is the case for every $f \in \HH_2$, we conclude that $\HH_1\P = 0$ and therefore $\HH_1 = \HH_2$ (since Hilbert spaces are closed). 
+\end{proof}
 \end{document}

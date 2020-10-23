@@ -125,7 +125,7 @@
 	\emph{and note that} $(N+1)! \sum_{\abs{\alpha} = N+1} \frac{h^\alpha}{\alpha!} = (h_1 + \dotsb + h_n)^{N+1}$. 
 \end{question}
 
-\begin{solution}
+\begin{proof}
 	Since $\phi \in \DD(X)$, we know that $\supp\phi \subseteq \clos{B_N}$ for some $N \in \NN$. Now, suppose $\norm{h} < 1$, then
 	\[
 	\phi(x+h) \neq 0 \implies \norm{x + h} \leq N \implies \norm{x} \leq \norm{x + h} + \norm{h} \leq N + 1, 
@@ -156,5 +156,108 @@ and we conclude that
 \frac{\sup_x \abs{\pt^\beta R_N(x, h)}}{\norm{h}^N} \leq \frac{C(\abs{h_1} + \dotsb + \abs{h_n})^{N+1}}{\norm{h}^N} \leq \frac{C N^{N+1} \norm{h}^{N+1}}{\norm{h}^N} = CN^{N+1} \norm{h} \to 0, 
 \]
 and therefore that $\pt^\beta R_N(x, h) = o(\norm{h}^n)$ for all multi-indices $\beta$. 
+\end{proof}
+
+\begin{question}
+	Which elements of $\DD(X)$ can be represented as a power series on $X$? 
+\end{question}
+
+\begin{solution}
+	It is known that if two power series agree on an open set, they agree on the entire space. Since every $\phi \in \DD(X)$ is identically zero on some open set (outside its support), the only element of $\DD(X)$ with a power series representation is the zero function. 
+\end{solution}
+
+\begin{question}
+	Prove the $C^\infty$ Urysohn lemma: if $K$ is a compact subset of $X \subseteq \RR^n$, show that one can find a $\phi \in \DD(X)$ such that $0 \leq \phi \leq 1$ and $\phi = 1$ on a neighborhood of $K$. 
+\end{question}
+
+\begin{solution}
+	Let $K \subseteq U_1$. Define $U_2 \ceq U_1 + B(0, 1)$ and let $\chi = \ind_{U_2}$. Now let $\psi \in \DD(\RR^n)$ satisfy $\int_{\RR^n} \psi \dd{x} = 1$ and $\supp\psi \subseteq B(0, 1)$. The we compute
+	\begin{align*}
+		(\chi * \psi)(x) &= \int_{\RR^n} \chi(y) \psi(x - y) \dd{y} = \int_{U_2} \psi(x - y) \dd{y}.
+	\end{align*}
+	Clearly, $\chi * \psi \in \DD(X)$, and furthermore, we have for $x \in U_1$ that
+	\[
+	\int_{U_2} \psi(x - y) \dd{y} = \int_{U_2 - x} \psi(z) \dd{z} \overset\star= 1,
+	\]
+	since $B(0, 1) \subseteq U_2 - x$. This proves the claim.
+\end{solution}
+
+\begin{question}
+	Given $T \in \DD'(X)$, the derivative $\pt^\alpha T$ is defined by
+	\[
+	\ang{\pt^\alpha T, \phi} = (-1)^\abs{\alpha} \ang{T, \pt^\alpha\phi} \quad \forall \phi \in \DD(X). 
+	\]
+	Show that $\pt^\alpha T \in \DD'(X)$. If $\ord(T) = m$ what can you say about $\ord(\pt^\alpha T)$? 
+\end{question}
+
+\begin{proof}
+	Let $K \subseteq X$ be compact and $\phi \in \DD(X)$. Since $T$ is a distribution, we know that there exists constants $C, N$ such that
+	\[
+	\abs{\ang{T, \phi}} \leq C \sum_{\abs{\beta} \leq N} \sup \abs{\pt^\beta \phi}. 
+	\]
+	
+	Letting $M \ceq \abs{\alpha}$, we find
+		\begin{align*}
+		\abs{\ang{\pt^\alpha T, \phi}} &= \abs{\ang{T, \pt^\alpha\phi}} \leq C \sum_{\abs{\beta} \leq N} \sup \abs{\pt^{\alpha + \beta}\phi} \leq C \sum_{\abs{\beta} \leq M + N} \sup \abs{\pt^\beta \phi}.
+	\end{align*}
+We conclude that $\pt^\alpha T$ is a distribution, and that if $\ord(T) = m$, $\ord(\pt^\alpha T) \leq m + \abs{\alpha}$. 
+\end{proof}
+
+\begin{question}
+	Given $T \in \DD'(X)$ and $f \in C^\infty(X)$, prove that for each multi-index $\alpha$
+	\[
+	\pt^\alpha(Tf) = \sum_{\beta \leq \alpha} \binom{\alpha}{\beta} \pt^\beta f \pt^{\alpha - \beta}T
+	\]
+	in $\DD'(X)$. 
+\end{question}
+
+\begin{proof}
+	Let $\phi \in \DD(X)$, then by definition we have $\ang{\pt^\alpha(Tf), \phi} = \ang{T, (-1)^\abs{\alpha} f \pt^\alpha\phi}$. Approximate $T$ by a sequence $(\psi_n) \subseteq \DD'(X)$, then we find
+	\begin{align*}
+	\ang{T, (-1)^{\abs{\alpha}} f \pt^\alpha\phi} &= \lim_{n\to\infty} \ang{\psi_n,  (-1)^{\abs{\alpha}} f \pt^\alpha\phi} = \lim_{n\to\infty}  (-1)^{\abs{\alpha}} \int_X \psi_n(x) f(x) \pt^\alpha\phi(x) \dd{x} \\
+	&= \lim_{n\to\infty} \int_X \pt^\alpha (\psi_n(x) f(x)) \phi(x) \dd{x} \\
+	&= \lim_{n\to\infty} \int_X \qty(\sum_{\beta \leq \alpha} \binom\alpha\beta\pt^\beta f(x) \cdot \pt^{\alpha - \beta} \psi_n(x)) \phi(x) \dd{x} \\
+	&= \lim_{n\to\infty} \sum_{\beta \leq \alpha} \binom\alpha\beta \ang{\pt^\beta f \pt^{\alpha - \beta} \psi_n, \phi} =  \lim_{n\to\infty} \sum_{\beta \leq \alpha} \binom\alpha\beta (-1)^{\abs{\alpha - \beta}} \ang{\psi_n, \pt^\beta f \pt^{\alpha - \beta} \phi} \\
+	&= \sum_{\beta \leq \alpha} \binom\alpha\beta (-1)^{\abs{\alpha - \beta}} \ang{T, \pt^\beta f \pt^{\alpha - \beta} \phi} = \sum_{\beta \leq \alpha} \binom\alpha\beta \ang{\pt^\beta f \pt^{\alpha - \beta} T, \phi} \\
+	&= \ang*{\sum_{\beta \leq \alpha} \binom{\alpha}{\beta} \pt^\beta f \pt^{\alpha - \beta}T, \phi}. 
+	%&= \lim_{n\to\infty} \ang*{\sum_{\abs{\beta} \leq \abs{\alpha}} \binom\alpha\beta \pt^\beta f\cdot \pt^{\alpha - \beta} \psi_n, \phi} = \lim_{n\to\infty} \sum_{\abs{\beta} \leq \abs{\alpha}
+	\end{align*}
+\end{proof}
+
+\begin{question}
+	Let $(x_k)$ be a sequence in $X$ with no limit point in $X$. Consider the family of linear maps
+	$u_\alpha \colon \DD(X) \to \CC$ defined by 
+	\[ \ang{u_\alpha, \phi} = \sum_{k=1}^\infty \pt^\alpha \phi(x_k)
+	 \]
+	 for each multi-index $\alpha$. For what $\alpha$ is $u_\alpha \in \DD'(X)$? What is $\ord(u_\alpha)$? 
+\end{question}
+
+\begin{solution}
+	Let $K \subseteq X$ be compact. Since $(x_k)$ does not have a limit point, only finitely many of the $x_k$ lie in $K$ (otherwise $(x_k)$ would have a subsequence contained in $K$ which would have a convergent subsequence). Without loss of generality, assume that $x_1, \dotsc, x_n \in K$, and $x_{n+1}, x_{n+2}, \dotsc, \notin K$. Now, for any $\phi \in \DD(X)$ with $\supp(\phi) \subseteq K$ we find
+	\begin{align*}
+		\abs{\ang{u, \phi}} &= \abs{\sum_{k=1}^\infty \pt^\alpha\phi(x_k)} = \abs{\sum_{k=1}^n \pt^\alpha\phi(x_k)} \leq \sum_{k=1}^n \abs{\pt^\alpha \phi(x_k)} \leq n \cdot \sup \abs{\pt^\alpha\phi} \leq n \cdot \sum_{\abs{\beta} \leq \abs{\alpha}} \sup \abs{\pt^\beta \phi}. 
+	\end{align*}
+	This shows that $u_\alpha \in \DD'(X)$ for any $\alpha$, with $\ord(u_\alpha) \leq \abs{\alpha}$. We claim that this is an equality, i.e., $\ord(u_\alpha) = \abs{\alpha}$. \TODO How to show??
+\end{solution}
+
+\begin{question}
+	Find the most general solution to the equations
+	\begin{enumerate}[(a)]
+		\item $u'  = 1$,
+		\item $xu' = \delta_0$,
+		\item $(e^{2\pi i x} - 1)u' = 0$
+	\end{enumerate}
+	in $\DD'(\RR)$. 
+\end{question}
+
+\begin{solution}
+	Let $\phi \in \DD(X)$. 
+	\begin{enumerate}[(a)]
+		\item If $u' = 1$ then we find 
+		\[
+		\int_\RR \phi(x) \dd{x} = \ang{1, \phi} = \ang{u', \phi} = -\ang{u, \phi'},
+		\]
+		so for any $c \in \RR$ we find by partial integration $\ang{u, \phi'} = - \int_\RR\phi(x) \dd{x} = \int_\RR (x + c) \phi'(x) \dd{x}$. From this we deduce that $u = x + c$ for some $c$. 
+	\end{enumerate}
 \end{solution}
 \end{document}
