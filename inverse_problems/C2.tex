@@ -6,7 +6,7 @@ Let $A \in \BB(\XX, \YY)$ such that $\Ran(A)$ is not closed (this happens for ex
 	\[
 	\lim_{\alpha \to 0} R_\alpha f = A\D f \quad\text{for all $f \in \Dom(A\D)$}. 
 	\]
-	If all $R_\alpha$ are linear, then we speak of a \emph{linear regularisation} of $A\D$. 
+	If all $R_\alpha$ are linear (\TODO and bounded?), then we speak of a \emph{linear regularisation} of $A\D$. 
 \end{definition}
 
 \begin{theorem}[Banach-Steinhaus]
@@ -43,12 +43,14 @@ Let $A \in \BB(\XX, \YY)$ such that $\Ran(A)$ is not closed (this happens for ex
 \end{proof}
 
 We need some process to choose a parameter. To this end, note that we have
-\[
+\begin{equation} \label{eq:error_terms}
 \norm{R_\alpha f_\delta - A\D f} \leq \norm{R_\alpha (f_\delta - f)} + \norm{(R_\alpha - A\D) f} \\
-\leq  \norm{R_\alpha} \norm{f_\delta - f} + \norm{f} \norm{R_\alpha - A\D}. 
-\]
-The first term is called the \emph{data error} and is unbounded for $\alpha \to 0$, and the second term is called the \emph{approximation error} which does vanish for $\alpha \to 0$. Therefore, we want to choose $\alpha$ small enough to have a low approximation error, while keeping the data error at bay. We define this formally:
+\leq  \delta \norm{R_\alpha} +\norm{(R_\alpha - A\D) f}  . 
+\end{equation}
+The first term is called the \emph{data error} and is unbounded for $\alpha \to 0$, and the second term is called the \emph{approximation error} which does vanish for $\alpha \to 0$. Therefore, we want to choose $\alpha$ small enough to have a low approximation error, while keeping the data error at bay. 
 
+
+\subsection{Parameter choice rules}
 \begin{definition}
 	A function $\alpha \colon  \RR_{> 0} \times \YY \to \RR_{> 0} \colon (\delta, f_\delta) \mapsto \alpha(\delta, f_\delta)$ is called a \emph{parameter choice rule} (PCR). We distinguish three types:
 	\begin{enumerate}
@@ -64,7 +66,133 @@ The first term is called the \emph{data error} and is unbounded for $\alpha \to 
 	\lim_{\delta \to 0} \sup_{f_\delta : \norm{f - f_\delta} \leq \delta} \norm{R_\alpha f_\delta - A\D f} = 0
 	\]
 	and
-	\[
+	\begin{equation} \label{eq:alpha_to_0}
 	\lim_{\delta \to 0} \sup_{f_\delta : \norm{f - f_\delta} \leq \delta} \alpha(\delta, f_\delta) = 0. 
-	\]
+	\end{equation}
 \end{definition}
+
+\subsubsection{A priori parameter choice rules}
+
+We will not prove the following theorem, which guarantees the existence of a priori PCRs: 
+\begin{theorem}
+	Let $(R_\alpha)_{\alpha > 0}$ be a regularisation of $A\D$. Then there exists an a priori PCR $\alpha = \alpha(\delta)$ such that $(R_\alpha, \alpha)$ is convergent. 
+\end{theorem}
+
+We can characterise PCRs in the following way:
+\begin{theorem}
+	Let $(R_\alpha)_{\alpha > 0}$ be a linear regularisation of $A\D$, and $\alpha = \alpha(\delta)$ an a priori PCR. Then $(R_\alpha, \alpha)$ is convergent if and only if
+	\[
+	\lim_{\delta \to 0} \delta \norm{R_{\alpha(\delta)}} = 0 \quad\text{and}\quad \lim_{\delta\to 0} \alpha(\delta) = 0. 
+	\]
+\end{theorem}
+
+\begin{proof}
+	``$\implies$'' Suppose $(R_\alpha, \alpha)$ is convergent. It is clear that $\lim_{\delta \to 0} \alpha(\delta) = 0$ by \cref{eq:alpha_to_0}. Suppose $\lim_{\delta\to 0} \delta \norm{R_{\alpha(\delta)}} \neq 0$. Then there exists a sequence $(\delta_k) \to 0$ and a constant $C > 0$ such that $\delta_k \norm{R_{\alpha(\delta_k)}} \geq C$ for all $k$. This implies we can find a sequence $(g_k) \subseteq \YY$ with $\norm{g_k} = 1$ and $\delta_k \norm{R_{\alpha(\delta_k)}g_k} \geq C$ for all $k$. 
+	
+	Now let $f \in \Dom(A\D)$ and define $f_k \ceq f + \delta_k g_k$, then clearly we have $f_k \to f$, but also
+	\[
+	C \leq \norm{R_{\alpha(\delta_k)}(\delta_k g_k)} = \norm{R_{\alpha(\delta_k)}(f_{\delta_k} - f)} \leq \norm{R_{\alpha(\delta_k)}f_{\delta_k} - A\D f} + \norm{(R_{\alpha(\delta_k)} - A\D) f}.
+	\]
+	In particular we find that $\norm{(R_{\alpha(\delta_k)} - A\D) f} \geq C$, so clearly $R_\alpha$ is not convergent. 
+	
+	``$\impliedby$'' This follows immediately from \cref{eq:error_terms}. 
+\end{proof}
+
+A problem with a priori PCRs is that they are scale-invariant: if $\alpha = \alpha(\delta)$ gives a convergent regularisation, then $\hat\alpha = \alpha(k\delta)$ also gives a convergent regularisation for any $k$. In practice, it is not always clear which scale should be chosen.
+
+\subsubsection{A posteriori parameter choice rules}
+Let $f \in \Dom(A\D)$ and $f_\delta$ s.t.\ $\norm{f- f_\delta} \leq \delta$. Letting $u\D$ denote the minimum-norm solution of the problem $Au = f$, and defining $\mu \ceq \norm{Au\D - f} = \inf_{u \in \XX} \norm{Au - f}$, we see that
+\[
+\norm{Au\D - f_\delta} \leq \norm{Au\D - f} + \norm{f - f_\delta} \leq \mu + \delta. 
+\]
+Therefore, it is not useful to choose $\alpha(\delta, f_\delta)$ with $\norm{Au_\alpha - f_\delta} < \mu + \delta$: if this is the case, we are most likely overfitting. 
+
+This motivates \emph{Morozov's discrepancy principle}: 
+
+\begin{definition}
+	Let $(R_\alpha)$ be a (\TODO linear?) regularisation of $A\D$ and assume $\Ran(A)$ is dense in $\YY$. Fix $\eta > 1$, and define
+	\[
+	\alpha(\delta, f_\delta) = \sup\qty{\alpha > 0 : \norm{A R_{\alpha} f_\delta - f_\delta} \leq \eta\delta}.
+	\]
+	Then $\alpha(\delta, f_\delta)$ is said to satisfy \emph{Morozov's discrepancy principle}. 
+\end{definition}
+
+It can be shown that the above $\alpha$ indeed gives a convergent regularisation.
+
+\subsubsection{Heuristic parameter choice rules}
+Heuristic parameter choice rules unfortunately only work if the original problem was well-posed:
+\begin{theorem}[Bakushinskii]
+	Let $(R_\alpha)$ be a regularisation of $A\D$ and suppose there exists a heuristic parameter choice rule $\alpha$ such that $(R_\alpha, \alpha)$ is convergent. Then $A\D$ is continuous from $\YY$ to $\XX$. 
+\end{theorem}
+
+\subsection{Spectral regularisation}
+We will now start with specific examples of regularisations. Spectral regularisations are derived from the spectral decomposition
+\[
+A\D f = \sum_{j=1}^\infty \sigma_j^{-1} \ang{f, y_j} x_j. 
+\]
+We construct a regularisation by replacing $\sigma_j^{-1}$ by some function $g_\alpha(\sigma_j)$, i.e.,
+\begin{equation} \label{eq:spectral_reg}
+R_\alpha f = \sum_{j=1}^\infty g_\alpha(\sigma_j) \ang{f, y_j} x_j. 
+\end{equation}
+Let us explore which conditions $g_\alpha$ must satisfy: 
+
+\begin{theorem} \label{thm:spectral_reg}
+	Let, for $\alpha > 0$, the function $g_\alpha \colon \RR_{>0} \to \RR_{>0}$ satisfy
+	\begin{enumerate} \itemsep=0em
+		\item $\lim_{\alpha \to 0} g_\alpha(\sigma) = \frac1\sigma$ for all $\sigma > 0$;
+		\item $g_\alpha(\sigma) \leq C_\alpha$ for some $C_\alpha > 0$; 
+		\item $\sup_{\alpha, \sigma}  \sigma g_\alpha(\sigma) \leq \gamma$ for some $\gamma > 0$. 
+	\end{enumerate}
+	Then collection $(R_\alpha)$ defined by \cref{eq:spectral_reg} is a linear regularisation of $A\D$, and in particular, we have $\norm{R_\alpha} \leq C_\alpha$. 
+\end{theorem}
+
+\begin{proof}
+	From condition 2 it follows that all $R_\alpha$ are bounded. Since 
+	\[\ang{f, y_j} = \ang{P_{\clos{\Ran(A)}} f, y_j} = \ang{AA\D f, y_j} = \ang{A\D f, A^* y_j} = \sigma_j \ang{u\D, x_j},\]
+	we compute
+	\[
+	(R_\alpha - A\D) f = \sum_j (g_\alpha(\sigma_j) - \sigma_j)^{-1} \ang{f, y_j} x_j = \sum_j (\sigma_j g_\alpha(\sigma_j) - 1) \ang{u\D, x_j} x_j, 
+	\]
+	and since $\sigma g_\alpha(\sigma_j) \leq \gamma$, we have $(\sigma_j g_\alpha(\sigma_j) - 1)^2 \leq 1 + \gamma^2$, so that 
+	\[
+	\norm{(R_\alpha - A\D) f}^2 \leq (1 + \gamma^2) \norm{u\D}^2 < \infty. 
+	\]
+	
+	Since $\norm{(R_\alpha - A\D) f}$ is finite, we may apply the reverse Fatou lemma to the sum and obtain
+	\[
+	\limsup_{\alpha \to 0} \norm{(R_\alpha - A\D)f}^2 \leq \sum_j \qty(\sigma_j \limsup_{\alpha \to 0} g_\alpha(\sigma_j) - 1)^2 \ang{u\D, x_j}^2 = 0,
+	\]
+	and therefore $R_\alpha f \to A\D f$ as $\alpha \to 0$. 
+\end{proof}
+
+\begin{example}
+	The first, very simple example is the \emph{truncated SVD}: we simply define
+	\[
+	g_\alpha(\sigma) = \begin{cases} 1/\sigma &\sigma \geq \alpha, \\ 0 &\sigma < \alpha. \end{cases}
+	\]
+	It is easy to check that $g_\alpha$ satisfies the conditions of \cref{thm:spectral_reg}, and that all $R_\alpha$ are finite-rank operators with $\norm{R_\alpha} \leq \frac1\alpha$. Therefore, if we choose $\alpha = \alpha(\delta)$ such that $\delta/\alpha(\delta) \to 0$, then we obtain a convergent regularisation. 
+	
+	This also highlights the problem with this method: as $\delta$ gets smaller, we need more and more singular vectors which are generally expensive to compute. 
+\end{example}
+
+\begin{example}
+	The second example is \emph{Tikhonov regularisation}. Here, we define $g_\alpha(\sigma) = \frac{\sigma}{\sigma^2 + \alpha}$, and again it is easily checked that the conditions of \cref{thm:spectral_reg} are satisfied, noting that
+	\[
+	\frac{\sigma}{\sigma^2 + \alpha} \leq \frac{\sigma}{2 \sigma \sqrt{\alpha}} = \frac{1}{2\sqrt\alpha} \eqqcolon C_\alpha. 
+	\]
+	Therefore, if $\delta/\sqrt{\alpha(\delta)} \to 0$, the regularisation is convergent. 
+	
+	This method does not require computing the SVD of $A$: it is easily shown that $u_\alpha \ceq R_\alpha f$ is the unique solution to the \emph{regularised normal equation}
+	\[
+	(A^*A + \alpha I) u_\alpha = A^* f. 	
+	\]
+	
+	While $A^* A + \alpha I$ is always invertible, computing the inverse is expensive, so we usually use some approximation of the inverse.
+	
+	
+	Finally, it can also be shown that 
+	\[
+	u_\alpha = \min_{u \in \XX} \norm{A u - f}^2 + \alpha \norm{u}^2,
+	\]
+	so we can also view $u_\alpha$ as the solution of an optimisation problem. 
+\end{example}

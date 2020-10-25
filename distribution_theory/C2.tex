@@ -1,0 +1,96 @@
+\section{Distributions with compact support}
+\begin{definition}
+	Let $Y \subseteq X$ be open and $u \in \DD'(X)$. We say that $u$ \emph{vanishes} on $Y$ if $\ang{u, \phi} = 0$ for all $\phi \in \DD(Y)$. 
+\end{definition}
+
+\begin{definition}
+	For $u \in \DD'(X)$, we define the \emph{support} of $u$ as
+	\[
+	\supp u \ceq X \setminus \bigcup\qty{Y \subseteq X \mid Y \text{ open}, u \text{ vanishes on $Y$}}. 
+	\]
+\end{definition}
+For example, the support of $\delta_x$ is simply $\qty{x}$. 
+
+\subsection{Test functions and distributions}
+We will now consider a bigger space of test functions, which yields a smaller space of distributions. 
+\begin{definition}
+	We define $\EE(X)$ as the space of smooth functions $\phi \colon X \to \CC$. We say that a sequence $(\phi_m) \subseteq \EE(X)$ converges to 0 if $\pt^\alpha\phi \to 0$ uniformly on compact subsets of $X$ for every multi-index $\alpha$. 
+\end{definition}
+
+\begin{definition}
+	We define 
+	%the space of \emph{distributions with compact support}, denoted 
+	$\EE'(X)$ as the space of linear maps $u \colon \EE(X) \to \CC$ for which there exists a compact $K \subseteq X$ and nonnegative constants $C, N$ such that
+	\begin{equation} \label{eq:dist_compact_support}
+	\abs{\ang{u, \phi}} \leq C \sum_{\alpha \leq N} \sup_K \abs{\pt^\alpha\phi}
+	\end{equation}
+	for all $\phi \in \EE(X)$. 
+\end{definition}
+
+\begin{lemma}[Sequential continuity] \label{lem:seq_continuity_compact_support}
+	Let $u \colon \EE(X) \to \CC$ be a linear map. Then $u \in \EE'(X)$ if and only if, for every sequence $(\phi_m) \subseteq \EE(X)$ with $\phi_m \to 0$, we have $\ang{u, \phi_m} \to 0$. 
+\end{lemma}
+
+\begin{proof}
+	\TODO
+\end{proof}
+
+\begin{lemma}
+	If $u \in \EE'(X)$, then $u\restr_{\DD(X)}$ defines an element of $\DD'(X)$ with compact support and finite order. 
+	
+	Conversely, for each $u \in \DD'(X)$ with compact support there exists a unique extension $\tilde u \in \EE'(X)$ with $\supp(\tilde u) = \supp(u)$ and $\tilde u\restr_{\DD(X)} = u$. 
+\end{lemma}
+
+\begin{proof}
+	Let $u \in \EE'(X)$, so that there exists a compact $K \subseteq X$ with $\abs{\ang{u, \phi}} \leq C \sum_{\abs{\alpha} \leq N} \sup_K \abs{\pt^\alpha \phi}$. 
+	Now, for any compact $K' \subseteq X$ and any $\phi$ with $\supp\phi \subseteq K'$, \cref{eq:seminorm_cond} is clearly satisfied, and we can use the same $N$ for all compact $K'$, so clearly $u\restr_{\DD(X)}$ is an element of $\DD'(X)$ with finite order.
+	Finally, suppose $\phi$ is supported in $X \setminus K$, then it is clear that $\ang{u, \phi} = 0$, which proves that $\supp u \subseteq K$ and therefore that $u$ has compact support.
+	
+	Now suppose $u \in \DD'(X)$ has compact support, let $\rho \in \DD(X)$ be 1 in a neighbourhood of $\supp u$, and define $\tilde u \in \EE'(X)$ by
+	\[
+	\ang{\tilde u, \phi} \ceq \ang{u, \rho\phi} \quad\forall \phi \in \EE(X). 
+	\]
+	Clearly $\tilde u$ is an element of $\EE'(X)$ since $\supp(\rho\phi) \subseteq \supp\rho$ and 
+	\[
+	\abs{\ang{\tilde u, \phi}} = \abs{\ang{u, \rho\phi}} \leq C \sum_{\abs{\alpha} \leq N} \sup_{\supp(\rho)} \abs{\pt^\alpha(\rho \phi)} \overset\star\leq C' \sum_{\abs{\alpha} \leq N} \sup_{\supp\rho} \abs{\pt^\alpha\phi},
+	\]
+	where $\star$ follows from the Leibniz rule. It is also clear that $\supp \tilde u = \supp u$. 
+	
+	Finally we will show uniqueness: suppose $\tilde v$ is an extension of $u$ with $\supp \tilde v = \supp u$, and write any $\phi \in \EE(X)$ as $\phi = \rho\phi + (1-\rho)\phi = \phi_0 + \phi_1$. Then since $\phi_0 \in \DD(X)$ and $\phi_1$ vanishes on a neighbourhood of $\supp u$, we find
+	\[
+	\ang{\tilde v, \phi} = \ang{\tilde v, \phi_0 + \phi_1} = \ang{\tilde v, \phi_0} = \ang{u, \phi_0},
+	\]
+	which is independent of choice of extension. 
+\end{proof}
+
+\subsection{Convolution between $\EE'(\RR^n)$ and $\DD'(\RR^n)$}
+\begin{definition}
+	Define for $u \in \EE'(\RR^n), \phi \in \EE(\RR^n)$ the \emph{convolution}
+	\[
+	(u * \phi)(x) = \ang{u, \tau_x \refl\phi}. 
+	\]
+\end{definition}
+This convolution satisfies the same properties as the convolution between $\DD'(\RR^n)$ and $\DD(\RR^n)$. 
+Also, if $\phi \in \DD(\RR^n)$, then $u * \phi \in \DD(\RR^n)$. 
+
+\begin{definition}
+	Let $u, v \in \DD'(\RR^n)$, at least one of which has compact support, define $u * v \colon \DD(\RR^n) \to \EE(\RR^n)$ by
+	\[
+	(u * v) * \phi = u * (v * \phi) \quad \forall \phi \in \DD(\RR^n). 
+	\]
+\end{definition}
+We will show (example sheet 2, question 1) that $u * v$ is uniquely defined and gives rise to an element of $\DD'(\RR^n)$ via $\ang{u * v, \phi} \ceq [(u * v) * \refl\phi](0)$. 
+
+\begin{lemma}
+	Given $u, v \in \DD'(\RR^n)$, at least one of which has compact support, we have $u * v = v * u$. 
+\end{lemma}
+
+\begin{proof}
+	First we note that $(u * \phi) * \psi = u * (\phi * \psi)$ holds if $u$ has compact support and at least one of $\phi, \psi$ has compact support. 
+	
+	Fix $\phi, \psi \in \DD(\RR^n)$, we see from our earlier shown properties that 
+	\begin{align*}
+	(u * v) * (\phi * \psi) &= u * \qty(v * (\phi * \psi)) = u * ((v * \phi) * \psi) = u * (\psi * (v * \phi)) = (u * \psi) * (v * \phi).
+	\end{align*}
+	If we interchange $u$ and $v$ in the above, that is equivalent to interchanging $\phi$ and $\psi$, which we know must yield the same result. This shows $u * v$ and $v * u$ agree on $\phi * \psi$ for all $\phi, \psi \in \DD(\RR^n)$, and from this it follows that $u * v = v * u$ (\TODO why?).
+\end{proof}

@@ -72,8 +72,8 @@ A special case of the previous example is the case $M = 0$: in this case the dis
 \]
 Henceforth we will abuse notation: if $f \in \locint(X)$, then we will write $f$ instead of $\tau_f$, i.e., $\ang{f, \phi} = \int_X f\phi \dd{x}$. 
 
-\begin{lemma}
-    Let $u \colon \DD(X) \to \CC$ be a linear map. Then $u$ is a distribution if and only if, for every sequence $(\phi_j) \subseteq \DD(X)$ with $\phi_j \to 0$ as in \cref{def:test_convergence}, we have $\ang{u, \phi_m} \to 0$. 
+\begin{lemma}[Sequential continuity] \label{lem:seq_continuity}
+    Let $u \colon \DD(X) \to \CC$ be a linear map. Then $u$ is a distribution if and only if, for every sequence $(\phi_m) \subseteq \DD(X)$ with $\phi_m \to 0$ as in \cref{def:test_convergence}, we have $\ang{u, \phi_m} \to 0$. 
 \end{lemma}
 
 \begin{proof}
