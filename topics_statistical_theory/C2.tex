@@ -42,10 +42,10 @@ We can express the MSE in terms of convolutions:
 	\]
 \end{definition}
 We can compute 
-\begin{align*}
-\Bias \hat f_n(x) &= \EE[\hat f_n(x)] - f(x) = \EE[K_h(x - X_1)] - f(x) = \int_\RR  K_h(x - z) f(z) \dd{z} \\
-&= (K_h * f)(x) - f(x). 
-\end{align*}
+\begin{align}
+\Bias \hat f_n(x) &= \EE[\hat f_n(x)] - f(x) = \EE[K_h(x - X_1)] - f(x) = \int_\RR  K_h(x - z) f(z) \dd{z} \nonumber \\
+&= (K_h * f)(x) - f(x) \label{eq:bias_computation}. 
+\end{align}
 
 Analogously, letting $\xi_i \ceq K_h(x - X_i)$ (note that these are i.i.d.\ random variables), we have
 \begin{equation} \label{eq:variance_computation}
@@ -67,7 +67,7 @@ We now aim to find bounds on the bias and the variance of $\hat f_n$ in order to
 	For a kernel $K$, define $R(K) \ceq \int_\RR K^2(u) \dd{u}$. 
 \end{definition}
 
-\begin{proposition}
+\begin{proposition} \label{prop:variance_bound}
 	Let $\hat{f_n}$ be the kernel density estimator with kernel $K$ and bandwidth $h > 0$ constructed from $X_1, \dotsc, X_n \iid f$. Then for any $x \in \RR, h > 0, n \in \NN$ we have
 	\[
 	\Var \hat f_n(x) \leq \frac{1}{nh} \norm{f}_\infty R(K). 
@@ -81,3 +81,78 @@ We now aim to find bounds on the bias and the variance of $\hat f_n$ in order to
 	&\leq \frac1{nh} \norm{f}_\infty \int_\RR K^2(u) \dd{u} = \frac{1}{nh} \norm{f}_\infty R(K). 
 	\end{align*}
 \end{proof}
+
+Obtaining a bound on the bias is not at all straightforward: we wil need to introduce conditions on both the density $f$ and the kernel $k$. 
+\begin{definition}
+	Let $I \subseteq \RR$ be an interval, fix $\beta, L > 0$, and let $m \ceq \ceil{\beta} - 1$. A function $f \colon \RR \to \RR$ is said to belong to the \emph{Hölder class} $\HH(\beta, L)$ if $f$ is $m$ times differentiable on $I$ and
+	\[
+	\abs{f^{(m)}(x) - f^{(m)}(y)} \leq L \abs{x - y}^{\beta - m} \quad\text{for all $x, y \in I$}. 
+	\]
+	If $I$ is unspecified, we let $I = \RR$. 
+	
+	The densities in $\HH(\beta, L)$ are denoted by
+	\[
+	\FF(\beta, L) \ceq \qty{f \in \HH(\beta, L) \mid f \geq 0 \text{ and } \int_\RR f \dd{x} = 1}. 
+	\]
+\end{definition}
+
+\begin{definition}
+	Fix $\ell \in \NN$. We say a kernel $k$ is of \emph{order} $\ell$ if $\int_\RR x^j k(x) \dd{x} =0 $ for $j = 1, \dotsc, \ell - 1$. 
+\end{definition}
+
+\begin{remark}
+	Most kernels used in practice are of order 2. Note that a kernel of order $\geq 3$ cannot be nonnegative, since we have $\int_\RR x^2k(x) \dd{x} = 0$. Therefore, the kernels are not themselves densities and the corresponding kernel density estimate is not guaranteed to be a density. 
+\end{remark}
+
+\begin{proposition} \label{prop:bias_bound}
+	Assume that $f \in \FF(\beta, L)$ and that $k$ is a kernel of order $\ell \ceq \ceil{\beta}$, and furthermore assume that
+	\[
+	\mu_\beta(k) \ceq \int_\RR \abs{u}^\beta \abs{k(u)} \dd{u} < \infty. 
+	\]
+	Then the kernel density estimate with bandwidth $h$ and kernel $k$ based on $X_1, \dotsc, X_n \sim f$ satisfies
+	\[
+	\abs{\Bias \hat f_n(x)} \leq \frac{L}{(\ell - 1)!} \mu_\beta(k) h^\beta \quad\text{for all $x \in \RR, h > 0, n \in \NN$}. 
+	\]
+\end{proposition}
+
+\begin{proof}
+	By \cref{eq:bias_computation}, we have 
+	\[
+	\Bias \hat f_n(x) = \frac1h \int_\RR k\qty(\frac{x - z}{h}) f(z) \dd{z} - f(x) = \int_\RR k(u)\qty( f(x - uh) - f(x)) \dd{x}. 
+	\]
+	By applying Taylor's theorem with the Lagrange remainder we obtain, with $m = \ceil{\beta} - 1$, that
+	\[
+	f(x - uh) - f(x) = \sum_{j=1}^{m-1} \frac{(-uh)^j}{j!} f^{(j)}(x) + \frac{(-uh)^m}{m!} f^{(m)}(x - \tau u h) \quad\text{for some $\tau \in [0, 1]$}. 
+	\]
+	Since $\int_\RR u^j k(u) \dd{u} = 0$ for all $j \leq m$, plugging the sum into the integral will give 0. Therefore, we find
+	\[
+	\Bias \hat f_n(x) =  \frac{(-h)^m}{m!} \int_\RR u^m k(u) f^{(m)}(x - \tau uh) \dd{u} = \frac{(-h)^m}{m!} \int_\RR u^m k(u) \qty[f^{(m)}(x - \tau uh)
+- f^{(m)}(x)] \dd{u},	\]
+	where the last inequality follows again from the fact that $k$ is of order $m + 1$. 
+	
+	Now we use that $f \in \FF(\beta, L)$, and conclude
+	\[
+	\abs{\Bias \hat f_n(x)} \leq \frac{Lh^m}{m!} \int_\RR \abs{u}^m \abs{k(u)} \abs{\tau u h}^{\beta - m} \dd{u} \leq \frac{Lh^\beta}{m!} \int_\RR \abs{u}^\beta \abs{k(u)} \dd{u} = \frac{L}{(\ell - 1)!} \mu_\beta(k) h^\beta,
+	\]	
+	which concludes the proof. 
+\end{proof}
+
+Combining \cref{prop:variance_bound,prop:bias_bound}, we find that
+\[
+\MSE \hat f_n(x) \leq \frac{1}{nh} R(k) \norm{f}_\infty + \frac{L^2}{((\ell - 1)!)^2} \mu^2_\beta(k) h^{2\beta}. 
+\]
+By minimising this w.r.t.\ $h$, we find that the optimal $h$ is given by
+\[
+h_n^* = \qty(\frac{((\ell - 1)!)^2 \norm{f}_\infty R(k)}{2\beta L^2 \mu_\beta^2(k)})^{1/(2\beta + 1)} n^{-1/(2\beta + 1)}, 
+\]
+and the corresponding $\MSE$ is given by
+\[
+\MSE \hat f_n(x) \leq C n^{-2\beta/(2\beta + 1)},
+\]
+where $C$ is independent of $n$. This bound on the rate is slower than the $O(1/n)$ rate found in parametric problems, but such a rate is only obtained when the assumed model is correct. 
+
+\subsection{Bounds on the integrated variance and bias}
+To bound the MISE, we will give bounds on the integrated variance and bias. 
+\begin{proposition}
+	Let $\hat{f_n}$ denote the kernel density estimate with bandwidth $h$ and kernel $k$ based on $X_1, \dotsc, X_n \iid P$ (where $P$ is a distribution on $\RR$). Then 
+\end{proposition} 

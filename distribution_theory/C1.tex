@@ -293,6 +293,16 @@ We would like to interchange integral and application of $u$, and we will have t
 Here, $*$ is by the fact that the sum is finite since $\psi$ has compact support, while $**$ is by sequential continuity of $u$ and the fact that the Riemann sum converges to the convolution integral \emph{in the space of test functions} (non-examinable fact). 
 \end{proof}
 
+We will use the following trick many times:
+\begin{proposition}
+	For any $u \in \DD'(\RR^n), \phi \in \DD(\RR^n)$ we have $\ang{u, \phi} = (u * \refl\phi)(0)$. 
+\end{proposition}
+
+\begin{proof}
+	We have $(u * \refl\phi)(0) = \ang{u, \tau_0 \phi} = \ang{u, \phi}$. 
+\end{proof}
+For example, from this trick it follows that if $u * \phi = 0$ for all $\phi$, then $u = 0$. 
+
 \begin{theorem}
 	If $u \in \DD'(\RR^n)$, there exists a sequence $(\phi_k) \subseteq \DD(\RR^n)$ such that $\phi_k \to u$ in $\DD'(\RR^n)$. 
 \end{theorem}
@@ -306,7 +316,7 @@ Here, $*$ is by the fact that the sum is finite since $\psi$ has compact support
 	\]
 	Clearly we have $\phi_k \in \DD(\RR^n)$ since each $\chi_k$ has compact support. 
 	
-	Note that $\ang{u, \phi} = (u * \refl\phi)(0)$ by definition. Now, take any $\theta \in \DD(\RR^n)$, then we have
+	Now, take any $\theta \in \DD(\RR^n)$, then we have
 	
 	\begin{align*}
 		\ang{\phi_k, \theta} &= \ang{\chi_k (u * \psi_k), \theta} = \ang{u * \psi_k, \chi_k \theta} = \qty[ (u * \psi_k) * \refl{\chi_k\theta}](0) \\

@@ -50,6 +50,8 @@
 \newcommand{\QQ}{\Bb Q}
 \newcommand{\RR}{\Bb R}
 \newcommand{\EE}{\Bb E}
+\newcommand\ZZ{\Bb Z}
+\newcommand\FF{\Cal F}
 
 % Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
 % For other delimiters: use \qty from the physics package (i.e., \qty(...))
@@ -89,6 +91,7 @@
 \DeclareMathOperator\Dom{\Cal D}
 \DeclareMathOperator\Nul{\Cal N}
 \DeclareMathOperator\Ran{\Cal R}
+\DeclareMathOperator\diag{diag}
 
 \title{Inverse Problems --- Example Sheet 1} % subject
 \author{Lucas Riedstra}
@@ -97,6 +100,9 @@
 \begin{document}
 \maketitle
 
+\begin{mdframed}
+		Note: when writing a norm of a vector $v \in V$, I will simply write $\norm{v}$ and not $\norm{v}_V$, unless it is unclear in which space $v$ lives. The same holds for inner products. 	
+\end{mdframed}
 \begin{question}
 	For $\Omega = [0, 1]^2$ and $\XX \in L^2(\Omega)$, we consider the integral operator $A \colon \XX \to \XX$ with
 	\[
@@ -117,7 +123,7 @@
 \end{question}
 
 \begin{solution}
-	Note: when writing a norm of a vector $v \in V$, I will simply write $\norm{v}$ and not $\norm{v}_V$, unless it is unclear in which space $v$ lives. The same holds for inner products. 	
+
 	
 	\begin{enumerate}[(a)]
 		\item Let $\alpha, \beta \in \RR$, $u, v \in L^2(\Omega)$ and $y \in \Omega$. Then we have
@@ -147,11 +153,19 @@ Taking square roots on both sides we find that $\norm{Au}\leq \norm{k}\norm{u}$,
 \end{align*}
 where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ follows from Fubini's theorem (\TODO justify). 
 
-\item It is known that for any compact set $X \subseteq \RR^n$, polynomials lie dense in $L^2(X)$. Therefore, there exists a sequence of polynomials $p_n$ such that $p_n \to k$ in $L^2(\XX)$. 
+\item It is known that for any compact set $X \subseteq \RR^n$, polynomials lie dense in $L^2(X)$. Therefore, there exists a sequence of polynomials $p_n$ such that $p_n \to k$ in $L^2([0, 1]^4)$. It is easily seen that for any polynomial $p$, the operator
+\[
+(A_p u)(y) \ceq \int_\Omega p(x, y) u(x) \dd{x} 
+\] 
+has finite rank: let $p(z) = \sum_{\abs{\alpha} \leq n} c_\alpha z^\alpha$ (where $z \in [0, 1]^4$ and $\alpha$ is a multi-index), then we find
+\[
+(A_p u)(y) = \sum_{\abs{\alpha} \leq n} c_\alpha \int_\Omega x_1^{\alpha_1} x_2^{\alpha_2} y_1^{\alpha_3} y_2^{\alpha_4} u(x) \dd{x} = \sum_{\abs{\alpha} \leq n} c_\alpha \qty(\int_\Omega x_1^{\alpha_1} x_2^{\alpha_2} \dd{x}) y_1^{\alpha_3} y_2^{\alpha_4},
+\]
+so $A_p u$ lies in the $\Span\qty{y_1^{\alpha_1} y_2^{\alpha_2} \mid \alpha_1 + \alpha_2 \leq n}$, and therefore has finite rank. 
+By (b), we find that $\norm{A - A_n} \leq \norm{k - p_n} \to 0$, which shows that $A_n \to A$ in operator norm. We conclude that $A$ is compact. 
 %\[
 %(A_n u)(y) \ceq \int_\Omega p_n()
 %\]
- \TODO Finish
 	\end{enumerate}
 \end{solution}
 
@@ -188,7 +202,7 @@ where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ f
 		f_n(y) \ceq (Au_n)(y) = \int_0^y u_n(x) \dd{x} = \begin{cases}
 			0 &\text{if $y < \frac12 - \frac1n$,}\\
 			\frac n2(y - \frac12 + \frac1n) &\text{if $\frac12 - \frac1n \leq y \leq \frac12 + \frac1n$} \\
-			1 &\text{ if $y > \frac12 + \frac1n$}. 
+			1 &\text{if $y > \frac12 + \frac1n$}. 
 		\end{cases}
 		\]
 		
@@ -205,9 +219,11 @@ where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ f
 	%\[
 	%(A s_n)(y) = \int_0^y s_n(x) \dd{x} = \sqrt 2 \int_0^y \sin(nx) \dd{x} = \frac{\sqrt 2}{n} \qty(1 - \cos(ny)) = \frac{\sqrt 2}{n} c_0(y) - \frac1n c_n(y) 
 	%\]
-	\item To apply the Picard criterion we must find the singular values and right singular vectors of $A$, which are equal to the square roots of the eigenvalues of $AA^*$ and the eigenvectors of $AA^*$. 
+	\item 	Note that $A$ is compact, since we can write $(Au)(y) = \int_{[0, 1]} k(x, y) u(x) \dd{x}$ with $k(x, y) = \ind_{x \leq y}$. 
 	
-	Note that 
+	To apply the Picard criterion we must find the singular values and right singular vectors of $A$, which are equal to the square roots of the eigenvalues of $AA^*$ and the eigenvectors of $AA^*$. 
+	
+
 	\begin{align*}
 		\ang{Au, v} &= \int_0^1 (Au)(y)\cdot v(y) \dd{y} \\
 		&= \int_0^1 \int_0^y u(x) \dd{x} v(y) \dd{y} \\
@@ -218,8 +234,110 @@ where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ f
 	\end{align*}
 where $v(x) = \int_x^1 v(y) \dd{y}$.  Therefore, we find
 \begin{align*}
-	(AA^* u)(x) = \int_0^y \int_x^1 u(x) \dd{x} \dd{y}
+	(AA^* u)(x) = \int_0^x \int_y^1 u(z) \dd{z} \dd{y}.
 \end{align*}
+Now we solve the eigenequation. Firstly, note that $\Nul(A) = \qty{0}$, so let $\lambda^2 > 0$. Then we have
+\begin{align}
+	\int_0^x \int_y^1 u(z) \dd{z} \dd{y} &= \lambda^2 u(x) \\
+	\int_x^1 u(z) \dd{z} &= \lambda^2 u'(x) \\
+	- u(x) &= \lambda^2 u''(x). 
+\end{align}
+Furthermore, from (1) we infer $u(0) = 0$ while from (2) we infer $u'(1) = 0$. 
+The general solution to (3) is given by $u(x) = a \cos(\lambda^{-1} x) + b \sin(\lambda^{-1} x)$. 
+Plugging $u(0) = 0$ gives $a = 0$, and $u'(1) = 0$ gives
+\[
+b\lambda^{-1} \cos(\lambda^{-1}) = 0 \implies b = 0 \text{ or } \lambda^{-1} = \pi\qty(n - \frac12) \text{ for some $n \in \ZZ_{>0}$}.
+\]
+
+Our singular values are therefore $\frac{1}{(n - \frac12)\pi}$ ($n \in \ZZ_{>0}$) with right singular vectors $y_n(x) = \sqrt 2\sin((n - \frac12) \pi x)$. 
+We now compute
+\[
+\ang{f, y_n} = \sqrt 2\int_{1/2}^1 \sin(\qty(n - \frac12) \pi x) \dd{x} = ...
+\]
+
+\item The Moore-Penrose inverse of $A$ is discontinuous. This can be seen by theorem 2.1.11: in (a) we have constructed a sequence $(f_n) \subseteq \Ran(A)$ that converges, and in (b) we have shown that its limit lies outside of $\Ran(A)$. Therefore, $\Ran(A)$ is not closed, so $A\D$ is discontinuous. 
+
+\end{enumerate}
+\end{solution}
+
+\begin{question}
+	\begin{enumerate}[(a)]
+		\item 
+
+	Let $m, n \in \NN$ with $m \geq n \geq 2$. Compute the Moore-Penrose inverses of the following matrices:
+	\begin{enumerate}[(i)]
+		\item $A = (1, 1, \dotsc, 1) \in \RR^{1 \times n}$;
+		\item $A = \diag(a_1, \dotsc, a_n) \in \RR^{n \times n}$ with $a_j \in \RR$ for $j = 1, \dotsc, n$;
+		\item $A \in \RR^{m \times n}$ with $A\T A = I_n$. 
+	\end{enumerate}
+
+\item Let $a, b \in \RR$ with $a < b$. Compute the Moore-Penrose inverse of the operator $A \colon L^2([a, b]) \to \RR$ with $Au = \int_a^b u(x) \dd{x}$. 
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[(a)]
+		\item \begin{enumerate}[(i)]
+			\item Clearly $\Ran(A) = \RR$ and $\Nul(A)\P = \Span\qty{\vec e}$ where $\vec e$ is the all-ones vector. So $A\D$ must map $x \in \RR$ to $\vec e/n$, and therefore we have
+			\[
+			A\D = \vec e/n \in \RR^{n \times 1}.
+			\]
+			
+			\item Clearly we have $\Ran(A) = \Span\qty{\vec e_j \mid a_j \neq 0} = \Nul(A)\P$ while $\Ran(A)\P = \Span\qty{\vec e_j \mid a_j = 0} = \Nul(A)$. 
+			
+			It is easily seen that
+			\[
+			A\D = \diag(b_1, \dotsc, b_n) \in \RR^{n \times n}, \quad\text{where } b_i = \begin{cases}
+				a_i^{-1} &\text{if $a_i \neq 0$}; \\
+				0 &\text{if $a_i = 0$}. 
+			\end{cases}
+			\]
+			
+			\item If $A\T A = I$, then the columns $\vec u_1, \dotsc, \vec u_n$ of $A$ are orthogonal. In particular, $A$ is injective (so $\Nul(A) = \qty{0}$) and $\Ran(A) = \Span\qty{\vec u_1, \dotsc, \vec u_n}$. Extend $\vec u_1, \dotsc, \vec u_n$ to an orthonormal basis $\vec u_1, \dotsc, \vec u_m$ of $\RR^m$, then we must have
+			\[
+			A\D\qty(\sum_{i=1}^m \alpha_i \vec u_i) = \mqty(\alpha_1 \\ \vdots \\ \alpha_n) \in \RR^n.
+			\]
+			From this expression it is easily seen that $A\D = A\T$. 
+		\end{enumerate}
+	
+	\item Clearly we have $\Ran(A) = \RR$ while $\Nul(A) = \qty{u \mid \int_a^b u(x) \dd{x} = 0}$. It is also easily seen that 
+	\[
+	\Nul(A)\P = \qty{v \mid \int_a^b v(x) u(x) \dd{x} = 0 \text{ if $\int_a^b u(x) \dd{x} = 0$}} = \Span\qty{1}. 
+	\]
+	
+	Therefore we simply have that $A\D$ maps a constant $c \in \RR$ to the constant function $\frac{c}{b-a}$. 
 	\end{enumerate}
 \end{solution}
+
+\begin{question}
+	Many forward problems are either modelled as convolutions or they are modelled as the composition of several components, one of which is a convolution. Therefore convolutions play an important role in inverse problems. As in Exercise 1, let $\Omega =[0, 1]^2$ be the unit square and let $\XX = L^2(\Omega)$. A convolution is the special case of an integral operator $A \colon \XX \to \XX$ where the kernel has a simple structure: 
+	\[
+	(Au)(y) \ceq \int_\Omega k(y - x) u(x) \dd{x},
+	\]
+	for $k \in L^2(\Omega)$. It follows easily from Exercise 1 that $A$ is linear and bounded. 
+	\begin{enumerate}[(a)]
+		\item Although shown in general in Exercise 1, give an explicit form for the adjoint of the convolution. 
+		\item Let $f = Au$. It follows from the convolution theorem that a convolution can be inverted by means of the Fourier transform
+		\begin{equation} \label{eq:fourier}
+		u = (2\pi)^{-\frac n2} \FF^{-1} \qty(\frac{\FF(f)}{\FF(k)}),
+		\end{equation}
+		where $\FF$ is the Fourier transform and $\FF^{-1}$ its inverse. Implement this formula in \emph{MATLAB} to deblur the blurry tree image $f$ generated by the script \verb|ex4b_generate_data.m|. Note that the script also outputs $\FF(k)$. Add some noise to the data and show that the inversion formula is ill-conditioned.
+		
+		Hint: Make use of the \emph{MATLAB} commands \verb|fft2| and \verb|ifft2|. 
+		
+		\item Reformulate \cref{eq:fourier} so that the denominator is non-negative and give a stable approximation of this formula. Implement this formula in MATLAB and empirically show that it is stable.  
+		
+		Hint: Make use of the \emph{MATLAB} command \verb|conj|. 
+	\end{enumerate}
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}[(a)]
+		\item We have by question 1 that
+		\[
+		(A^* v)(y) = \int_\Omega k(x - y)v(x) \dd{x}.
+		\]
+		\item 
+	\end{enumerate}
+\end{proof}
 \end{document}

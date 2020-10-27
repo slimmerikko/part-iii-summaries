@@ -1,0 +1,52 @@
+\section{The Lasso}
+\subsection{Model selection}
+We go back to the linear model $Y = X\beta^0 + \eps$ with $\EE[\eps] = 0$ and $\Var(\eps) = \sigma^2 I$. Using the trace trick, one can easily compute that the MSPE of the OLS estimator is given by
+\[
+\frac1n \EE\norm{X\beta^0 - X\hat\beta^\Rm{OLS}}_2^2 = \frac{\sigma^2 p}{n}. 
+\]
+Defining $S = \qty{k \mid (\beta^0)_k \neq 0}$, there is often reason to assume that $S$ is small, i.e., $s \ceq \abs{S} \ll p$. If we could fit a model using only the variables in $S$, the MSPE would be much $\frac{\sigma^2 s}{n} \ll \frac{\sigma^2 p}{n}$. 
+
+\paragraph{Best subset selection} A natural way to find $S$ is to consider all possible subsets of $\qty{1, \dotsc, p}$, and pick the best regression procedure using, for example, cross-validation. However, this can become computationally infeasible for moderately large $p$ (say $p \approx 10$). 
+
+\paragraph{Forward selection} This is a greedy way of performing best subset regression. Given a target model size $m$, we first compute the intercept-only model $M_0$, and then one-by-one add the predictor variable that reduces the residual sum of squares the most, until we have a model with $m$ variables. 
+
+\subsection{Lasso estimator}
+The \emph{Least absolute shrinkage and selection operator} or \emph{Lasso} is given by
+\[
+(\hat\mu_\lambda^\Rm{L}, \hat\beta_\lambda^\Rm{L}) \ceq \argmin_{(\mu, \beta) \in \RR \times \RR^p} \frac1{2n}\norm{Y- \mu \vec 1 - X\beta}_2^2 + \lambda \norm{\beta}_1. 
+\]
+As with ridge regression, we usually centre and scale the matrix $X$, as well as centre the responses $Y$, in which case we find
+\[
+\hat\beta_\lambda^\Rm{L} = \argmin_{\beta \in \RR^p} \frac1{2n}\norm{Y - X\beta}_2^2 + \lambda \norm{\beta}_1. 
+\]
+
+The main difference between the lasso estimator and the ridge regression estimator is that it is likely that the lasso estimator has some zero components. This means that the lasso estimator also estimates which variables are relevant. 
+
+We have the following:
+\begin{theorem}[Slow rate]
+	Assume $X$ has centred and scaled columns, and assume that $Y$ has been centred, so $Y = X\beta^0 + \eps - \bar\eps \vec 1$. Let $A > 0$ and suppose
+	\[
+	\lambda = A\sigma\sqrt{\frac{\log(p)}{n}}.
+	\]
+	Let $\hat\beta = \hat\beta_\lambda^\Rm{L}$, then with probability at least $1 - 2p^{-A^2/2 - 1}$ we have that the MSPE satisfies
+	\[
+	\frac1n \norm{X(\beta^0 - \hat\beta)}_2^2 \leq 4\lambda \norm{\beta^0}_1 = 4A\sigma\sqrt{\frac{\log(p)}{n}} \norm{\beta^0}_1. 
+	\]
+\end{theorem}
+
+\begin{proof}
+	By definition we have
+	\[
+	\frac1{2n}\norm{Y - X\hat\beta }_2^2 + \lambda \norm{\hat \beta}_1 \leq \frac1{2n}\norm{Y - X\beta^0}_2^2 + \lambda \norm{\beta^0}_1,
+	\]
+	and rearranging the terms gives
+	\[
+	\frac1{2n} \norm{X(\beta^0 - \hat\beta)}_2^2 \leq\frac1n \eps\T X (\hat\beta - \beta^0) + \lambda\norm{\beta^0}_1 - \lambda \norm{\hat\beta}_1. 
+	\]
+	By H\"older's inequality we have $\abs{\eps\T X(\beta^0 - \hat\beta)} \leq \norm{X\T\eps}_\infty \norm{\hat\beta - \beta^0}_1$. 
+	Define the event \\ $\Omega = \qty{\norm{X\T\eps}_\infty/n \leq \lambda}$, then conditional on $\Omega$ we find
+	\[
+	\frac1{n} \norm{X(\beta^0 - \hat\beta)}_2^2 \leq 2\lambda \qty(\norm{\beta^0 - \hat\beta}_1 + \norm{\beta^0}_1 - \norm{\hat\beta}_1) \leq 4\lambda \norm{\beta^0}_1.
+	\]
+	In (\TODO refer), we will show that $\PP(\Omega) \geq 1 - 2p^{-(A^2/2 - 1)}$, which completes the proof. 
+\end{proof}

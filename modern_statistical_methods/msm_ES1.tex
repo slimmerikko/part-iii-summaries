@@ -297,6 +297,8 @@ Note that we have indexed $\theta$ with two numbers for convenience.
 	We have therefore rewritten $\ang{Z_i, Z_j}$ into something that can be computed in $O(p)$, which is exactly the aim of the kernel trick.
 \end{proof}
 
+¨
+
 \begin{question}
 	Let $\hat\alpha$ be a minimiser of $\norm{Y - K\alpha}^2 + \lambda \alpha\T K\alpha$, with $K$ being a kernel matrix as usual. Show that $K\hat\alpha = K(K + \lambda I)^{-1} Y$. 
 \end{question}
@@ -398,14 +400,19 @@ Since $K$ and $(K + \lambda)^{-1}$ are simultaneously diagonalisable, they commu
 \end{question}
 
 \begin{proof}
-	Without loss of generality we can assume $\HH_1 = \HH$, where $\HH$ is the RKHS constructed in the proof of Theorem 5, so $\HH$ is the completion of $\Span\qty{k(\cdot, x) \mid x \in \XX}$. Now we can embed $\HH$ into $\HH_2$ by mapping $k(\cdot, x)$ to $k_x$. Clearly this mapping respects the inner product by construction, so this is a linear embedding. Therefore, we may assume $\HH_1 \subseteq \HH_2$. 
-	
-	Now suppose $\HH_1 \subseteq \HH_2$ and decompose each $f \in \HH_2$ as $f = u + v$ with $u \in \HH_1$, $v \in \HH_1\P$. By the previous question we know that for every $x$ there exists a unique $k_x$ with $\ang{k_x, f} = f(x)$ for all $f$, and clearly we have $k_x \in \HH_1$. 
-	
-	Then for each $f \in \HH_2, x \in \XX$ we have (since $k_x \in \HH_1$) that
-	\[
-	f(x) = \ang{k_x, f} = \ang{k_x, u} + \ang{k_x, v} = \ang{k_x, u} = u(x),
-	\]
-	which implies $v = 0$. Since this is the case for every $f \in \HH_2$, we conclude that $\HH_1\P = 0$ and therefore $\HH_1 = \HH_2$ (since Hilbert spaces are closed). 
+%	Without loss of generality we can assume $\HH_1 = \HH$, where $\HH$ is the RKHS constructed in the proof of Theorem 5, so $\HH$ is the completion of $\Span\qty{k(\cdot, x) \mid x \in \XX}$. Now we can embed $\HH$ into $\HH_2$ by mapping $k(\cdot, x)$ to $k_x$. Clearly this mapping respects the inner product by construction, so this is a linear embedding. Therefore, we may assume $\HH_1 \subseteq \HH_2$. 
+%	
+%	Now suppose $\HH_1 \subseteq \HH_2$ and decompose each $f \in \HH_2$ as $f = u + v$ with $u \in \HH_1$, $v \in \HH_1\P$. By the previous question we know that for every $x$ there exists a unique $k_x$ with $\ang{k_x, f} = f(x)$ for all $f$, and clearly we have $k_x \in \HH_1$. 
+%	
+%	Then for each $f \in \HH_2, x \in \XX$ we have (since $k_x \in \HH_1$) that
+%	\[
+%	f(x) = \ang{k_x, f} = \ang{k_x, u} + \ang{k_x, v} = \ang{k_x, u} = u(x),
+%	\]
+%	which implies $v = 0$. Since this is the case for every $f \in \HH_2$, we conclude that $\HH_1\P = 0$ and therefore $\HH_1 = \HH_2$ (since Hilbert spaces are closed). 
+Let $U = \HH_1 \cap \HH_2$. By the previous question, we know that $V$ must contain all functions of the form $k(\cdot, x)$. Now, take any $f \in \HH_1$ and write $f = u + v$ with $u \in U$, $v \in U\P$. Then we have
+\[
+v(x) = \ang{v, k(\cdot, x)} = 0 \quad\text{for all $x$}, 
+\]
+so $v = 0$. Therefore we find $f \in V$, so in particular we have $\HH_1 \subseteq V$. Analogously we have $\HH_2 \subseteq V$, which shows $\HH_1 = \HH_2$.
 \end{proof}
 \end{document}

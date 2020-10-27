@@ -49,8 +49,9 @@
 \newcommand{\PP}{\Bb P}
 \newcommand{\QQ}{\Bb Q}
 \newcommand{\RR}{\Bb R}
-\newcommand{\EE}{\Bb E}
+\newcommand{\EE}{\Cal E}
 \newcommand{\DD}{\Cal D}
+\newcommand\ZZ{\Bb Z}
 
 % Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
 % For other delimiters: use \qty from the physics package (i.e., \qty(...))
@@ -258,6 +259,48 @@ We conclude that $\pt^\alpha T$ is a distribution, and that if $\ord(T) = m$, $\
 		\int_\RR \phi(x) \dd{x} = \ang{1, \phi} = \ang{u', \phi} = -\ang{u, \phi'},
 		\]
 		so for any $c \in \RR$ we find by partial integration $\ang{u, \phi'} = - \int_\RR\phi(x) \dd{x} = \int_\RR (x + c) \phi'(x) \dd{x}$. From this we deduce that $u = x + c$ for some $c$. 
+		
+		\item If $xu' = \delta_0$ then we have
+		\[
+		\phi(0) = \ang{\delta_0, \phi} = \ang{xu', \phi} = \ang{u', x\phi} = \ang{u, -(x\phi)'} = \ang{u, -x\phi' - \phi} %=  \ang{u, -x\phi'} + \ang{u, -\phi}. 
+		\]
+		Note that the above is satisfied for $u = - \delta_0 + c$ for any constant $c$. \TODO is this the most general solution?
+		
+		\item Since $e^{2\pi i x} = 1 \iff x \in \ZZ$, intuitively it must be the case that $u'$ is 0, except ``on $\ZZ$'', whatever that may mean. Therefore, we guess that, for any sequence $(\alpha_n)_{n \in \ZZ} \subseteq \CC$ and constant $c \in \CC$, the map \[u = c + \sum_{n \in \ZZ} \alpha_n \ind_{x \geq n}.\] We compute the derivative of $u$. It is easily seen that $u' = \sum_{n \in \ZZ} \alpha_n \delta_n$ (the infiniteness of the sum does not pose a problem since the test functions are compactly supported, so $\ang{u, \phi}$ will always be a finite sum). 
+%		We have for arbirary $\phi$ that
+%		\begin{align*}
+%		\ang{u', \phi} &= - \ang{u, \phi'} = -\int_\RR \sum_{n \in \ZZ} \qty(\alpha_n \ind_{x \geq n}) \phi'(x) \dd{x}	\overset\star= - \sum_{n \in \ZZ} \alpha_n \int_n^\infty \phi'(x) \dd{x} = \sum_{n \in \ZZ} \alpha_n \phi(n),	
+%		\end{align*}
+%	where $\star$ follows from the fact that the sum is finite since $\phi'$ is compactly supported. 
+%	Therefore, we can conclude $u' = \sum_{n \in \ZZ} \alpha_n \delta_n$, and indeed we find
+From this, we see that
+	\[
+	\ang{(e^{2\pi i x} - 1) u', \phi} = \ang{u', (e^{2\pi i x} -1 )\phi} = \sum_{n \in \ZZ} \alpha_n (e^{2\pi i n} - 1) \phi(n) = 0,
+	\]
+	so $u$ satisfies the equation. \TODO Why is this the most general solution? Intuitively clear, but how to make this rigorous?
 	\end{enumerate}
 \end{solution}
+
+\begin{question}
+	Define the distribution $u \in \DD'(\RR^2)$ by the locally integrable function $u(x, y) = \ind_{x \geq y}$. Show that $\pt_x^2   u - \pt_y^2 u = 0$ in $\DD'(\RR^2)$. Can you give a physical interpretation of this result?
+\end{question}
+
+\begin{proof}
+	Let $f \in \DD(\RR^2)$, then we have
+	\begin{align*}
+		\ang{\pt_x^2 u - \pt_y^2 u, f} &= \ang{\pt_x^2 u, f}- \ang{\pt_y^2 u, f} = \ang{u, \pt_x^2 f} - \ang{u, \pt_y^2 f} = \ang{u, \pt_x^2 f - \pt_y^2 f} \\
+		&\overset\star= \int_{-\infty}^\infty \int_{y}^\infty \pt_x^2 f(x, y) \dd{x}\dd{y} - \int_{-\infty}^\infty \int_{-\infty}^x \pt_y^2 f(x, y) \dd{y} \dd{x} \\
+		&= - \int_{-\infty}^\infty \pt_x f(y, y) \dd{y} - \int_{-\infty}^\infty \pt_y f(x, x) \dd{x}
+		\\
+		&= - \int_{-\infty}^\infty (\pt_xf + \pt_yf)(x, x) \dd{x}.
+	\end{align*}
+Here, $\star$ follows from Fubini's theorem. 
+Define $g(x) = f(x, x)$, then it is easily seen that $g'(x) = \pt_x f(x, x) + \pt_y f(x, x)$, so we find that
+\[
+\ang{\pt_x^2 u - \pt_y^2 u, f} = 
+- \int_{-\infty}^\infty g'(x) \dd{x} = \lim_{x\to -\infty} g(x) - \lim_{x\to\infty} g(x) = 0 - 0 = 0. 
+\]
+\end{proof}
+
+This shows that $\pt_x u - \pt_y u = 0$, or equivalently, that $u$ satisfies the wave equation. 
 \end{document}
