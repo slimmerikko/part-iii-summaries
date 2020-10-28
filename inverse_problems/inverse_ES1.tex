@@ -151,7 +151,7 @@ Taking square roots on both sides we find that $\norm{Au}\leq \norm{k}\norm{u}$,
 	&= \int_\Omega\int_\Omega k(x, y) u(x) v(y) \dd{x} \dd{y} \overset\star= \int_\Omega\int_\Omega k(x, y) u(x) v(y) \dd{y} \dd{x} \\
 	&= \int_\Omega u(x) \qty(\int_\Omega k(x, y) v(y) \dd{y}) \dd{x} = \ang{u, A^*v}
 \end{align*}
-where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ follows from Fubini's theorem (\TODO justify). 
+where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ follows from Fubini's theorem.
 
 \item It is known that for any compact set $X \subseteq \RR^n$, polynomials lie dense in $L^2(X)$. Therefore, there exists a sequence of polynomials $p_n$ such that $p_n \to k$ in $L^2([0, 1]^4)$. It is easily seen that for any polynomial $p$, the operator
 \[
@@ -159,7 +159,7 @@ where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ f
 \] 
 has finite rank: let $p(z) = \sum_{\abs{\alpha} \leq n} c_\alpha z^\alpha$ (where $z \in [0, 1]^4$ and $\alpha$ is a multi-index), then we find
 \[
-(A_p u)(y) = \sum_{\abs{\alpha} \leq n} c_\alpha \int_\Omega x_1^{\alpha_1} x_2^{\alpha_2} y_1^{\alpha_3} y_2^{\alpha_4} u(x) \dd{x} = \sum_{\abs{\alpha} \leq n} c_\alpha \qty(\int_\Omega x_1^{\alpha_1} x_2^{\alpha_2} \dd{x}) y_1^{\alpha_3} y_2^{\alpha_4},
+(A_p u)(y) = \sum_{\abs{\alpha} \leq n} c_\alpha \int_\Omega x_1^{\alpha_1} x_2^{\alpha_2} y_1^{\alpha_3} y_2^{\alpha_4} u(x) \dd{x} = \sum_{\abs{\alpha} \leq n} c_\alpha \qty(\int_\Omega x_1^{\alpha_1} x_2^{\alpha_2} u(x) \dd{x}) y_1^{\alpha_3} y_2^{\alpha_4},
 \]
 so $A_p u$ lies in the $\Span\qty{y_1^{\alpha_1} y_2^{\alpha_2} \mid \alpha_1 + \alpha_2 \leq n}$, and therefore has finite rank. 
 By (b), we find that $\norm{A - A_n} \leq \norm{k - p_n} \to 0$, which shows that $A_n \to A$ in operator norm. We conclude that $A$ is compact. 
@@ -214,48 +214,64 @@ By (b), we find that $\norm{A - A_n} \leq \norm{k - p_n} \to 0$, which shows tha
 		\end{align*}
 	so $f_n \to f$ in $L^2[0, 1]$. Since $f_n \in \Ran(A)$ this shows $f \in \clos{\Ran(A)}$. 
 	
-	% \item From Fourier theory it is known that $\qty{s_n(x) = \sqrt 2\sin(nx) : n \in \NN}$ and $\qty{1} \cup \qty{c_n(x) = \sqrt 2\cos(nx) \mid n \in \NN}$ are orthonormal bases of $L^2[0, 1]$. 
-	%Note that 
-	%\[
-	%(A s_n)(y) = \int_0^y s_n(x) \dd{x} = \sqrt 2 \int_0^y \sin(nx) \dd{x} = \frac{\sqrt 2}{n} \qty(1 - \cos(ny)) = \frac{\sqrt 2}{n} c_0(y) - \frac1n c_n(y) 
-	%\]
-	\item 	Note that $A$ is compact, since we can write $(Au)(y) = \int_{[0, 1]} k(x, y) u(x) \dd{x}$ with $k(x, y) = \ind_{x \leq y}$. 
+
+	\item 	In example 2.2.12, it is shown that for this operator, the Picard criterion is
+	\begin{equation} \label{eq:picard}
+	2\sum_{j=1}^\infty  \sigma_j^{-2} \qty(\int_0^1 f(s) \sin(\sigma_j^{-1} s) \dd{s})^2,
+	\end{equation}
+	where $\sigma_j = \frac2{(2j - 1)\pi}$.
 	
-	To apply the Picard criterion we must find the singular values and right singular vectors of $A$, which are equal to the square roots of the eigenvalues of $AA^*$ and the eigenvectors of $AA^*$. 
+	We compute
+	\[
+	\int_0^1 f(s) \sin(\sigma_j^{-1} s) \dd{s} = \int_{1/2}^1 \sin(\sigma_j^{-1} s) \dd{s} = \sigma_j \qty[ \cos(\frac12 \sigma_j^{-1}) - \cos(\sigma_j^{-1})]. 
+	\]
+	We have
+	\[
+	\cos(\sigma_j^{-1}) = \cos(\frac{(2j - 1)\pi}{2}) = 0 \quad\text{and}\quad \cos(\frac12\sigma_j^{-1}) = \cos(\frac{(2j-1)\pi}{4}) = \pm\frac1{\sqrt2 }. 
+	\]
 	
+	Plugging this into \cref{eq:picard} gives that
+	\[
+	2\sum_{j=1}^\infty  \sigma_j^{-2} \qty(\int_0^1 f(s) \sin(\sigma_j^{-1} s) \dd{s})^2 = 2 \sum_{j=1}^\infty \sigma_j^{-2} (\sigma_j^2/2) = \sum_{j=1}^\infty 1 = \infty,
+	\]
+	so $f$ does not satisfy the Picard criterion and therefore $f \in \clos{\Ran(A)} \setminus \Ran(A)$. 
+%	Note that $A$ is compact, since we can write $(Au)(y) = \int_{[0, 1]} k(x, y) u(x) \dd{x}$ with $k(x, y) = \ind_{x \leq y}$. 
+%	
+%	To apply the Picard criterion we must find the singular values and right singular vectors of $A$, which are equal to the square roots of the eigenvalues of $AA^*$ and the eigenvectors of $AA^*$. 
+%	
+%
+%	\begin{align*}
+%		\ang{Au, v} &= \int_0^1 (Au)(y)\cdot v(y) \dd{y} \\
+%		&= \int_0^1 \int_0^y u(x) \dd{x} v(y) \dd{y} \\
+%		&= \int_0^1 \int_0^y u(x) v(y) \dd{x} \dd{y} \\
+%		&= \int_0^1 \int_x^1 u(x) v(y) \dd{y} \dd{x} \\ 
+%		&= \int_0^1 u(x) \int_x^1 v(y) \dd{y} \dd{x} \\
+%		&= \ang{u, A^* v}
+%	\end{align*}
+%where $v(x) = \int_x^1 v(y) \dd{y}$.  Therefore, we find
+%\begin{align*}
+%	(AA^* u)(x) = \int_0^x \int_y^1 u(z) \dd{z} \dd{y}.
+%\end{align*}
+%Now we solve the eigenequation. Firstly, note that $\Nul(A) = \qty{0}$, so let $\lambda^2 > 0$. Then we have
+%\begin{align}
+%	\int_0^x \int_y^1 u(z) \dd{z} \dd{y} &= \lambda^2 u(x) \\
+%	\int_x^1 u(z) \dd{z} &= \lambda^2 u'(x) \\
+%	- u(x) &= \lambda^2 u''(x). 
+%\end{align}
+%Furthermore, from (1) we infer $u(0) = 0$ while from (2) we infer $u'(1) = 0$. 
+%The general solution to (3) is given by $u(x) = a \cos(\lambda^{-1} x) + b \sin(\lambda^{-1} x)$. 
+%Plugging $u(0) = 0$ gives $a = 0$, and $u'(1) = 0$ gives
+%\[
+%b\lambda^{-1} \cos(\lambda^{-1}) = 0 \implies b = 0 \text{ or } \lambda^{-1} = \pi\qty(n - \frac12) \text{ for some $n \in \ZZ_{>0}$}.
+%\]
+%
+%Our singular values are therefore $\frac{1}{(n - \frac12)\pi}$ ($n \in \ZZ_{>0}$) with right singular vectors $y_n(x) = \sqrt 2\sin((n - \frac12) \pi x)$. 
+%We now compute
+%\[
+%\ang{f, y_n} = \sqrt 2\int_{1/2}^1 \sin(\qty(n - \frac12) \pi x) \dd{x} = ...
+%\]
 
-	\begin{align*}
-		\ang{Au, v} &= \int_0^1 (Au)(y)\cdot v(y) \dd{y} \\
-		&= \int_0^1 \int_0^y u(x) \dd{x} v(y) \dd{y} \\
-		&= \int_0^1 \int_0^y u(x) v(y) \dd{x} \dd{y} \\
-		&= \int_0^1 \int_x^1 u(x) v(y) \dd{y} \dd{x} \\ 
-		&= \int_0^1 u(x) \int_x^1 v(y) \dd{y} \dd{x} \\
-		&= \ang{u, A^* v}
-	\end{align*}
-where $v(x) = \int_x^1 v(y) \dd{y}$.  Therefore, we find
-\begin{align*}
-	(AA^* u)(x) = \int_0^x \int_y^1 u(z) \dd{z} \dd{y}.
-\end{align*}
-Now we solve the eigenequation. Firstly, note that $\Nul(A) = \qty{0}$, so let $\lambda^2 > 0$. Then we have
-\begin{align}
-	\int_0^x \int_y^1 u(z) \dd{z} \dd{y} &= \lambda^2 u(x) \\
-	\int_x^1 u(z) \dd{z} &= \lambda^2 u'(x) \\
-	- u(x) &= \lambda^2 u''(x). 
-\end{align}
-Furthermore, from (1) we infer $u(0) = 0$ while from (2) we infer $u'(1) = 0$. 
-The general solution to (3) is given by $u(x) = a \cos(\lambda^{-1} x) + b \sin(\lambda^{-1} x)$. 
-Plugging $u(0) = 0$ gives $a = 0$, and $u'(1) = 0$ gives
-\[
-b\lambda^{-1} \cos(\lambda^{-1}) = 0 \implies b = 0 \text{ or } \lambda^{-1} = \pi\qty(n - \frac12) \text{ for some $n \in \ZZ_{>0}$}.
-\]
-
-Our singular values are therefore $\frac{1}{(n - \frac12)\pi}$ ($n \in \ZZ_{>0}$) with right singular vectors $y_n(x) = \sqrt 2\sin((n - \frac12) \pi x)$. 
-We now compute
-\[
-\ang{f, y_n} = \sqrt 2\int_{1/2}^1 \sin(\qty(n - \frac12) \pi x) \dd{x} = ...
-\]
-
-\item The Moore-Penrose inverse of $A$ is discontinuous. This can be seen by theorem 2.1.11: in (a) we have constructed a sequence $(f_n) \subseteq \Ran(A)$ that converges, and in (b) we have shown that its limit lies outside of $\Ran(A)$. Therefore, $\Ran(A)$ is not closed, so $A\D$ is discontinuous. 
+\item The Moore-Penrose inverse of $A$ is discontinuous. This can be seen by theorem 2.1.11: we have in (b) an element $f \in \clos{\Ran(A)} \setminus \Ran(A)$, so   $\Ran(A)$ is not closed, so $A\D$ is discontinuous. 
 
 \end{enumerate}
 \end{solution}
@@ -293,11 +309,17 @@ We now compute
 			\end{cases}
 			\]
 			
-			\item If $A\T A = I$, then the columns $\vec u_1, \dotsc, \vec u_n$ of $A$ are orthogonal. In particular, $A$ is injective (so $\Nul(A) = \qty{0}$) and $\Ran(A) = \Span\qty{\vec u_1, \dotsc, \vec u_n}$. Extend $\vec u_1, \dotsc, \vec u_n$ to an orthonormal basis $\vec u_1, \dotsc, \vec u_m$ of $\RR^m$, then we must have
+			\item 
+%			If $A\T A = I$, then the columns $\vec u_1, \dotsc, \vec u_n$ of $A$ are orthogonal. In particular, $A$ is injective (so $\Nul(A) = \qty{0}$) and $\Ran(A) = \Span\qty{\vec u_1, \dotsc, \vec u_n}$. Extend $\vec u_1, \dotsc, \vec u_n$ to an orthonormal basis $\vec u_1, \dotsc, \vec u_m$ of $\RR^m$, then we must have
+%			\[
+%			A\D\qty(\sum_{i=1}^m \alpha_i \vec u_i) = \mqty(\alpha_1 \\ \vdots \\ \alpha_n) \in \RR^n.
+%			\]
+%			From this expression it is easily seen that $A\D = A\T$.
+			We claim $A\D = A\T$. For this, we check the first two Moore-Penrose equations: for the first one, we have $A\T A = I_n = P_{\RR^n} = P_{\Nul(A)\P}$ since $\Nul(A) = \qty{0}$.  
+			For the second one, let $\vec u_1, \dotsc, \vec u_n \in \RR^m$ be the columns of $A$ (which are orthonormal), then we have
 			\[
-			A\D\qty(\sum_{i=1}^m \alpha_i \vec u_i) = \mqty(\alpha_1 \\ \vdots \\ \alpha_n) \in \RR^n.
+			AA\T = \sum_{i=1}^n \vec u_i \vec u_i\T = P_{\Span\qty{\vec u_1, \dotsc, \vec u_n}} = P_{\clos{\Ran(A)}}. 
 			\]
-			From this expression it is easily seen that $A\D = A\T$. 
 		\end{enumerate}
 	
 	\item Clearly we have $\Ran(A) = \RR$ while $\Nul(A) = \qty{u \mid \int_a^b u(x) \dd{x} = 0}$. It is also easily seen that 

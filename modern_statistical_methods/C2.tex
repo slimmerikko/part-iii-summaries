@@ -28,7 +28,7 @@ We have the following:
 	\[
 	\lambda = A\sigma\sqrt{\frac{\log(p)}{n}}.
 	\]
-	Let $\hat\beta = \hat\beta_\lambda^\Rm{L}$, then with probability at least $1 - 2p^{-A^2/2 - 1}$ we have that the MSPE satisfies
+	Let $\hat\beta = \hat\beta_\lambda^\Rm{L}$, then with probability at least $1 - 2p^{-(A^2/2 - 1)}$ we have that the MSPE satisfies
 	\[
 	\frac1n \norm{X(\beta^0 - \hat\beta)}_2^2 \leq 4\lambda \norm{\beta^0}_1 = 4A\sigma\sqrt{\frac{\log(p)}{n}} \norm{\beta^0}_1. 
 	\]
@@ -48,5 +48,61 @@ We have the following:
 	\[
 	\frac1{n} \norm{X(\beta^0 - \hat\beta)}_2^2 \leq 2\lambda \qty(\norm{\beta^0 - \hat\beta}_1 + \norm{\beta^0}_1 - \norm{\hat\beta}_1) \leq 4\lambda \norm{\beta^0}_1.
 	\]
-	In (\TODO refer), we will show that $\PP(\Omega) \geq 1 - 2p^{-(A^2/2 - 1)}$, which completes the proof. 
+	In \cref{lem:probability_omega_bound}, we will show that $\PP(\Omega) \geq 1 - 2p^{-(A^2/2 - 1)}$, which completes the proof. 
+\end{proof}
+
+\subsection{Concentration inequalities}
+Let $W$ be any random variable and $\phi \colon \RR\to[0,\infty)$ strictly increasing. Then by Markov's inequality we have
+\[
+\PP(W \geq t) = \PP(\phi(W) \geq \phi(t)) \leq \frac{\EE[\phi(W)]}{\phi(t)}. 
+\]
+Plugging in $\phi(x) = e^{\alpha x}$ (for some $\alpha > 0$), we get
+\[
+\PP(W \geq t) \leq e^{-\alpha t} \EE[e^{\alpha W}] = e^{-\alpha t} M_W(\alpha).
+\]
+Now we can take the infimum over all $\alpha$ on the right-hand side, and we get what is called the \emph{Chernoff bound}:
+\[
+\PP(W \geq t) \leq \inf_{\alpha > 0} e^{-\alpha t} M_W(\alpha). 
+\]
+
+\begin{definition}
+	A random variable  $W$ with mean $\mu$ is called \emph{sub-Gaussian with parameter $\sigma > 0$} or $\sigma$-sub-Gaussian if 
+	\[
+	M_{W - \mu} \leq M_{N(0, \sigma^2)} \quad\text{or equivalently}\quad \EE[e^{\alpha(W - \mu)}] \leq e^{\alpha^2\sigma^2/2} \text{ for all $\alpha \in \RR$}. 
+	\]
+\end{definition}
+
+We need the following lemma, which characterises an important class of sub-Gaussian random variables:
+\begin{lemma}[Hoeffding]
+	If $W$ is a mean-zero random variable which takes values in $[a, b]$, then $W$ is sub-Gaussian with parameter $(b-a)/2$. 
+\end{lemma}
+
+By Chernoff bounding, we obtain for a $\sigma$-sub-Gaussian random variable $W$ that \[\PP(W - \mu \geq t) \leq e^{-t^2/(2\sigma^2)}.\]
+
+\begin{proposition}
+	Let $W_1, \dotsc, W_n$ be independent, mean-zero random variables where $W_i$ is $\sigma_i$-sub-Gaussian. For any $\gamma \in \RR^n$, the random variable $\gamma\T W$ is sub-Gaussian with parameter $\qty(\sum_i \sigma_i^2\gamma_i^2)^{1/2}$.
+\end{proposition}
+\begin{proof}
+	Since the $W_i$ are independent we have for all $\alpha \in \RR$ that
+	\begin{align*}
+		\EE[e^{\alpha \sum_i \gamma_i W_i}] = \prod_{i=1}^n \EE[e^{\alpha \gamma_i W_i}]  \leq \prod_{i=1}^n e^{\alpha^2\gamma_i^2\sigma_i^2/2} = e^{\alpha^2 \sum_i \gamma_i^2\sigma_i^2/2}.
+	\end{align*}
+\end{proof}
+
+\begin{lemma} \label{lem:probability_omega_bound}
+	Suppose $\eps_1, \dotsc, \eps_n$ are independent mean-zero $\sigma$-sub-Gaussian random variables and let $\lambda \ceq A\sigma \sqrt{\log(p)/n}$. Then
+	\[
+	\PP\qty(\frac{\norm{X\T\eps}_\infty}{n} \leq \lambda) \geq 1 - 2p^{-(A^2/2 - 1)}. 
+	\]
+\end{lemma}
+
+\begin{proof}
+	We have
+	\[
+	\PP\qty(\frac{\norm{X\T\eps}_\infty}{n} > \lambda) = \PP\qty(\bigcup_i \frac{\abs{X_i\T\eps}}{n} > \lambda) \leq \sum_i \PP\qty(\frac{\abs{X_i\T\eps}}{n} > \lambda). 
+	\]
+	By the previous proposition, both $X_i\T\eps$ and $-X_i\T\eps$ are sub-Gaussian with parameter $\sigma/\sqrt n$, so we have
+	\[
+	\sum_i \PP\qty(\frac{\abs{X_i\T\eps}}{n} > \lambda) \leq 2p \exp(\frac{-\lambda^2}{2(\sigma/\sqrt n)^2}) = 2p\exp(-A^2\log(p)/2) = 2 p^{-(A^2/2 - 1)}.
+	\]
 \end{proof}

@@ -300,7 +300,29 @@ Define $g(x) = f(x, x)$, then it is easily seen that $g'(x) = \pt_x f(x, x) + \p
 \ang{\pt_x^2 u - \pt_y^2 u, f} = 
 - \int_{-\infty}^\infty g'(x) \dd{x} = \lim_{x\to -\infty} g(x) - \lim_{x\to\infty} g(x) = 0 - 0 = 0. 
 \]
+This shows that $\pt_x u - \pt_y u = 0$, or equivalently, that $u$ satisfies the wave equation. 
 \end{proof}
 
-This shows that $\pt_x u - \pt_y u = 0$, or equivalently, that $u$ satisfies the wave equation. 
+\begin{question}
+	Compute $\Delta(\norm{x}^{2-n})$ in $\DD'(\RR^n)$ for $n \geq 3$, i.e.\ compute
+	\[
+	\ang{\Delta (\norm{x}^{2-n}), \phi} = \ang{\norm{x}^{2-n}, \Delta\phi} = \int \frac{\Delta\phi}{\norm{x}^{n-2}} \dd{x}
+	\]
+	for arbitrary $\phi \in \DD(\RR^n)$. Note that $\norm{x} = (x_1^2 +\dotsb +x_n^2)^{1/2}$ and $\Delta = \sum_i (\pdv{x_i})^2$. 
+	
+	\emph{Hint:} use $\int\dd{x} = \int_{\norm{x}\leq\eps}\dd{x} + \int_{\norm{x}>\eps}\dd{x}$ and treat each integral separately. 
+\end{question}
+
+\begin{solution}
+	We follow the hint: let $\eps > 0$, then we first compute
+	\[
+	\int_{\norm{x} > \eps} \frac{\Delta\phi}{\norm{x}^{n-2}} \dd{x} = \sum_{i=1}^n \int_{\norm{x} > \eps} \frac{\pdv[2]{x_i} \phi}{\norm{x}^{n-2}}\dd{x} = \sum_{i=1}^n \int_{\norm{x} > \eps} \phi \cdot \pdv[2]{x_i} \norm{x}^{2-n} \dd{x}. 
+	\]
+	Now, it is easily computed that $\pdv{x_i} \norm{x} = \frac{x_i}{\norm{x}}$, and therefore 
+	\begin{align*}
+	\pdv[2]{x_i} \norm{x}^{2-n} &= \pdv{x_i} (2-n) x_i \norm{x}^{-n} = (2-n) \qty(\norm{x}^{-n} - n x_i^2 \norm{x}^{-n-2}) \\
+	&= (n-2)\norm{x}^{-n} \qty(n \qty(\frac{x_i}{\norm{x}})^2 - 1). 
+	\end{align*}
+\end{solution}
+
 \end{document}
