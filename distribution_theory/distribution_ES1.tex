@@ -81,6 +81,7 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator{\supp}{supp}
 \DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\prv}{p.\!v.}
 
 \newcommand\clos\overline
 
@@ -323,6 +324,104 @@ This shows that $\pt_x u - \pt_y u = 0$, or equivalently, that $u$ satisfies the
 	\pdv[2]{x_i} \norm{x}^{2-n} &= \pdv{x_i} (2-n) x_i \norm{x}^{-n} = (2-n) \qty(\norm{x}^{-n} - n x_i^2 \norm{x}^{-n-2}) \\
 	&= (n-2)\norm{x}^{-n} \qty(n \qty(\frac{x_i}{\norm{x}})^2 - 1). 
 	\end{align*}
+\TODO finish
 \end{solution}
 
+\begin{question}
+	Let $(f_k)$ be the sequence of smooth functions defined by $f_k(x) = \frac1\pi \frac k{(kx)^2 + 1}$. Prove that $f_k \to \delta_0$ in $\DD'(\RR)$. Compute the limits
+	\begin{enumerate}[(a)]
+		\item $\lim_{k\to\infty} k^2 x e^{-k^2 x^2}$,
+		\item $\lim_{k\to\infty} k^3 e^{ikx}$,
+		\item $\lim_{k\to\infty} \frac{\sin(kx)}{\pi x}$,
+	\end{enumerate}
+in $\DD'(\RR)$. 
+\end{question}
+
+\begin{solution}
+	It is easily seen that every $f_k$ is locally integrable. Furthermore, noting that $\arctan(kx)' = \frac{k}{(kx)^2 + 1}$, we see by the dominated convergence theorem that
+	\begin{align*}
+		\lim_{k\to\infty}\ang{f_k, \phi} &= \frac1\pi \lim_{k\to\infty} \int_\RR \frac{k}{(kx)^2 + 1} \phi(x) \dd{x} = -\frac1\pi \lim_{k\to\infty} \int_\RR \arctan(kx) \phi'(x) \dd{x} \\
+		&= -\frac1\pi \int_\RR \lim_{k\to\infty} \arctan(kx) \phi'(x) \dd{x} = -\frac1\pi \qty(2 \frac\pi2 \int_0^\infty \phi'(x) \dd{x} ) = \phi(0), 
+	\end{align*}
+which proves $f_k \to \delta_0$. 
+
+\begin{enumerate}[(a)]
+	\item We have $- (\frac12 e^{-k^2x^2})' = k^2 x e^{-k^2 x^2}$ and therefore
+	\begin{align*}
+		\lim_{k\to\infty} \int_\RR k^2 x e^{-k^2x^2} \phi(x) \dd{x} &= \frac12 \lim_{k\to\infty}  \int_\RR  e^{-k^2 x^2} \phi'(x) \dd{x} = \frac12 \int_\RR \lim_{k\to\infty} e^{-k^2 x^2} \phi'(x) \dd{x} = 0,
+	\end{align*}
+so the sequence converges to 0 in $\DD'(\RR)$. 
+
+\item We have 
+\begin{align*}
+	\lim_{k\to\infty}  k^3 \int_\RR e^{ikx} \phi(x) \dd{x} = \lim_{k\to\infty} 2\pi k^3 \Cal F^{-1}[\phi](k). 
+\end{align*}
+Since $\phi$ is a Schwarz function, its inverse Fourier transform is also a Schwarz function, and in particular $k^3 \Cal F^{-1}[\phi](k) \to 0$ as $k \to \infty$. 
+
+\item This sequence converges to $\delta_0$, although I have no idea how to prove it. 
+
+\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Compute the limit
+	\[
+	\lim_{k\to\infty} \frac12 + \sum_{m=1}^k \cos(\pi m x)
+	\]
+	in $\DD'(-1, 1)$. 
+\end{question}
+
+\begin{solution}
+	Note that \[
+	f_k(x) \ceq 
+	\frac12 + \sum_{m=1}^k \cos(\pi m x) = \frac12\qty(1 + e^{i \pi x} + e^{-i\pi x} + \dotsb + e^{i \pi m x} + e^{-i\pi m x}) = \frac12 \sum_{m=-k}^k (e^{i\pi x})^m.
+	\]
+	By viewing the last term as a geometric series $\frac12 e^{-ik\pi x} \sum_{m=0}^{2k+1} (e^{ix})^m$ we can compute that 
+	\[
+	f_k(x) = \frac{\sin((n + \frac12) \pi x)}{2\sin(\frac12\pi x)}. 
+	\]
+	It can be shown (???) that $f_k \to \delta_0$ in $\DD'(\RR)$. 
+\end{solution}
+
+\begin{question}
+	We define the \emph{principal value} of $1/x$, written $\prv(1/x)$, by
+	\[
+	\ang*{\prv(1/x), \phi} = \lim_{\eps \to 0} \int_{\abs{x} > \eps} \frac{\phi(x)}{x} \dd{x} \quad\text{for all $\phi \in \DD(\RR)$}. 
+	\]
+	Prove that $\prv(1/x) \in \DD'(\RR)$ and that $\ord(\prv(1/x)) = 1$. Show that
+	\[
+	\lim_{\eps \to 0} \frac{1}{x - i\eps} = \prv\qty(\frac1x) + i\pi \delta_0 \quad\text{in $\DD'(\RR)$}. 
+	\]
+\end{question}
+
+\begin{proof}
+	First we must show that $\prv(1/x)$ is well-defined.  ??
+\end{proof}
+
+\begin{question}
+	??
+\end{question}
+\begin{proof}
+	??
+\end{proof}
+
+\begin{question}
+	??
+\end{question}
+
+\begin{proof}
+	??
+\end{proof}
+
+\begin{question}
+	Define the distribution $u \in \EE'(\RR^3)$ by the locally integrable function $u(x) = \ind_{\abs{x}\leq 1}$. Prove that $-\sum_i x_i (\pdv{u}{x_i}) = \dd{\sigma_2}$ in $\EE'(\RR^3)$, where $\dd{\sigma_2}$ is the surface element on the sphere $S^2 \subseteq \RR^3$. 
+\end{question}
+
+\begin{proof}
+	We have
+	\begin{align*}
+		\ang*{- \sum_i x_i \pdv{u}{x_i}, \phi} &= - \sum_i \ang*{\pdv{u}{x_i}, x_i\phi} = \sum_i \ang*{u, \pdv{x_i}(x_i \phi)} = \ang*{u, \sum_i \pdv{x_i}(x_i\phi)} \\
+		&= \int_{\norm{x} \leq 1} \sum_i \pdv{x_i}(x_i\phi) \dd{x}
+	\end{align*}
+\end{proof}
 \end{document}

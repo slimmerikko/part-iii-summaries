@@ -1,0 +1,152 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage{mathtools, amsmath, amssymb, amsthm, enumerate, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+
+\newcommand\XX{\Cal X}
+\newcommand\HH{\Cal H}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+\renewcommand\P{^\perp}
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\newcommand\Nul{\Cal N}
+\newcommand\Ran{\Cal R}
+
+\title{Modern Statistical Methods --- Example Sheet 2} % subject
+\author{Lucas Riedstra}
+\date{...} % date
+
+\begin{document}
+\maketitle
+\begin{question}
+	Let $Y \in \RR^n$ be a vector of responses, $\Phi \in \RR^{n \times p}$ a design matrix, $J \colon [0, \infty) \to [0, \infty)$ a strictly increasing function and $c \colon \RR^n \to \RR^n$ some cost function. Set $K = \Phi\Phi\T$. Show, without using the representer theorem, that $\hat\theta$ minimises
+	\[
+	Q_1(\theta) \ceq c(Y, \Phi\theta) + J(\norm{\theta}_2^2)
+	\]
+	over $\theta \in \RR^p$ if and only if $\Phi\hat\theta = K\hat\alpha$ and $\hat\alpha$ minimises
+	\[
+	Q_2(\alpha) \ceq c(Y, K\alpha) + J(\alpha\T K\alpha)
+	\]
+	over $\alpha \in \RR^n$. 
+\end{question}
+
+\begin{proof}
+	Let $\hat\theta$ be a minimiser of $Q_1$, and write $\hat\theta = \Phi\T\hat\alpha + \hat\beta$ with $\Phi\T \hat\alpha \in \Nul(\Phi)\P = \Ran(\Phi\T)$, $\hat\beta \in \Nul(\Phi)$. 
+	
+	Noting that $K\hat\alpha = \Phi\Phi\T \hat\alpha = \Phi\hat\theta$ and  $\norm{\Phi\T\hat\alpha} = \alpha\T K\alpha$ we see
+	\[
+	Q_1(\theta) = c(Y, K\hat\alpha) + J(\alpha\T K\alpha + \|\hat\beta\|^2),
+	\]
+	and therefore it is necessary that $\hat\beta = 0$. The claim follows. 
+\end{proof}
+
+\begin{question}
+	Let $x, x' \in \RR^p$ and let $\psi \in \qty{-1, 1}^p$ be a random vector with independent components taking values $-1, 1$ each with probability $1/2$. Show that $\EE(\psi\T x \psi\T x') = x\T x'$. Construct a random feature map $\hat\phi \colon \RR^p \to \RR$ such that $\EE\qty{\hat\phi(x)\hat\phi(x')} = (x\T x)^2$. 
+\end{question}
+
+\begin{solution}
+	We have 
+	\begin{align*}
+		\psi\T x \psi\T x' = \qty(\sum_i \psi_i x_i) \qty(\sum_j \psi_j x'_j) = \sum_i x_i x_i' + 2 \sum_{i < j} \psi_i \psi_j x_i x_j'. 
+	\end{align*}
+	Noting that for $i \neq j$ we have $\EE[\psi_i \psi_j] = \EE[\psi_i] \EE[\psi_j] = 0$ it follows that $\EE[\psi\T x \psi\T x'] = \sum_i x_i x_i' = x\T x'$. 
+	
+	Let $\psi_*$  be an identical independent copy of $\psi$ and define $\hat\phi(x) = \psi\T x \psi_*\T x$. Then we find
+	\[
+	\EE[\hat\phi(x)\hat\phi(x')] = \EE[\psi\T x \psi\T x']\EE[\psi_*\T x \psi_*\T x'] = (x\T x')^2. 
+	\]
+\end{solution}
+
+\begin{question}
+	Let $\XX = \pow(\qty{1, \dotsc, p})$ and $z, z' \in \XX$. Let $k$ be the Jaccard similarity kernel. Let $\pi$ be a random permutation of $\qty{1, \dotsc, p}$. Let $M = \min\qty{\pi(j) \mid j \in z}$, $M' = \min\qty{\pi(j) \mid j \in z'}$. Show that
+	\[
+	\PP(M = M') = k(z, z'),
+	\]
+	when $z, z' \neq \emptyset$. Now let $\psi \in \qty{-1, 1}^p$ be a random vector with i.i.d.\ components taking the values -1 or 1, each with probability $1/2$. By considering $\EE[\psi_M\psi_{M'}]$ show that the Jaccard similarity kernel is indeed a kernel. Explain how we can use the ideas above to approximate kernel ridge regression with Jaccard similarity, when $n$ is very large (you may assume none of the data points are the empty set). 
+\end{question}
+
+\begin{proof}
+	We have \[
+	\PP(M = M') = \PP\qty(\argmin_{j \in z \cup z'} \pi(j) \in z \cap z') = \frac{\abs{z \cap z'}}{\abs{z \cup z'}} = k(z, z') \quad\text{since $\pi$ is random.}
+	\]
+	
+	Furthermore, we have
+	\[
+	\EE[\psi_M \psi_{M'}] = \PP(M = M') \EE[\psi_M^2] + \PP(M \neq M') \EE[\psi_M \psi_{M'}] = k(z, z'), 
+	\]
+	since for $M \neq M'$ we have $\EE[\psi_M\psi_M'] = \EE[\psi_M]\EE[\psi_{M'}] = 0$. 
+	Let $z_1, \dotsc, z_n \in \XX$ with corresponding $M_1, \dotsc, M_n$, and write $\hat \psi = (\psi_{M_1}, \dotsc, \psi_{M_n})\T$, then the kernel matrix $K$ is given by $\EE[\hat\psi \hat\psi\T]$ which is positive semidefinite. 
+	
+	Using the random feature map $\hat\phi(z) = \psi_{M_z}$ we can approximate kernel ridge regression using the random feature map method. 
+\end{proof}
+\end{document}
