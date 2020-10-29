@@ -213,7 +213,7 @@ where $\star$ follows from Fubini's theorem.
 
 Now we note that 
 \[
-\int_{\RR^n} e^{i\lambda(x-y) - \eps\norm{\lambda}^2} \dd{\lambda} = \prod_{i=1}^n \int_{\RR^n} e^{i\lambda_j(x_j - y_j) - \eps\lambda_j^2} \dd{\lambda} \overset{\star\star}= \prod_{i=1}^n \qty(\frac\pi e)^{1/2} e^{- \frac{(x_i - y_i)^2}{4\eps}} = \qty(\frac\pi\eps)^{n/2} e^{- \frac{\norm{x - y}^2}{4\eps}}.
+\int_{\RR^n} e^{i\lambda(x-y) - \eps\norm{\lambda}^2} \dd{\lambda} = \prod_{i=1}^n \int_{\RR} e^{i\lambda_j(x_j - y_j) - \eps\lambda_j^2} \dd{\lambda} \overset{\star\star}= \prod_{i=1}^n \qty(\frac\pi e)^{1/2} e^{- \frac{(x_i - y_i)^2}{4\eps}} = \qty(\frac\pi\eps)^{n/2} e^{- \frac{\norm{x - y}^2}{4\eps}}.
 \] 
 To explain $\star\star$, \TODO. 
 
@@ -226,6 +226,7 @@ and plugging that into the above yields
 \end{align*}
 where $\star\star\star$ follows from the substitution $x - y = 2\sqrt\eps y'$.
 
-Finally, continuity of $\FF^{-1}$ is easily shown with an argument analogous to that for continuity of $\FF$. 
+Finally, continuity of $\FF^{-1}$ is easily shown with an argument analogous to that for continuity of $\FF$ (????). 
 \end{proof}
+
 

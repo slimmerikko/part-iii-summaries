@@ -11,7 +11,7 @@ There are a few major drawbacks to using histograms: it is difficult to choose $
 
 \subsection{The univariate kernel density estimator}
 \begin{definition}
-	A Borel measurable function $k \colon \RR \to \RR$ is called a \emph{kernel} if it satisfies $\int_\RR K(x) \dd{x} = 1$. 
+	A Borel measurable function $K \colon \RR \to \RR$ is called a \emph{kernel} if it satisfies $\int_\RR K(x) \dd{x} = 1$. 
 	
 	A \emph{univariate kernel density estimator} of $f$ with kernel $K$ and \emph{bandwidth} $h > 0$ is defined as
 	\[
@@ -76,13 +76,13 @@ We now aim to find bounds on the bias and the variance of $\hat f_n$ in order to
 
 \begin{proof}
 	By \cref{eq:variance_computation} we have
-	\begin{align*}
-	\Var \hat f_n(x) &\leq \frac1n (K_h^2 * f)(x) = \frac{1}{nh^2} \int_\RR K^2\qty(\frac{x - z}{h}) f(z) \dd{z} = \frac{1}{nh} \int_\RR K^2(u) f(x - uh) \dd{u} \\
-	&\leq \frac1{nh} \norm{f}_\infty \int_\RR K^2(u) \dd{u} = \frac{1}{nh} \norm{f}_\infty R(K). 
-	\end{align*}
+	\begin{align}
+	\Var \hat f_n(x) &\leq \frac1n (K_h^2 * f)(x) = \frac{1}{nh^2} \int_\RR K^2\qty(\frac{x - z}{h}) f(z) \dd{z} = \frac{1}{nh} \int_\RR K^2(u) f(x - uh) \dd{u}  \label{eq:var_bound}\\
+	&\leq \frac1{nh} \norm{f}_\infty \int_\RR K^2(u) \dd{u} = \frac{1}{nh} \norm{f}_\infty R(K) .\nonumber 
+	\end{align}
 \end{proof}
 
-Obtaining a bound on the bias is not at all straightforward: we wil need to introduce conditions on both the density $f$ and the kernel $k$. 
+Obtaining a bound on the bias is not at all straightforward: we wil need to introduce conditions on both the density $f$ and the kernel $K$. 
 \begin{definition}
 	Let $I \subseteq \RR$ be an interval, fix $\beta, L > 0$, and let $m \ceq \ceil{\beta} - 1$. A function $f \colon \RR \to \RR$ is said to belong to the \emph{Hölder class} $\HH(\beta, L)$ if $f$ is $m$ times differentiable on $I$ and
 	\[
@@ -97,62 +97,153 @@ Obtaining a bound on the bias is not at all straightforward: we wil need to intr
 \end{definition}
 
 \begin{definition}
-	Fix $\ell \in \NN$. We say a kernel $k$ is of \emph{order} $\ell$ if $\int_\RR x^j k(x) \dd{x} =0 $ for $j = 1, \dotsc, \ell - 1$. 
+	Fix $\ell \in \NN$. We say a kernel $K$ is of \emph{order} $\ell$ if $\int_\RR x^j k(x) \dd{x} =0 $ for $j = 1, \dotsc, \ell - 1$. 
 \end{definition}
 
 \begin{remark}
-	Most kernels used in practice are of order 2. Note that a kernel of order $\geq 3$ cannot be nonnegative, since we have $\int_\RR x^2k(x) \dd{x} = 0$. Therefore, the kernels are not themselves densities and the corresponding kernel density estimate is not guaranteed to be a density. 
+	Most kernels used in practice are of order 2. Note that a kernel of order $\geq 3$ cannot be nonnegative, since we have $\int_\RR x^2K(x) \dd{x} = 0$. Therefore, the kernels are not themselves densities and the corresponding kernel density estimate is not guaranteed to be a density. 
 \end{remark}
 
 \begin{proposition} \label{prop:bias_bound}
-	Assume that $f \in \FF(\beta, L)$ and that $k$ is a kernel of order $\ell \ceq \ceil{\beta}$, and furthermore assume that
+	Assume that $f \in \FF(\beta, L)$ and that $K$ is a kernel of order $\ell \ceq \ceil{\beta}$, and furthermore assume that
 	\[
-	\mu_\beta(k) \ceq \int_\RR \abs{u}^\beta \abs{k(u)} \dd{u} < \infty. 
+	\mu_\beta(K) \ceq \int_\RR \abs{u}^\beta \abs{K(u)} \dd{u} < \infty. 
 	\]
-	Then the kernel density estimate with bandwidth $h$ and kernel $k$ based on $X_1, \dotsc, X_n \sim f$ satisfies
+	Then the kernel density estimate with bandwidth $h$ and kernel $K$ based on $X_1, \dotsc, X_n \sim f$ satisfies
 	\[
-	\abs{\Bias \hat f_n(x)} \leq \frac{L}{(\ell - 1)!} \mu_\beta(k) h^\beta \quad\text{for all $x \in \RR, h > 0, n \in \NN$}. 
+	\abs{\Bias \hat f_n(x)} \leq \frac{L}{(\ell - 1)!} \mu_\beta(K) h^\beta \quad\text{for all $x \in \RR, h > 0, n \in \NN$}. 
 	\]
 \end{proposition}
 
 \begin{proof}
 	By \cref{eq:bias_computation}, we have 
 	\[
-	\Bias \hat f_n(x) = \frac1h \int_\RR k\qty(\frac{x - z}{h}) f(z) \dd{z} - f(x) = \int_\RR k(u)\qty( f(x - uh) - f(x)) \dd{x}. 
+	\Bias \hat f_n(x) = \frac1h \int_\RR K\qty(\frac{x - z}{h}) f(z) \dd{z} - f(x) = \int_\RR K(u)\qty( f(x - uh) - f(x)) \dd{x}. 
 	\]
 	By applying Taylor's theorem with the Lagrange remainder we obtain, with $m = \ceil{\beta} - 1$, that
 	\[
 	f(x - uh) - f(x) = \sum_{j=1}^{m-1} \frac{(-uh)^j}{j!} f^{(j)}(x) + \frac{(-uh)^m}{m!} f^{(m)}(x - \tau u h) \quad\text{for some $\tau \in [0, 1]$}. 
 	\]
-	Since $\int_\RR u^j k(u) \dd{u} = 0$ for all $j \leq m$, plugging the sum into the integral will give 0. Therefore, we find
+	Since $\int_\RR u^j K(u) \dd{u} = 0$ for all $j \leq m$, plugging the sum into the integral will give 0. Therefore, we find
 	\[
-	\Bias \hat f_n(x) =  \frac{(-h)^m}{m!} \int_\RR u^m k(u) f^{(m)}(x - \tau uh) \dd{u} = \frac{(-h)^m}{m!} \int_\RR u^m k(u) \qty[f^{(m)}(x - \tau uh)
+	\Bias \hat f_n(x) =  \frac{(-h)^m}{m!} \int_\RR u^m K(u) f^{(m)}(x - \tau uh) \dd{u} = \frac{(-h)^m}{m!} \int_\RR u^m K(u) \qty[f^{(m)}(x - \tau uh)
 - f^{(m)}(x)] \dd{u},	\]
-	where the last inequality follows again from the fact that $k$ is of order $m + 1$. 
+	where the last inequality follows again from the fact that $K$ is of order $m + 1$. 
 	
 	Now we use that $f \in \FF(\beta, L)$, and conclude
 	\[
-	\abs{\Bias \hat f_n(x)} \leq \frac{Lh^m}{m!} \int_\RR \abs{u}^m \abs{k(u)} \abs{\tau u h}^{\beta - m} \dd{u} \leq \frac{Lh^\beta}{m!} \int_\RR \abs{u}^\beta \abs{k(u)} \dd{u} = \frac{L}{(\ell - 1)!} \mu_\beta(k) h^\beta,
+	\abs{\Bias \hat f_n(x)} \leq \frac{Lh^m}{m!} \int_\RR \abs{u}^m \abs{K(u)} \abs{\tau u h}^{\beta - m} \dd{u} \leq \frac{Lh^\beta}{m!} \int_\RR \abs{u}^\beta \abs{K(u)} \dd{u} = \frac{L}{(\ell - 1)!} \mu_\beta(K) h^\beta,
 	\]	
 	which concludes the proof. 
 \end{proof}
 
 Combining \cref{prop:variance_bound,prop:bias_bound}, we find that
 \[
-\MSE \hat f_n(x) \leq \frac{1}{nh} R(k) \norm{f}_\infty + \frac{L^2}{((\ell - 1)!)^2} \mu^2_\beta(k) h^{2\beta}. 
+\MSE \hat f_n(x) \leq \frac{1}{nh} R(K) \norm{f}_\infty + \frac{L^2}{((\ell - 1)!)^2} \mu^2_\beta(K) h^{2\beta}. 
 \]
 By minimising this w.r.t.\ $h$, we find that the optimal $h$ is given by
 \[
-h_n^* = \qty(\frac{((\ell - 1)!)^2 \norm{f}_\infty R(k)}{2\beta L^2 \mu_\beta^2(k)})^{1/(2\beta + 1)} n^{-1/(2\beta + 1)}, 
+h_n^* = \qty(\frac{((\ell - 1)!)^2 \norm{f}_\infty R(K)}{2\beta L^2 \mu_\beta^2(K)})^{1/(2\beta + 1)} n^{-1/(2\beta + 1)}, 
 \]
 and the corresponding $\MSE$ is given by
 \[
-\MSE \hat f_n(x) \leq C n^{-2\beta/(2\beta + 1)},
+\MSE \hat f_n(x) \leq \qty(\frac{\norm{f}_\infty^{2\beta} R(K)^{2\beta} L^2 \mu_\beta^2(K) \qty[(2\beta)^{2\beta + 1} + 1]}{((\ell - 1)!)^2 (2\beta)^{2\beta}}) n^{-2\beta/(2\beta + 1)},
 \]
-where $C$ is independent of $n$. This bound on the rate is slower than the $O(1/n)$ rate found in parametric problems, but such a rate is only obtained when the assumed model is correct. 
+This $O(n^{-2\beta/(2\beta + 1)})$ bound on the rate is slower than the $O(1/n)$ rate found in parametric problems, but such a rate is only obtained when the assumed model is correct. 
+
+We can strengthen this as follows:
+\begin{theorem}
+	Assume that $K$ is a kernel of order $\ell \ceq \ceil{\beta}$ and that $\mu_\beta(K)$ and $R(K)$ are both finite. Fix $\alpha > 0$ and let $h = \alpha n^{-1/(2\beta + 1)}$. Then there exists $C > 0$, independent of $n$, such that
+	\[
+	\sup_{x \in \RR} \sup_{f \in \FF(\beta, L)} \MSE \hat f_n(x) \leq C n^{-2\beta/(2\beta + 1)}. 
+	\]
+\end{theorem}
+
+\begin{proof}
+	We will show that the class $\FF(\beta, L)$ is uniformly bounded in supremum norm. Let $K^*$ be a bounded kernel of order $\ell$ (see example sheet \TODO), then by the previous proposition with $h = 1$ we have by nonnegativity of $f$ that
+	\begin{align*}
+		f(x) &\leq \abs{f(x)- \int_{-\infty}^\infty K^*(x - z) f(z) \dd{z}} + \abs{\int_{-\infty}^\infty K^*(x-z) f(z) \dd{z}}.	\\
+		&\leq \abs{\Bias \hat f_{n, K^*}(x)} + \norm{K^*}_\infty \int_{-\infty}^\infty  f(z) \dd{z} \\
+		&\leq \frac{L}{(\ell - 1)!} \mu_\beta(K^*) + \norm{K^*}_\infty,
+	\end{align*}
+and this bound is independent of $f$ and $x$.
+
+Now we have
+\[
+\MSE \hat f_n(x) \leq \frac{R(K) \norm{f}_\infty}{nh} + \frac{L^2}{((\ell - 1)!)^2} \mu^2_\beta(K) h^{2\beta} \leq C n^{-2\beta/(2\beta + 1)}. 
+\]
+\end{proof}
+
 
 \subsection{Bounds on the integrated variance and bias}
 To bound the MISE, we will give bounds on the integrated variance and bias. 
 \begin{proposition}
-	Let $\hat{f_n}$ denote the kernel density estimate with bandwidth $h$ and kernel $k$ based on $X_1, \dotsc, X_n \iid P$ (where $P$ is a distribution on $\RR$). Then 
+	Let $\hat{f_n}$ denote the kernel density estimate with bandwidth $h$ and kernel $K$ based on $X_1, \dotsc, X_n \iid P$ (where $P$ is a distribution on $\RR$). Then
+	\[
+	\int_{-\infty}^\infty \Var \hat f_n(x) \dd{x} = \frac1{nh} R(K). 
+	\]
 \end{proposition} 
+
+\begin{proof}
+	We have by Fubini and \cref{eq:var_bound} that
+	\begin{align*}
+		\int_{-\infty}^\infty \Var\hat f_n(x) \dd{x} &\leq \frac1{nh^2} \int_{-\infty}^\infty \int_{-\infty}^\infty K^2\qty(\frac{x - z}{h}) f(z) \dd{z} \dd{x} = \frac1{nh^2} \int_{-\infty}^\infty f(z) \int_{-\infty}^\infty K^2\qty(\frac{x-z}{h}) \dd{x} \dd{z} \\
+		&= \frac1{nh} R(K) \int_{-\infty}^\infty f(z) \dd{z} = \frac1{nh} R(K). 
+	\end{align*}
+\end{proof}
+
+\begin{recap}
+	Let $[a, b] = I \subseteq \RR$ be an interval, then $f \colon I \to \RR$ is called \emph{absolutely continuous} if, for every $\eps > 0$, there exists $\delta > 0$ such that, whenever $(x_1, y_1), \dotsc, (x_m, y_m)$ are disjoint subintervals of $I$ with $\sum_{i=1}^m (y_i - x_i) < \delta$, we have $\sum_{i=1}^m \abs{f(y_i) - f(x_i)} < \eps$. 
+	
+	It is known that absolute continuity is equivalent to being differentiable Lebesgue almost everywhere with a so-called \emph{weak derivative} $f'$ that satisfies $f(x) = f(a) + \int_a^x f'(t) \dd{t}$ for all $x \in [a, b]$. 
+\end{recap}
+
+\begin{recap}
+	The \emph{generalised Minkowski inequality} states that any Borel measurable function $g \colon \RR^2 \to \RR$ we have that
+	\[
+	\int_\RR \qty(\int_\RR g(u, x) \dd{u})^2 \dd{x} \leq \qty(\int_\RR \qty(\int_\RR g^2(u, x) \dd{x})^{1/2} \dd{u})^2. 
+	\] 
+\end{recap}
+To obtain bounds on the integrated squared bias, we will require smoothness conditions w.r.t.\ the $L^2(\RR)$ norm. 
+\begin{definition}
+	Fix $\beta, L > 0$ and let $m \ceq \ceil{\beta} - 1$. The \emph{Nikolski class} $\Nn(\beta, L)$ consists of functions $f \colon \RR \to \RR$ that are $(m-1)$ times differentiable and for  which $f^{(m-1)}$ is absolutely continuous with weak derivative $f^{(m)}$ satisfying
+	\[
+	\qty{\int_{-\infty}^\infty \qty[ f^{(m)}(x + t) - f^{(m)}(x)]^2 \dd{x}}^{1/2} \leq L \abs{t}^{\beta - m} \quad\text{for all $t \in \RR$}. 
+	\]
+	
+	The densities in $\Nn(\beta, L)$ are denoted by $\FF_\Nn(\beta, L)$. 
+\end{definition}
+
+\begin{proposition}
+	Fix $\beta, L> 0$ and let $K$ be a kernel of order $\ell \ceq \ceil\beta$. Let $\hat f_n$ denote the KDE with kernel $K$ and bandwidth $h$ based on $X_1, \dotsc, X_n \iid f \in \FF_\Nn(\beta, L)$. Then we have
+	\[
+	\int_{-\infty}^\infty \Bias^2 \hat f_n(x) \dd{x} \leq \frac{L^2}{((\ell - 1)!)^2} \mu_\beta^2(K) h^{2\beta}. 
+	\]
+\end{proposition}
+
+\begin{proof}
+	\TODO write this out (integration + taylor expansion + 2x minkowski). 
+\end{proof}
+
+Putting everything together, we obtain the following:
+\begin{theorem}
+	Fix $\beta, L > 0$, and let $K$ be a kernel of order $\ell = \ceil\beta$ with $R(k)$ and $\mu_\beta(K)$ finite. Let $\hat f_n$ be the KDE with kernel $K$ and bandwidth $h$ based on $X_1, \dotsc, X_n \iid f \in \FF_\Nn(\beta, L)$. Then we have
+	\[
+	\MISE\hat f_n \leq \frac{R(K)}{nh} + \frac{L^2}{((\ell - 1)!)^2} \mu_\beta^2(K) h^{2\beta}. 
+	\]
+	In particular, fixing $\alpha > 0$ and taking $h = \alpha n^{-1/(2\beta + 1)}$, there exists $C > 0$ independent of $n$ such that
+	\[
+	\sup_{f \in \FF_\Nn(\beta, L)} \MISE \hat f_{n, h, K} \leq C n^{-2\beta/(2\beta + 1)}. 
+	\]
+\end{theorem}
+
+\subsection{Bandwidth selection}
+The choice of bandwidth in the previous theorem is not practical since we have not specified $\alpha$ and $\beta$ is typically unknown. One possible approach is \emph{least squares cross validation}. For this, note that minimising the $\MISE$ is equivalent to minimising
+\[
+\MISE(\hat f_n) - \int_\RR f^2(x) \dd{x} = \EE\qty[ \int_\RR \hat f_n^2(x) \dd{x}] - 2\EE\qty[ \int_\RR \hat f_n(x) f(x) \dd{x}],
+\]
+and it can be checked that an unbiased estimator for the above is given by 
+\[
+\Rm{LSCV}(h) \ceq \int_\RR \hat f_n^2(x) \dd{x} - \frac2n \sum_{i=1}^n \hat f_{n, -i}(X_i),
+\]
+where $\hat f_{n, -i}$ is the KDE based on all observations except $X_i$. We now choose $h$ such that LSCV is minimised. 

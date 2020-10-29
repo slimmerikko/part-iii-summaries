@@ -1,0 +1,191 @@
+\section{Variational regularisation}
+\subsection{Background}
+\subsubsection{Banach spaces and weak convergence}
+A \emph{Banach space} $\XX$ is a complete normed vector space. We define the \emph{dual space} $\XX^* \ceq \LL(X, \RR)$, and for $p \in \XX^*, u \in \XX$ we usually write $\ang{p, u}$ instead of $p(u)$.  For any $A \in \LL(\XX, \YY)$ we define the \emph{adjoint} $A^* \colon \YY^* \to \XX^*$ by $\ang{A^*p, u} \ceq \ang{p, Au}$ for all $p \in \XX^*, u \in \XX$. The dual space $\XX'$ is equipped with the norm
+\[
+\norm{p}_{\XX^*} \ceq \sup_{\norm{u}\leq 1} \ang{p, u}, 
+\]
+and with this norm $\XX^*$ is a Banach space. 
+
+The \emph{bi-dual space} is defined as $\XX^{**} \ceq (\XX^*)^*$. The mapping $E \colon \XX \to (\XX)^{**}$ defined by $\ang{E(u), p} \ceq \ang{p, u}$ is a continuous linear isometry, and we will regard $\XX$ as a subspace of $\XX^{**}$ using this isometry. If $\XX = \XX^{**}$ (i.e., $E$ is surjective), the space $\XX$ is called \emph{reflexive}.
+A space $\XX$ is called \emph{separable} if $\XX$ has a countable dense subset. 
+
+A sequence $(u_k) \subseteq \XX$ is said to \emph{converge weakly} to $u \in \XX$, denoted $u_k \cw u$, if $\ang{p, u_k} \to \ang{p, u}$ for all $p \in \XX^*$. 
+
+A sequence $(p_k) \subseteq \XX^*$ is said to \emph{converge weakly-*} to $p \in \XX'$, denoted $p_k \cws p$, if $\ang{p_k, u} \to \ang{p, u}$ for all $u \in \XX$. 
+
+\begin{theorem}
+	Let $\XX$ be Banach, then the unit ball is compact in $\XX^*$ w.r.t.\ the weak-$*$ topology. If $\XX$ is separable, then the weak-$*$ topology is metrisable and every bounded sequence in $\XX^*$ has a weakly-$*$ convergent subsequence. 
+\end{theorem}
+
+\begin{theorem}
+	Let $\XX$ be reflexive, then every bounded sequence in $\XX$ has a weakly convergent subsequence. 
+\end{theorem}
+
+We define $\rext \ceq \RR\cup \qty{\pm\infty}$. 
+
+\begin{definition}
+	Let $\XX$ be a Banach space with topology $\tau_X$. A functional $E \colon \XX \to\rext$ is said to be \emph{sequentially lower-semicontinuous with respect to $\tau_\XX$} or simply $\tau_\XX$-LSC if
+	\[
+	E(u) \leq \liminf_{n\to\infty} E(u_n)\quad\text{if $u_n \overset\tau\to u$}. 
+	\]
+	
+	Specifically, if $\tau_\XX$ is the weak topology, then $E$ is called \emph{weakly} LSC. If $\tau_\XX$ is the topology induced by the norm on $\XX$, then $E$ is called \emph{strongly} LSC or simply LSC.
+\end{definition}
+
+\subsubsection{Convex analysis}
+\begin{definition}
+	Let $C \subseteq \XX$. Then the \emph{characteristic function} of $C$ is defined as 
+	\[
+	\chi_C(u) \ceq \begin{cases} 0, &u \in C, \\ \infty,& u \notin C. \end{cases}
+	\]
+\end{definition}
+Using characteristic functions, we have $\min_{u \in C} E(u) = \min_{u \in \XX} E(u) + \chi_C(u)$. 
+
+\begin{definition}
+	Let $E \colon \XX \to \rext$, then the \emph{effective domain} is $\dom(E) \ceq \qty{u \mid E(u) < \infty}$. 
+	
+	The functional $E$ is called \emph{proper} if $\dom(E) \neq\emptyset$. 
+\end{definition}
+
+\begin{definition}
+	A functional $E \colon \XX \to \rext$ is called:
+	\begin{enumerate}
+		\item \emph{convex} if for all $u \neq v \in \XX$ and $\lambda \in (0, 1)$ we have $E(\lambda u + (1-\lambda) v) \leq \lambda E(u) + (1-\lambda) E(v)$;
+		\item \emph{strictly convex} if the above inequality is strict;
+		\item \emph{strongly convex} with constant $\theta > 0$ if $u \mapsto E(u) - \theta \norm{u}^2$ is convex. 
+	\end{enumerate}
+
+Note that $C \subseteq \XX$ is a convex set if and only if $\chi_C$ is a convex function. 
+\end{definition}
+
+\begin{lemma}
+	Nonnegative linear combinations of convex functionals are convex. If one of the components is strictly convex, then the nonnegative linear combination is also strictly convex. 
+\end{lemma}
+
+\begin{definition}
+	Let $E \colon \XX \to \rext$ be a functional. We define the \emph{Fenchel conjugate}
+	\[
+	E^* \colon \XX^* \to \rext \colon p \mapsto \sup_{u \in \XX} \qty[ \ang{p, u} - E(u)]. 
+	\]
+\end{definition}
+
+\begin{theorem}
+	For any $E \colon \XX \to \RR$ we have $E^{**} \restr_{\XX} \leq E$. If $E$ is proper and LSC, then $E^{**} \restr_{\XX} = E$. 
+\end{theorem}
+
+\begin{definition}
+	A functional $E \colon \XX \to \rext$ is called \emph{subdifferentiable} at $u \in \XX$ if there exists a $p \in \XX^*$ such that
+	\[
+	E(v) \geq E(u) + \ang{p, v - u} \quad\text{for all $v \in \XX$}. 
+	\]
+	In this case, we call $p$ a \emph{subgradient} of $E$ at position $u$. The collection of all subgradients of $E$ at $u$ is denoted by $\pt E(u)$ and is called the \emph{subdifferential} of $E$ at $u$. 
+\end{definition}
+
+\begin{lemma}
+	Let $E \colon \XX \to \rext$ be convex, then $E$ is subdifferentiable at all points $u \in \dom(E)$. If $E$ is also proper, then $E$ is not subdifferentiable at any $u \notin \dom(E)$. 
+\end{lemma}
+
+\begin{theorem}
+	Let $E \colon \XX \to \rext$ be proper and convex and $u \in \dom(E)$. Then $\pt E(u)$ is convex and weakly-$*$ compact in $\XX^*$. 
+\end{theorem}
+
+\begin{theorem}
+	Let $E, F$ be proper LSC convex functionals and $u \in \dom(E) \cap \dom(F)$ such that at least one of $E$ and $F$ is continuous at $u$. Then $\pt(E + F)(u) = \pt E(u) + \pt F(u)$. 
+\end{theorem}
+
+\begin{theorem}
+	Let $E$ be convex. Then $u$ is a global minimiser of $E$ if and only if $0 \in \pt E(u)$. 
+\end{theorem}
+
+
+\begin{definition}
+	Let $E$ be convex, $u, v \in \XX$, $E(v) < \infty$ and $q \in \pt E(v)$. Then the \emph{Bregman distance} of $E$ between $u$ and $v$ is defined as
+	\[
+	D_E^q(u, v) \ceq E(u) - E(v) - \ang{q, u -v} \geq 0. 
+	\]
+	
+	If we also have $E(u) < \infty, p \in \pt E(u)$, then we define the \emph{symmetric Bregman distance}
+	\[
+	D_E^{p, q}(u, v) \ceq D_E^p(v, u) + D_E^q(u, v) = \ang{p - q, u - v}. 
+	\]
+\end{definition}
+
+\begin{definition}
+	A functional $E$ is called \emph{absolutely one-homogeneous} if $E(\lambda u) = \abs{\lambda} E(u)$ for all $\lambda \in \RR, u \in \XX$. 
+\end{definition}
+
+\begin{proposition}
+	Let $E$ be a convex, proper and absolutely one-homogeneous, and $p \in \pt E(u)$. Then:
+	\begin{enumerate}
+		\item $E(u) = \ang{p, u}$;
+		\item $D^p(v, u) = E(v) - \ang{p, v}$ for all $v \in \XX$;
+		\item $E^*(p) = \chi_{\pt E(0)}(p)$.
+	\end{enumerate}  
+\end{proposition}
+
+Furthermore, we have the following:
+\begin{proposition}
+	Let $E$ be proper, convex, and absolutely one-homogeneous, and let $u \in \XX$. Then $p \in \pt E(u)$ if and only if $p \in \pt E(0)$ and $\ang{p, u} = E(u)$. 
+\end{proposition}
+
+\subsubsection{Minimisers}
+\begin{definition}
+	We say that $u^* \in \XX$ is a \emph{minimiser} of a  functional $E$ if $u$ minimises $E$ and $E(u) < \infty$. 
+\end{definition}
+
+\begin{definition}
+	A functional $E$ is called \emph{coercive} if $\norm{u_j} \to \infty \implies \abs{E(u_j)} \to \infty$. 
+\end{definition}
+
+\begin{lemma}
+	Let $E$ be proper, coercive and bounded from below. Then $\inf_{u \in \XX} E(u) > -\infty$ and there exists a (bounded) minimising sequence $(u_j)$ with $E(u_j) \to \inf_u E(u)$. \end{lemma}
+
+\begin{theorem}[Direct method]
+	Let $\XX$ be Banach and $\tau_\XX$ a topology on $\XX$ such that any bounded sequence in $\XX$ has a $\tau_\XX$ convergent subsequence. Then any proper, bounded from below, coercive, $\tau_X$-LSC functional has a minimiser.  
+\end{theorem}
+
+\begin{proof}
+	Since $E$ is bounded from below, we have $\inf_u E(u) > -\infty$, so there exists a bounded minimising sequence $(u_j)$, which we can assume is $\tau_\XX$ convergent with limit $u^*$ after taking a subsequence if necessary. By lower-semicontinuity of $E$ we have
+	\[
+	E(u^*) \leq \liminf_{k\to\infty} E(u_j) = \lim_{j\to\infty} E(u_j) = \inf_u E(u),
+	\]
+	so $u^*$ is a minimiser. 
+\end{proof}
+
+\begin{theorem}
+	If a strictly convex functional has a minimiser, it is unique. 
+\end{theorem}
+
+\begin{proof}
+	Suppose $u \neq v$ are two minimisers, then by strict convexity, we have $E(\frac12 u + \frac12 v) < E(u)$, a contradiction. 
+\end{proof}
+
+\subsubsection{Duality in convex optimisation}
+Consider the \emph{primal} optimisation problem 
+\[
+(P) \ceq \inf_{u \in \XX} E(Au) + F(u),
+\]
+where $E, F$ are proper, convex and LSC, and $A \in \BB(\XX, \YY)$. Since $E$ is convex and LSC, we have $E = E^{**}$ so we can rewrite the primal problem as the \emph{saddle point problem}
+\[
+\inf_{u \in \XX} \sup_{\eta \in \YY^*} \ang{\eta, Au} - E^*(\eta) + F(u).
+\]
+Since $\inf\sup \geq \sup\inf$ always holds we have
+\[
+(P) \geq \sup_{\eta \in \YY^*} \inf_{u \in \XX} \ang{\eta, y} - E^*(\eta) + F(u) = \sup_{\eta \in \YY^*} -E^*(\eta) - F^*(-A^*\eta) \eqqcolon (D). 
+\] 
+
+The problem (D) is called the \emph{dual problem}, and the fact that $(D) \leq (P)$ is called \emph{weak duality}. The value $(P) - (D)$ is called the \emph{duality gap}, and if $(P) = (D)$, we speak of \emph{strong duality}. 
+
+We have the following:
+\begin{theorem}
+	Suppose the function $E(Au) + F(u)$ is proper, convex, LSC and coercive. Suppose also that there exists $u_0 \in \XX$ s.t.\ $F(u)< \infty$, $E(Au_0) < \infty$, and $E(y)$ is continuous at $y = A u_0$. Then:
+	\begin{enumerate}
+		\item The dual problem (D) has at least one solution $\hat\eta$;
+		\item There is no duality gap;
+		\item If $(P)$ has an optimal solution $\hat u$, then we have
+		\[
+		A^*\hat\eta \in \pt F(\hat u), \quad -\hat\eta \in \pt E(A\hat u). 
+		\]
+	\end{enumerate}
+\end{theorem}
