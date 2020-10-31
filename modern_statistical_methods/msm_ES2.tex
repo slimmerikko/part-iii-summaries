@@ -149,4 +149,124 @@
 	
 	Using the random feature map $\hat\phi(z) = \psi_{M_z}$ we can approximate kernel ridge regression using the random feature map method. 
 \end{proof}
+
+\begin{question}
+	Consider the logistic regression model where we assume $Y_1, \dotsc, Y_n \in \qty{-1, 1}$ are independent and
+	\[
+	\log(\frac{\PP(Y_i = 1)}{\PP(Y_i = -1)}) = x_i\T\beta^0. 
+	\]
+	Show that the maximum likelihood estimate $\beta$ minimises
+	\[
+	\sum_{i=1}^n \log(1 + \exp(-Y_i x_i\T \beta))
+	\]
+	over $\beta \in \RR^p$. 
+\end{question}
+
+\begin{proof}
+	Let $(y_1, \dotsc, y_n)$ be the responses, then the likelihood function becomes
+	\[
+	L(\beta) = \PP(Y_1, \dotsc, Y_n \mid \beta)
+	\]
+	
+	Note that
+	\begin{align*}
+		\frac{\PP(Y_i = 1)}{1 - \PP(Y_i = 1)} = \exp(x_i\T\beta) \implies \PP(Y_i = 1) = \frac{1}{1 + \exp(-x_i\T \beta)},
+	\end{align*}
+and analogously
+\begin{align*}
+	\PP(Y_i = -1) =  \frac{1}{1 + \exp(x_i\T\beta)}. 
+\end{align*}
+We can combine the above formulas as
+\[
+\PP(Y_i = y_i) = \frac{1}{1 + \exp(-y_i x_i\T\beta)}. 
+\]
+
+Therefore our the MLE $\hat\beta$ maximises
+\[
+L(\beta) = \prod_{i=1}^n \frac{1}{1 + \exp(-Y_i x_i\T\beta)}, 
+\]
+and it also maximises the log-likelihood function
+\[
+\log(L(\beta)) = - \sum_{i=1}^n \log(1 + \exp(-Y_i x_i\T\beta))
+\]
+which is of course equivalent to minimising
+\[
+-\log(L(\beta)) = \sum_{i=1}^n \log(1 + \exp(-Y_i x_i\T\beta)). 
+\]
+\end{proof}
+
+\begin{question}
+	Consider the following algorithm for model selection when we have a response $Y \in \RR^n$ and a matrix of predictors $X \in \RR^{n \times p}$.
+	\begin{enumerate}[(a)]
+		\item First centre $Y$ and all the columns of $X$. Initiale the current model $M \subseteq \qty{1, \dotsc, p}$ to be $\emptyset$ and set the current residual $R$ to be $Y$. 
+		\item Find the variable $k^*$ in $M^c$ most correlated with the current residual $R$. Set $M$ to be $M \cup \qty{k^*}$. Replace $R$ with the residual from regressing $R$ onto $X_{k^*}$. Further replac eeach variable in $M^c$ with the residual from regressing itself onto $X_{k^*}$.
+		\item Continue the previous step unto $R = 0$. 
+	\end{enumerate}
+Show that this algorithm is equivalent to forward selection.
+
+\emph{Hint:} Use induction on the iteration $m$ of the algorithm. Consider strengthening the natural induction hypothesis that the model at iteration $m$ is the same as that selected after $m$ steps of forward selection. 
+\end{question}
+
+\begin{solution}
+	content...
+\end{solution}
+
+\begin{question}
+	Show that if $W$ is mean-zero and sub-Gaussian with parameter $\sigma$, then $\Var(W) \leq \sigma^2$. 
+\end{question}
+
+\begin{proof}
+	If $W$ is mean-zero, then $\Var(W) = \EE(W^2)$. By the proof of lemma 15 we have $\EE(W^2) \leq 2 \sigma^2$, but this bound is too loose.   
+	
+	Since $W$ is sub-Gaussian, we have for all $\alpha \in \RR$ that
+	\begin{align*}
+		\EE[e{\alpha W}] &\leq e^{\alpha^2\sigma^2/2} \\
+		\sum_{k=0}^\infty \frac{\EE[W^k] }{k!} \alpha^k &\leq \sum_{k=0}^\infty \frac{\sigma^{2k}}{2^k k!} \alpha^{2k} \\
+		\frac{\EE[W^2]}{2} \alpha^2 + \sum_{k=3}^\infty \frac{\EE[W^k]}{k!} \alpha^k &\leq \frac{\sigma^2}{2} \alpha^2 + \sum_{k=2}^\infty \frac{\sigma^{2k}}{2^k k!} \alpha^{2k} \\
+		\frac12\alpha^2 \qty(\sigma^2 - \EE[W^2]) &\geq \alpha^3 P(\alpha),
+		\end{align*}
+	where $P$ is a power series in $\alpha$. Rescaling we find \[
+	\frac12(\sigma^2 - \EE[W^2]) \geq \alpha P(\alpha),
+	\]
+	and letting $\alpha \to 0$ also lets $\alpha P(\alpha) \to 0$, and therefore $\sigma^2 - \EE[W^2] \geq 0$ so $\Var(W) \leq \sigma^2$. 
+\end{proof}
+
+\begin{question}
+	Verify Hoeffding's lemma for the special case where $W$ is a Rademacher random variable, so $W$ takes the values $-1, 1$ each with probability $1/2$. 
+\end{question}
+
+\begin{proof}
+		If $W$ is a Rademacher random variable then we have, using $(2k)! \geq 2^k k!$ for each $k \in \NN$, that
+	\begin{align*}
+		\EE[e^{\alpha W}] = \frac12 e^{-\alpha} + \frac12 e^{\alpha} = \sum_{k=0}^\infty \frac{\alpha^{2k}}{(2k)!} \leq \sum_{k=0}^\infty \frac{\alpha^{2k}}{2^k k!} = e^{\alpha^2/2}
+	\end{align*}
+which shows that $W$ is sub-Gaussian with parameter $1 = (1 -(-1))/2$, so Hoeffding's lemma holds indeed. 
+\end{proof}
+
+\begin{question}
+	\begin{enumerate}[(a)]
+		\item Let $W \sim \chi_d^2$. Show that
+		\[
+		\PP(\abs{W/d - 1} \geq t) \leq 2e^{-dt^2/8}
+		\]
+		for $t \in (0, 1)$. You may use the facts that the mgf of a $\chi_1^2$ random variable is $(1 - 2\alpha)^{-1/2}$ for $\alpha < 1/2$, and $e^{-\alpha} (1 - 2\alpha)^{-1/2} \leq e^{2\alpha^2}$ when $\abs{\alpha} < 1/4$. 
+		
+		\item Let $A \in \RR^{d\times p}$ have i.i.d.\ standard normal entries. Fix $u \in \RR^p$. Use the result above to conclude that
+		\[
+		\PP\qty(\abs{\frac{\norm{Au}_2^2}{d \norm{u}_2^2} - 1} \geq t) \leq 2e^{-dt^2/8}. 
+		\]
+		
+		\item Suppose we have data $u_1, \dotsc, u_n \in \RR^p$, with $p$ large and $n \geq 2$. Show that for a given $\eps \in (0, 1)$ and $d > 16\log(n/\sqrt\eps)/t^2$, each data point may be compressed down to $u_i \mapsto Au_i/\sqrt d = w_i$, whilst approximately preserving the distance between the points:
+		\[
+		\PP\qty(1 - t \leq \frac{\norm{w_i - w_j}_2^2}{\norm{u_i - u_j}_2^2} \leq 1 + t \text{ for all } i \neq j \in \qty{1, \dotsc, n}) \geq 1 - \eps. 
+		\]
+		This is the famous Johnson-Lindenstrauss Lemma. 
+	\end{enumerate}
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}[(a)]
+		\item 
+	\end{enumerate}
+\end{proof}
 \end{document}

@@ -83,6 +83,7 @@
 \DeclareMathOperator\Beta{Beta}
 \DeclareMathOperator\Gam{Gamma}
 \DeclareMathOperator\Cov{Cov}
+\DeclareMathOperator\diag{diag}
 
 \title{Topics in Statistical Theory --- Example Sheet 1} % subject
 \author{Lucas Riedstra}
@@ -299,12 +300,12 @@ Of course, the true limit is 0 for any $n$, which is only given by Bennett's ine
 	
 	Then, defining $t_0 = -\infty$ and $t_{k+1} = \infty$,  we find that
 	\begin{gather*}
-	\PP\qty[ n \qty(\hat F_n(t_1), \dotsc, 1 - \hat F_n(t_k)) (a_1, \dotsc, a_{n+1})] \\ = \PP[\text{exactly $a_i$ of the $X_i$ lie in $(t_{i-1}, t_i]$ for $i = 1, \dotsc, n$}].
+	\PP\qty[ n \qty(\hat F_n(t_1), \dotsc, 1 - \hat F_n(t_k)) = (a_1, \dotsc, a_{k+1})] \\ = \PP[\text{exactly $a_i$ of the $X_i$ lie in $(t_{i-1}, t_i]$ for $i = 1, \dotsc, n$}].
 	\end{gather*}
 
-This probability is 0 unless all $a_i$ are nonnegative integers with $\sum_i a_i = n$. In this case, we can first choose $a_1$ of the $X_i$ which must lie in $(\infty, t_1]$, then we choose $a_2$ of the remaining $X_i$ which must lie in $(t_1, t_2]$ and so forth. We find that the above probability equals
+In this case, we have a multinomial distribution with $n$ trials and probabilities $F(t_1), F(t_2) - F(t_1), \dotsc, F(t_k) - F(t_{k-1}), 1 - F(t_k)$. Therefore, the probability is 0 if $\sum_i a_i \neq n$ and else it is
 \[
-\binom{n}{a_1} (F(t_1))^{a_1} \binom{n - a_1}{a_2} (F(t_2) - F(t_1))^{a_2} \dotsb \binom{a_k + a_{k_1}}{a_k} (F(t_k) - F(t_{k-1}))^{a_k} \cdot (1 - F(t_k))^{a_{k+1}}. 
+\frac{n!}{a_1! \dotsb a_{k+1}!} F(t_1)^{a_1} \dotsb (1 - F(t_k))^{a_{k+1}}. 
 \]
 
 \item By the central limit theorem, the asymptotic distribution is $N(0, \Sigma)$, where $\Sigma$ is the covariance matrix of $(\hat F_n(t_1), \dotsc, \hat F_n(t_k))$. We will compute the entries of $\Sigma$. 
@@ -334,4 +335,68 @@ In the end, we find
 \]
 \end{enumerate} 
 \end{solution}
+
+\begin{question}
+	We say that a continuous process $(B_t)_{t \in [0, 1]}$ is a \emph{standard Brownian motion} on $[0, 1]$ if $B_0 = 0$ and if, for $0 \leq s_1 \leq t_1 \leq \dotsb \leq s_k \leq t_k \leq 1$, we have $(B_{t_1} - B_{s_1}, \dotsb, B_{t_k} - B_{s_k}) \sim N_k(0, \Sigma)$, where $\Sigma \ceq \diag(t_ 1- s_1, \dotsb, t_k - s_k)$. The process $(W_t)_{t \in [0, 1]}$ defined by $W_t \ceq B_t - tB_1$ is called a \emph{Brownian bridge}, or \emph{tied-down Brownian motion}, because $W_0 = W_1 = 0$. Compute the distribution of $(W_{t_1}, \dotsc, W_{t_k})$. 
+\end{question}
+
+\begin{solution}
+	Note that $W_t = B_t - t B_1 = (1-t) (B_t - B_0) - t (B_1 - B_t)$. Now, since $(B_t - B_0)$ and $(B_1 - B_t)$ are independent with distributions $N(0, t)$ and $N(0, 1-t)$ distributions respectively, we find that 
+	\[
+	W_t \sim (1-t) N(0, t) + t N(0, 1 - t) = N\qty(0, \frac{t}{\sqrt{1 - t}}) + N\qty(0, \frac{1-t}{\sqrt t}) = N\qty(0, \frac{t}{\sqrt{1 - t}} + \frac{1-t}{\sqrt t}). 
+	\]
+	
+	??
+\end{solution}
+
+\begin{question}
+	Let $\phi$ denote the standard normal density function, which is a bounded, second-order kernel. For $r \in \NN_0$, define the $r$-th Hermite polynomial $H_r$ by $H_r(x) \ceq (-1)^r \phi^{(r)}(x) / \phi(x)$. Prove that $H_r$ is a monic polynomial of degree $r$ that is even if $r$ is even and odd if $r$ is odd. Show further that
+	\[
+	\int_{-\infty}^\infty H_r(u) H_s(u) \phi(u) \dd{u} = \begin{cases}
+		(2\pi)^{1/2} r!, & r=s, \\ 0 , & r \neq s.
+	\end{cases}
+	\]
+	Now fix an integer $\ell \geq 2$ and define 
+	\[
+	K_\ell(u) \ceq \sum_{r=0}^{\ell -1 } \frac{H_r(0) H_r(u)}{(2\pi)^{1/2} r!} e^{-u^2/2}. 
+	\]
+	Prove that $K_\ell$ is a bounded kernel of order $\ell$. 
+\end{question}
+
+\begin{proof}
+ 	We prove this by induction on $r$. For $r = 0$, we have $H_0(x) = 1$, which is indeed an even monic polynomial of degree 0. 
+ 	Now, suppose the claim holds for a given $r$, that is, $H_r(x) = (-1)^r \phi^{(r)}(x)/\phi(x) = p(x)$ for some monic polynomial $p$ of degree $r$, which is even if $r$ is even and odd if $r$ is odd. Then we have
+ 	\begin{align*}
+ 	\phi^{(r)}(x) &= (-1)^r p(x) \phi(x) = (-1)^r (2\pi)^{-1/2} p(x) \exp(-x^2/2) \\
+ 	\phi^{(r+1)}(x) &= (-1)^r 2\pi^{-1/2} \qty(p'(x) - x p(x)) \exp(-x^2/2) \\
+ 	H_{r+1 }(x) &= (-1)^r (-1)^{r+1} \qty(p'(x) - x p(x)) = xp(x) - p'(x). 
+ 	\end{align*}
+ 	Now it is clear that $H$ is a monic polynomial of degree $r$ since $p$ was assumed monic. Furthermore, since derivatives of even functions are odd and vice versa, it is clear that $H$ is odd if $p$ is even and vice versa. 
+
+	Now, suppose $r < s$, then 
+	\begin{align*}
+		\int_{-\infty}^\infty H_r(u) H_s(u) \phi(u) \dd{u} &= (-1)^s \int_{-\infty}^\infty H_r(u) \phi^{(s)}(x) \dd{u} \overset{\text{IBP}}= \int_{-\infty}^\infty H_r^{(s)}(u) \phi(u) \dd{u} = 0,
+	\end{align*}
+since $H_r^{(s)} = 0$ if $r < s$. 
+
+However, if $r = s$, then following the same line of reasoning as above and using the fact that $H_r^{(r)} = r!$, we find
+\[
+\int_{-\infty}^\infty H_r^2(u) \phi(u) \dd{u} = r! \int_{-\infty}^\infty \phi(u) \dd{u} = r!. 
+\]
+
+Now we consider $K_\ell$: we have
+\[
+\int_{-\infty}^\infty K_\ell(u) \dd{u} = \sum_{r=0}^{\ell - 1} \frac{H_r(0)}{r!} \int_{-\infty}^\infty H_r(u) \phi(u) \dd{u} =  \sum_{r=0}^{\ell - 1} \frac{(-1)^r H_r(0)}{r!} \int_{-\infty}^\infty \phi^{(r)}(u) \dd{u}.
+\]
+Note that every term in the above sum vanishes except for the $r = 0$ term due to the integral, and the $r = 0$ term is 1, so $K_\ell$ is indeed a kernel. 
+
+We verify that $K_\ell$ has order $\ell$: let $j \in \qty{1, \dotsc, \ell - 1}$, then we have
+\begin{align*}
+	\int_{-\infty}^\infty u^j K_\ell(u) \dd{u} = \sum_{r=0}^{\ell - 1} \frac{(-1)^r H_r(0)}{r!} \int_{-\infty}^\infty u^j \phi^{(r)}(u) \dd{u}.
+\end{align*}
+Clearly, if $j < r$, integral in the sum vanishes. If $j = r$, the integral yields $r!$. So we have
+\[
+\int_{-\infty}^\infty u^j K_\ell(u) \dd{u} = (-1)^j H_j(0) + \sum_{r=0}^{j-1} \int_{-\infty}^\infty u^j \phi^{(r)}(u) \dd{u}. 
+\]
+\end{proof}
 \end{document}
