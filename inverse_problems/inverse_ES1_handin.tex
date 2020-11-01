@@ -1,0 +1,279 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage{mathtools, amsmath, amssymb, amsthm, enumerate, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+\newcommand\ZZ{\Bb Z}
+\newcommand\FF{\Cal F}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\renewcommand{\P}{^\perp}
+\newcommand{\D}{^\dagger}
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+\newcommand\clos\overline
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\newcommand\XX{\Cal X}
+\newcommand\YY{\Cal Y}
+\newcommand\UU{\Cal U}
+\newcommand\VV{\Cal V}
+\newcommand\LL{\Cal L}
+\newcommand\KK{\Cal K}
+\newcommand\BB{\Cal B}
+% \newcommand\LLL{\Bb L}
+\DeclareMathOperator\Dom{\Cal D}
+\DeclareMathOperator\Nul{\Cal N}
+\DeclareMathOperator\Ran{\Cal R}
+\DeclareMathOperator\diag{diag}
+
+\title{Inverse Problems --- Example Sheet 1} % subject
+\author{Lucas Riedstra}
+\date{2 November 2020} % date
+
+\begin{document}
+\maketitle
+
+\begin{mdframed}
+		Note: when writing a norm of a vector $v \in V$, I will simply write $\norm{v}$ and not $\norm{v}_V$, unless it is unclear in which space $v$ lives. The same holds for inner products. 	
+\end{mdframed}
+\begin{question}
+	For $\Omega = [0, 1]^2$ and $\XX \in L^2(\Omega)$, we consider the integral operator $A \colon \XX \to \XX$ with
+	\[
+	(Au)(y) \ceq \int_\Omega k(x, y) u(x) \dd{x},
+	\]
+	for $k \in L^2(\Omega \times \Omega)$.  Show that
+	\begin{enumerate}[(a)]
+		\item $A$ is linear with respect to $u$,
+		\item $A$ is a bounded linear operator, i.e.\ $\norm{Au}_\XX \leq \norm{A}_{\LL(\XX, \XX)} \norm{u}_\XX$. Give also an estimate for $\norm{A}_{\LL(\XX, \XX)}$,
+		\item the adjoint $A^*$ is given via
+		\[
+		(A^* v)(y) = \int_\Omega k(y, x) v(x) \dd{x}.
+		\]
+		\item $A$ is a compact operator, i.e.\ $A \in \KK(\XX, \XX)$. 
+		
+		\emph{Hint:} you may use the fact that if an operator $A$ can be written as a limit (in the operator norm) of finite-rank operators then $A$ is compact. An operator $B$ is called finite-rank if $\dim(B) < \infty$. 
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+
+	
+	\begin{enumerate}[(a)]
+		\item Let $\alpha, \beta \in \RR$, $u, v \in L^2(\Omega)$ and $y \in \Omega$. Then we have
+		\begin{align*}
+			(A(\alpha u + \beta v))(y) &= \int_\Omega k(x, y) (\alpha u + \beta v)(x) \dd{x} \\
+			&= \int_\Omega k(x, y) \qty(\alpha u(x) + \beta v(x)) \dd{x}\\
+			&= \alpha \int_\Omega k(x, y) u(x) \dd{x} + \beta \int_\Omega k(x, y) v(x) \dd{x} \\
+			&= (\alpha A u)(y) + (\beta Av)(y) = (\alpha Au + \beta Av)(y). 
+		\end{align*}
+	Since equality holds for all $y \in \Omega$ we find $A(\alpha u + \beta v) = \alpha A u + \beta A v$, which proves that $A$ is linear. 
+	\item Let $u \in L^2(\Omega)$, then we have
+	\begin{align*}
+	\norm{Au}^2 &= \int_\Omega ((Au)(y))^2 \dd{y} = \int_\Omega \qty( \int_\Omega k(x, y) u(x) \dd{x})^2 \dd{y} = \int_\Omega \ang{k(\cdot, y), u(\cdot)}^2 \dd{y}. 
+	\end{align*}
+Now we apply Cauchy-Schwarz and find
+\begin{align*}
+	\int_\Omega \ang{k(\cdot, y), u(\cdot)}^2 \dd{y} &\leq \int_\Omega \norm{k(\cdot, y)}^2 \norm{u}^2 \dd{y} \overset\star= \norm{u}^2 \iint_{\Omega^2} k^2(x, y) \dd{x}\dd{y} = \norm{u}^2 \norm{k}^2, 
+\end{align*}
+where $\star$ follows from Fubini's theorem since the integrand is nonnegative. 
+Taking square roots on both sides we find that $\norm{Au}\leq \norm{k}\norm{u}$, so $A$ is bounded with $\norm{A} \leq \norm{k}$. 
+
+\item We know that the adjoint is the unique operator that satisfies $\ang{Au, v} = \ang{u, A^*v}$ for all $u, v \in \XX$. Let $u, v \in \XX$, then we compute
+\begin{align*}
+	\ang{Au, v} &= \int_\Omega (Au)(y)\cdot  v(y) \dd{y} = \int_\Omega \qty(\int_\Omega k(x, y) u(x) \dd{x}) v(y) \dd{y} \\
+	&= \int_\Omega\int_\Omega k(x, y) u(x) v(y) \dd{x} \dd{y} \overset\star= \int_\Omega\int_\Omega k(x, y) u(x) v(y) \dd{y} \dd{x} \\
+	&= \int_\Omega u(x) \qty(\int_\Omega k(x, y) v(y) \dd{y}) \dd{x} = \ang{u, A^*v}
+\end{align*}
+where $(A^* v)(x) = \int_\Omega k(x, y) v(y) \dd{y}$ as required. Here $\star$ follows from Fubini's theorem.
+
+\item It is known that for any compact set $X \subseteq \RR^n$, polynomials lie dense in $L^2(X)$. Therefore, there exists a sequence of polynomials $p_n$ such that $p_n \to k$ in $L^2([0, 1]^4)$. It is easily seen that for any polynomial $p$, the operator
+\[
+(A_p u)(y) \ceq \int_\Omega p(x, y) u(x) \dd{x} 
+\] 
+has finite rank: let $p(z) = \sum_{\abs{\alpha} \leq n} c_\alpha z^\alpha$ (where $z \in [0, 1]^4$ and $\alpha$ is a multi-index), then we find
+\[
+(A_p u)(y) = \sum_{\abs{\alpha} \leq n} c_\alpha \int_\Omega x_1^{\alpha_1} x_2^{\alpha_2} y_1^{\alpha_3} y_2^{\alpha_4} u(x) \dd{x} = \sum_{\abs{\alpha} \leq n} c_\alpha \qty(\int_\Omega x_1^{\alpha_1} x_2^{\alpha_2} u(x) \dd{x}) y_1^{\alpha_3} y_2^{\alpha_4},
+\]
+so $A_p u$ lies in the $\Span\qty{y_1^{\alpha_1} y_2^{\alpha_2} \mid \alpha_1 + \alpha_2 \leq n}$, and therefore has finite rank. 
+By (b), we find that $\norm{A - A_n} \leq \norm{k - p_n} \to 0$, which shows that $A_n \to A$ in operator norm. We conclude that $A$ is compact. 
+%\[
+%(A_n u)(y) \ceq \int_\Omega p_n()
+%\]
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	We consider the problem of differentiation, formulated as the inverse problem of finding $u$ from $Au = f$ with the integral operator $A \colon L^2([0, 1]) \to L^2([0, 1])$ defined as
+	\[
+	(Au)(y) \ceq \int_0^y u(x) \dd{x}.
+	\]
+	
+	\begin{enumerate}[(a)]
+		\item Let $f$ be given by
+		\[
+		f(x) \ceq \begin{cases} 0 & x < \frac12, \\ 1 &x > \frac12. \end{cases}
+		\]
+		Show that $f \in \clos{\Ran(A)}$. 
+		\item Let $f$ be given as in a). Show that $f \in \clos{\Ran(A)} \setminus \Ran(A)$. \emph{Hint: Consider the Picard criterion}. 
+		
+		\item Prove or falsify: ``The Moore-Penrose inverse of $A$ is continuous.''
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[(a)]
+		\item We want to show that we can approximate $f$ by a sequence $(Au_n)$ for some $(u_n) \subseteq L^2[0,1]$. To this end, define for $n \geq 2$
+		\[
+		u_n(x) =
+		\begin{cases}
+			0 &\abs{x - \frac12} > \frac1n, \\
+			\frac n2 &\abs{x - \frac12} \leq \frac1n. 
+		\end{cases}
+		\]
+		Clearly $u \in L^2[0, 1]$, and we have
+		\[
+		f_n(y) \ceq (Au_n)(y) = \int_0^y u_n(x) \dd{x} = \begin{cases}
+			0 &\text{if $y < \frac12 - \frac1n$,}\\
+			\frac n2(y - \frac12 + \frac1n) &\text{if $\frac12 - \frac1n \leq y \leq \frac12 + \frac1n$} \\
+			1 &\text{if $y > \frac12 + \frac1n$}. 
+		\end{cases}
+		\]
+		
+		Therefore we find
+		\begin{align*}
+			\norm{f_n - f}^2 &= \int_0^1 (f_n - f)^2(x) \dd{x} \\
+			&= 2 \int_{\frac12 - \frac1n}^{\frac12} \frac{n^2}{4} (x - \frac12 - \frac1n)^2 \dd{x} \\
+			&= \frac{n^2}{2} \int_0^{1/n}  x^2 \dd{x} = \frac{1}{6n} \to 0, 
+		\end{align*}
+	so $f_n \to f$ in $L^2[0, 1]$. Since $f_n \in \Ran(A)$ this shows $f \in \clos{\Ran(A)}$. 
+	
+
+	\item 	In example 2.2.12, it is shown that for this operator, the Picard criterion is
+	\begin{equation} \label{eq:picard}
+	2\sum_{j=1}^\infty  \sigma_j^{-2} \qty(\int_0^1 f(s) \sin(\sigma_j^{-1} s) \dd{s})^2 < \infty,
+	\end{equation}
+	where $\sigma_j = \frac2{(2j - 1)\pi}$.
+	
+	We compute
+	\[
+	\int_0^1 f(s) \sin(\sigma_j^{-1} s) \dd{s} = \int_{1/2}^1 \sin(\sigma_j^{-1} s) \dd{s} = \sigma_j \qty[ \cos(\frac12 \sigma_j^{-1}) - \cos(\sigma_j^{-1})]. 
+	\]
+	We have
+	\[
+	\cos(\sigma_j^{-1}) = \cos(\frac{(2j - 1)\pi}{2}) = 0 \quad\text{and}\quad \cos(\frac12\sigma_j^{-1}) = \cos(\frac{(2j-1)\pi}{4}) = \pm\frac1{\sqrt2 }. 
+	\]
+	
+	Plugging this into \cref{eq:picard} gives that
+	\[
+	2\sum_{j=1}^\infty  \sigma_j^{-2} \qty(\int_0^1 f(s) \sin(\sigma_j^{-1} s) \dd{s})^2 = 2 \sum_{j=1}^\infty \sigma_j^{-2} (\sigma_j^2/2) = \sum_{j=1}^\infty 1 = \infty,
+	\]
+	so $f$ does not satisfy the Picard criterion and therefore $f \in \clos{\Ran(A)} \setminus \Ran(A)$. 
+%	Note that $A$ is compact, since we can write $(Au)(y) = \int_{[0, 1]} k(x, y) u(x) \dd{x}$ with $k(x, y) = \ind_{x \leq y}$. 
+%	
+%	To apply the Picard criterion we must find the singular values and right singular vectors of $A$, which are equal to the square roots of the eigenvalues of $AA^*$ and the eigenvectors of $AA^*$. 
+%	
+%
+%	\begin{align*}
+%		\ang{Au, v} &= \int_0^1 (Au)(y)\cdot v(y) \dd{y} \\
+%		&= \int_0^1 \int_0^y u(x) \dd{x} v(y) \dd{y} \\
+%		&= \int_0^1 \int_0^y u(x) v(y) \dd{x} \dd{y} \\
+%		&= \int_0^1 \int_x^1 u(x) v(y) \dd{y} \dd{x} \\ 
+%		&= \int_0^1 u(x) \int_x^1 v(y) \dd{y} \dd{x} \\
+%		&= \ang{u, A^* v}
+%	\end{align*}
+%where $v(x) = \int_x^1 v(y) \dd{y}$.  Therefore, we find
+%\begin{align*}
+%	(AA^* u)(x) = \int_0^x \int_y^1 u(z) \dd{z} \dd{y}.
+%\end{align*}
+%Now we solve the eigenequation. Firstly, note that $\Nul(A) = \qty{0}$, so let $\lambda^2 > 0$. Then we have
+%\begin{align}
+%	\int_0^x \int_y^1 u(z) \dd{z} \dd{y} &= \lambda^2 u(x) \\
+%	\int_x^1 u(z) \dd{z} &= \lambda^2 u'(x) \\
+%	- u(x) &= \lambda^2 u''(x). 
+%\end{align}
+%Furthermore, from (1) we infer $u(0) = 0$ while from (2) we infer $u'(1) = 0$. 
+%The general solution to (3) is given by $u(x) = a \cos(\lambda^{-1} x) + b \sin(\lambda^{-1} x)$. 
+%Plugging $u(0) = 0$ gives $a = 0$, and $u'(1) = 0$ gives
+%\[
+%b\lambda^{-1} \cos(\lambda^{-1}) = 0 \implies b = 0 \text{ or } \lambda^{-1} = \pi\qty(n - \frac12) \text{ for some $n \in \ZZ_{>0}$}.
+%\]
+%
+%Our singular values are therefore $\frac{1}{(n - \frac12)\pi}$ ($n \in \ZZ_{>0}$) with right singular vectors $y_n(x) = \sqrt 2\sin((n - \frac12) \pi x)$. 
+%We now compute
+%\[
+%\ang{f, y_n} = \sqrt 2\int_{1/2}^1 \sin(\qty(n - \frac12) \pi x) \dd{x} = ...
+%\]
+
+\item The Moore-Penrose inverse of $A$ is discontinuous. This can be seen by theorem 2.1.11: we have in (b) an element $f \in \clos{\Ran(A)} \setminus \Ran(A)$, so   $\Ran(A)$ is not closed, so $A\D$ is discontinuous. 
+
+\end{enumerate}
+\end{solution}
+
+\end{document}
