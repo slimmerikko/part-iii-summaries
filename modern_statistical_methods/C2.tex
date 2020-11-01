@@ -106,3 +106,53 @@ By Chernoff bounding, we obtain for a $\sigma$-sub-Gaussian random variable $W$ 
 	\sum_i \PP\qty(\frac{\abs{X_i\T\eps}}{n} > \lambda) \leq 2p \exp(\frac{-\lambda^2}{2(\sigma/\sqrt n)^2}) = 2p\exp(-A^2\log(p)/2) = 2 p^{-(A^2/2 - 1)}.
 	\]
 \end{proof}
+
+We now move to finding tail bounds for products of sub-Gaussian random variables. To this end, we consider Bernstein's in equality. 
+\begin{definition}
+	A random variable $W$ with mean $\mu$ is said to satisfy \emph{Bernstein's condition} with parameters $\sigma > 0, b > 0$ if 
+	\[
+	\EE\qty(\abs{W - \mu}^k) \leq \frac12 k! \sigma^2 b^{k-2} \qquad k = 2, 3, \dotsc
+	\]
+\end{definition}
+
+\begin{proposition}[Bernstein's inequality]
+	Let $W_1, W_2, \dotsc$ be independent random variables with mean $\mu$, where each $W_i$ satisfies Bernstein's condition with parameter $(\sigma, b)$. Then 
+	\begin{enumerate}
+		\item $\EE[\exp(\alpha(W_i - \mu))] \leq \exp\qty(\frac{\alpha^2\sigma^2}{2(1 - b \abs{\alpha})})$ for all $\abs{\alpha} < b^{-1}$;
+		\item $\PP\qty(\overline{W} - \mu \geq t) \leq \exp\qty(\frac{-nt^2}{2(\sigma^2 + bt)})$ for all $t \geq 0$.  
+	\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+	See notes from topics in statistical theory.
+\end{proof}
+
+\begin{lemma}
+	Let $W, Z$ be mean-zero, sub-Gaussian random variables with parameters $\sigma_W, \sigma_Z$. Then $WZ$ satisfies the Bernstein condition with parameters $(8\sigma_W\sigma_Z, 4\sigma_W\sigma_Z)$. 
+\end{lemma}
+
+\begin{proof}
+	Using the tail probability formula for expectations one can prove that any mean-zero sub-Gaussian random variable $X$ satisfies $\EE[X^{2k}] \leq 2^{k+1} \sigma_X^{2k} k!$. 
+	
+	Furthermore for any random variable $Y$ we have
+	\begin{align*}
+		\EE\abs{Y - \EE Y}^k &\leq \EE\qty(\abs{Y} + \abs{\EE Y})^k \\
+		&= \EE \sum_{t=0}^k \binom kt \abs{Y}^t \abs{\EE Y}^{k-t} \\
+		&\overset*\leq \sum_{t=0}^k \binom kt \EE(\abs{Y}^t) \EE(\abs{Y}^{k-t}) \\
+		&\overset*\leq \sum_{t=0}^k \binom kt \EE(\abs{Y}^k)^{t/k} \EE(\abs{Y}^k)^{k - t/k} \\
+		&= \EE(\abs{Y}^k) \sum_{t=0}^k \binom kt = 2^k \EE\abs{Y}^k,
+	\end{align*}
+where both equations $*$ are applications of Jensen's inequality. 
+
+From the above bound, we obtian 
+\begin{align*}
+\EE\abs{WZ - \EE WZ}^k &\leq 2^k \EE(\abs{W}^k \abs{Z}^k) \overset{\Rm{CS}}\leq 2^k (\EE W^{2k})^{1/2} (\EE Z^{2k})^{1/2} \leq 2^{2k+1} \sigma_W^k \sigma_Z^k k! \\
+&= \frac{k!}{2} (8\sigma_W\sigma_Z)^2 (4\sigma_W\sigma_Z)^{k-2},
+\end{align*}
+which proves the claim. 
+\end{proof}
+
+\subsubsection{Optimisation theory and convex analysis}
+\begin{proposition}
+	Let $f \colon \RR^d \to \RR$ be twice continuously differentiable. Then $f$ is convex (resp.\ strictly convex) if and only if its Hessian is positive semi-definite (resp.\ positive definite) for all $x \in \RR^d$.
+\end{proposition}
