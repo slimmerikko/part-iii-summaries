@@ -33,6 +33,15 @@ We define $\rext \ceq \RR\cup \qty{\pm\infty}$.
 	Specifically, if $\tau_\XX$ is the weak topology, then $E$ is called \emph{weakly} LSC. If $\tau_\XX$ is the topology induced by the norm on $\XX$, then $E$ is called \emph{strongly} LSC or simply LSC.
 \end{definition}
 
+
+\begin{lemma} \label{lem:lsc_closed_sets}
+	Let $E \colon \XX \to \rext$ be $\tau_\XX$-LSC and $a \in \RR$. Then $\qty{u \in \XX \mid E(u) \leq a}$ is $\tau_\XX$-closed. 
+\end{lemma}
+
+\begin{proof}
+	Let $(u_n) \overset\tau\to u$ and suppose $E(u_n) \leq a$ for all $n$. Then clearly $E(u) \leq \liminf E(u_n) \leq a$. 
+\end{proof}
+
 \subsubsection{Convex analysis}
 \begin{definition}
 	Let $C \subseteq \XX$. Then the \emph{characteristic function} of $C$ is defined as 
@@ -112,7 +121,7 @@ Note that $C \subseteq \XX$ is a convex set if and only if $\chi_C$ is a convex 
 \end{definition}
 
 \begin{definition}
-	A functional $E$ is called \emph{absolutely one-homogeneous} if $E(\lambda u) = \abs{\lambda} E(u)$ for all $\lambda \in \RR, u \in \XX$. 
+	For $p > 0$, a functional $E$ is called \emph{absolutely $p$-homogeneous} if $E(\lambda u) = \abs{\lambda}^p E(u)$ for all $\lambda \in \RR, u \in \XX$. 
 \end{definition}
 
 \begin{proposition}
@@ -141,7 +150,7 @@ Furthermore, we have the following:
 \begin{lemma}
 	Let $E$ be proper, coercive and bounded from below. Then $\inf_{u \in \XX} E(u) > -\infty$ and there exists a (bounded) minimising sequence $(u_j)$ with $E(u_j) \to \inf_u E(u)$. \end{lemma}
 
-\begin{theorem}[Direct method]
+\begin{theorem}[Direct method] \label{thm:direct_method}
 	Let $\XX$ be Banach and $\tau_\XX$ a topology on $\XX$ such that any bounded sequence in $\XX$ has a $\tau_\XX$ convergent subsequence. Then any proper, bounded from below, coercive, $\tau_X$-LSC functional has a minimiser.  
 \end{theorem}
 
@@ -189,3 +198,119 @@ We have the following:
 		\]
 	\end{enumerate}
 \end{theorem}
+
+\subsection{Regularisation properties}
+We consider the problem $Au = f$ where $A \in \BB(\XX, \YY)$ and where $\YY$ is a Banach space and $\XX$ is the dual of a separable Banach space.  Recall that in Tychonoff regularisation, we have
+\[
+R_\alpha(f_\delta) = \argmin_{u \in \XX} \norm{Au - f_\delta}^2 + \alpha \norm{u}^2. 
+\]
+Here, the term $\norm{u}^2$ is known as the \emph{regularisation term}, and penalising large values of $\norm{u}$ ensures regularity of the solution. Inspired by this, suppose we have any function $\JJ(u)$ as regulariser, then the \emph{variational regularisation problem} is given by
+\[
+R_\alpha f_\delta \in \argmin_{u \in \XX} \frac12 \norm{Au - f_\delta}^2 + \alpha \JJ(u), 
+\]
+\begin{definition}
+	Let $u_\JJ\D$ be a least-squares solution that minimises $\JJ$ over all least-squares solutions. Then we call $u_\JJ\D$ a \emph{$\JJ$-minimising solution} of the problem $Au = f$. 
+\end{definition}
+
+\begin{convention}
+	We will assume there exists t least one least-squares solution with a finite value of $\JJ$. 
+\end{convention}
+
+\begin{lemma} \label{lem:null_space_subspace}
+	Let $\JJ(u) \ceq \sum_{i=1}^n \JJ_i(u)$, where each $\JJ_i(u)$ is convex and absolutely $p_i$-homogeneous ($p_i > 0$). Then $\Nul(J)$ is a linear subspace of $\XX$. 
+\end{lemma}
+
+\begin{proof}
+	We note that $\JJ_i$ is nonnegative, since
+	\[
+	0 = \JJ_i(0) = \JJ_i\qty(\frac12 u - \frac12 u) \leq \frac12\JJ_i(u) + \frac12\JJ_i(-u) = \JJ_i(u).
+	\]
+	Therefore we have $\Nul(\JJ) = \cap_i \Nul(\JJ_i)$, and we will show that every $\Nul(\JJ_i)$ is a subspace. Let $\lambda \in \RR, u, v \in \Nul(\JJ_i)$, then 
+	\[
+	\JJ_i(\lambda u + v) = 2^{p_i} \JJ_i\qty(\frac{\lambda u}{2} + \frac v2) \leq 2^{p_i - 1} \qty(\abs{\lambda}^{p_i} \JJ_i(u) + \JJ_i(v)) = 0. 
+	\]
+	so $\lambda u + v \in \Nul(\JJ_i)$. This completes the proof. 
+\end{proof}
+
+\begin{lemma}
+	Let the assumptions of \cref{lem:null_space_subspace} be satisfied, and suppose $u \in \XX, v \in \Nul(\JJ)$. Then $\JJ(u + v) = \JJ(u)$. 
+\end{lemma}
+
+\begin{proof}
+	Clearly it suffices to prove this lemma for each $\JJ_i$. It is easily seen that for any $t \in (0, 1)$ we have
+	\[
+	\JJ_i(u + v) = \JJ_i \qty(t \frac ut + (1-t) \frac{v}{1-t}) \leq t \JJ_i \qty(\frac ut) = t^{1 - p_i} \JJ(u). 
+	\]
+	Letting $t \to 1$, we find $\JJ_i(u + v) \leq \JJ_i(u)$. 
+	
+	Similarly, we have
+	\[
+	\JJ_i(u) = \JJ_i(u + v - v) = \JJ_i \qty(t \frac{ u+ v}{t} + (1-t) \frac{-v}{1-t}) \leq t \JJ_i\qty(\frac{u+ v}{t}) = t^{1 - p_i} \JJ_i(u + v), 
+	\]
+	and letting $t \to 1$ we obtain $\JJ_i(u) \leq \JJ_i(u+v)$, so $\JJ_i(u) = \JJ_i(u+v)$, so $\JJ(u) = \JJ(u + v)$. 
+\end{proof}
+
+\begin{recap}
+	Let $\XX$ be a Banach space and let $U \subseteq \XX$ be a closed subspace of $\XX$. Then $U$ is called \emph{complemented} in $\XX$ if there exists a closed subspace $V \subseteq \XX$ such that $\XX = U \oplus V$. 
+	
+	In general, it is difficult to determine which closed subspaces of $\XX$ are complemented. However, it is known that all \textbf{finite-dimensional} subspaces are complemented. 
+\end{recap}
+\begin{lemma} \label{lem:regulariser_coercive}
+	Suppose $\JJ$ is proper, convex, and satisfies the conditions of \cref{lem:null_space_subspace}. Suppose also that:
+	\begin{enumerate}[(i)]
+		\item $\dim \Nul(\JJ) < \infty$ (so that $\XX = \Nul(\JJ) + \XX_0$ for some closed subspace $\XX_0$) and $\JJ$ is coercive on $\XX_0$;
+		\item $\Nul(A) \cap \Nul(\JJ) = \qty{0}$. 
+	\end{enumerate}
+
+Then the function $\Phi_\alpha(u) \ceq \frac12\norm{Au - f}^2 + \alpha \JJ(u)$ is coercive on $\XX$ for any $\alpha > 0$. 
+\end{lemma}
+
+\begin{proof}
+	Let $(u_j) \subseteq \XX$ be a sequence such that $(\Phi_\alpha(u_j))$ is bounded. We will prove that $(u_j)$ is bounded. 
+	
+	Decompose every $u_j$ as $u_j = u_j^0 + u_j^{\Cal N}$ with $u_j^0 \in \XX_0$ and $u_j^{\Cal N} \in \Nul(\JJ)$. Now, since $(\Phi_\alpha(u_j))$ is bounded, the sequence $(\JJ(u_j)) = (\JJ(u_j^0))$ is bounded as well, and by coercivity of $\JJ$ on $\XX^0$ we conclude that $(u_j^0)$ is bounded. 
+	
+	Now define $\tilde A \ceq A\restr_{\Nul(\JJ)}$. Since $\Nul(A) \cap \Nul(\JJ) = \qty{0}$, $\tilde A$ has an inverse on $A \Nul(\JJ)$, and since $\dim A\Nul(\JJ) < \infty$, that inverse is bounded. Therefore we find
+	\begin{align*}
+		\norm{u_j^{\Cal N}} &= \norm{\tilde A^{-1} ( A u_j^{\Cal N})} \leq C \norm{\tilde A u_j^{\Cal N}} = C \norm{\tilde A u_j - f - (A u_j^0 - f)} \leq C \qty(\norm{Au_j - f} + \norm{A} \norm{u_j^0} + \norm{f}). 
+	\end{align*}
+	Since $\Phi_\alpha(u_j)$ is bounded, $\norm{Au_j - f}$ is also bounded, and the other terms are also all bounded, so we conclude that $(u_j^{\Cal N})$ is bounded, and therefore that $(u_j)$ is bounded. 
+\end{proof}
+
+\begin{theorem}
+	Let $\XX, \YY$ be Banach spaces with topologies $\tau_\XX, \tau_\YY$. Assume that:
+	\begin{enumerate}[(a)]
+		\item bounded sequences in $\XX$ have $\tau_\XX$-convergent subsequences;
+		\item $\JJ\colon \XX \to [0, \infty]$ is proper, convex, $\tau_\XX$-LSC and satisfies the assumptions of \cref{lem:regulariser_coercive};
+		\item $A$ is continuous w.r.t.\ $\tau_\XX$ and $\tau_\YY$;
+		\item $\norm{\cdot}_\YY$ is $\tau_\YY$-LSC. 
+	\end{enumerate}
+
+Then:
+\begin{enumerate}
+	\item There exists a $\JJ$-minimising solution $u_\JJ\D$ of the equation $Au = f$;
+	\item For any $\alpha > 0$, $f \in \YY$ there exists a minimiser
+	\[
+ 	u_\alpha = R_\alpha f \in \argmin \frac12 \norm{Au - f}^2 + \alpha \JJ(u). 
+	\]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	\begin{enumerate}
+		\item Let $\LLL$ be the set of least-squares solutions and $\mu \ceq \inf\qty{\norm{Au - f} \mid u \in \XX}$, then we can write
+		\[
+		\LLL = \qty{u \in \XX : \norm{Au - f} \leq \mu}. 
+		\]
+		Since $\norm{\cdot}_\YY$ is $\tau_\YY$-LSC and $A \colon \tau_\XX \to \tau_\YY$ is continuous, we have by \cref{lem:lsc_closed_sets} that $\LLL$ is $\tau_\XX$-closed.
+		
+		Now consider the problem 
+		\[
+		\inf_{u \in \LLL} \JJ(u) = \inf_{u \in \XX} \JJ(u) + \chi_\LLL(u). 
+		\] 
+		By assumption there exists $u \in \LL$ with $\JJ(u) < \infty$, and the objective function $\JJ + \chi_\LL$ is bounded from below (by 0). Using similar arguments as in the previous lemma (???), it can be shown that it is coercive. Finally, characteristic functions of closed sets are LSC, so $\chi_\LLL$ and $\JJ$ are both $\tau_\XX$-LSC, and therefore their sum is $\tau_\XX$-LSC as well. By the direct method (\cref{thm:direct_method}), we conclude that a $\JJ$-minimising solution exists. 
+		
+		\item The objective function $\Phi_\alpha$ is coercive by the previous lemma, and also bounded from below. It is easily seen that $\Phi_\alpha$ is $\tau_\XX$-LSC, and using the direct method we conclude that $\Phi_\alpha$ has a minimiser. 
+	\end{enumerate}
+\end{proof}
+

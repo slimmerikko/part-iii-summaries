@@ -5,7 +5,8 @@
 \usepackage[margin=3cm]{geometry}
 \usepackage[normalem]{ulem}
 \usepackage{hyperref}
-\usepackage{mathtools, amsmath, amssymb, amsthm, mathabx, enumerate, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+\usepackage[shortlabels]{enumitem}
+\usepackage{mathtools, amsmath, amssymb, amsthm, mathabx, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
 
 \hypersetup{
     colorlinks   = true, %Colours links instead of ugly boxes
@@ -87,7 +88,7 @@
 
 \title{Distribution Theory and Applications --- Example Sheet 1} % subject
 \author{Lucas Riedstra}
-\date{...} % date
+\date{4 November 2020} % date
 
 \begin{document}
 \maketitle
@@ -109,6 +110,22 @@
 	Since $\psi$ vanishes outside $(0, 1)$, the function $\psi(x/\eps)$ vanishes outside $(0, \eps)$, and therefore the function $\vec x \mapsto \psi(\norm{\vec x}/\eps)$ vanishes outside $B_\eps$. 
 \end{proof}
 
+\begin{mdframed}
+For both questions 2 and 4, we need the following lemma:
+\begin{lemma} \label{lem:distance_compact_closed}
+	Let $K, V \subseteq \RR^n$ where $K$ is compact, $V$ is closed, and $K \cap V = \emptyset$. Then there is a nonzero distance between $K$ and $V$, i.e., 
+	\[
+	\inf_{x \in K, v \in V} \norm{x - v} > 0. 
+	\]
+\end{lemma}
+
+\begin{proof}
+	We know that $K \subseteq V\C$ and that $V\C$ is open, so for every $x \in K$ there exists an open ball $B(x, \eps_x)$ around $x$ such that $B(x, 2\eps_x) \subseteq V\C$. Since $\qty{B(x, \eps_x)}$ is an open covering of $K$, there exist finitely many balls $B(x_1, \eps_1), \dotsc, B(x_n, \eps_n)$ that cover $K$. Let $\eps \ceq \min\qty{\eps_1, \dotsc, \eps_n}$ and $x \in K$, then there is an $x_i$ such that $\norm{x - x_i} < \eps$, and since $B(x_i, 2\eps) \subseteq B(x_i, 2\eps_i) \subseteq V\C$ it is clear that $B(x, \eps) \subseteq V\C$ as well. 
+	
+	We conclude that $B(x, \eps) \subseteq V\C$ for any $x \in K$, and therefore that $\inf\limits_{x \in K, v \in V} \norm{x - v} \geq \eps > 0$. 
+\end{proof}
+\end{mdframed}
+
 \begin{question}
 	Given $\phi \in \DD(X)$, Taylor's theorem gives
 	\[
@@ -128,17 +145,28 @@
 \end{question}
 
 \begin{proof}
-	Since $\phi \in \DD(X)$, we know that $\supp\phi \subseteq \clos{B_N}$ for some $N \in \NN$. Now, suppose $\norm{h} < 1$, then
+	Let $\phi \in \DD(X)$ with $K = \supp\phi$, then by \cref{lem:distance_compact_closed} we know there exists a nonzero distance $d > 0$ between $K$ and $\RR^n \setminus X$. 
+	We claim that if $\norm{h} \leq \frac d2$, then 
 	\[
-	\phi(x+h) \neq 0 \implies \norm{x + h} \leq N \implies \norm{x} \leq \norm{x + h} + \norm{h} \leq N + 1, 
+	\supp(R_N) \subseteq \qty{x \in X \mid d(x, K) \leq \frac d2} \eqqcolon \hat K,
 	\]
-	so if we define $\psi_h(x) = \phi(x+h)$ then we know that $\supp\phi_h \subseteq \clos{B_{N+1}}$. 
+	which is clearly a compact set contained in $X$. Indeed, if $\norm{h} \leq \frac d2$ we have
+	\[
+	\phi(x+h) \neq 0 \implies x + h \in K \implies d(x, K) \leq \norm{h} \leq \frac d2. 
+	\]
 	
+	
+%	Since $\phi \in \DD(X)$, we know that $\supp\phi \subseteq \clos{B_N}$ for some $N \in \NN$. Now, suppose $\norm{h} < 1$, then
+%	\[
+%	\phi(x+h) \neq 0 \implies \norm{x + h} \leq N \implies \norm{x} \leq \norm{x + h} + \norm{h} \leq N + 1, 
+%	\]
+%	so if we define $\psi_h(x) = \phi(x+h)$ then we know that $\supp\phi_h \subseteq \clos{B_{N+1}}$. 
+%	
 	By Taylor's theorem, we have
 	\[
 	\phi(x+h) = \sum_{\abs{\alpha} \leq N} \frac{h^\alpha}{\alpha!} \pt^\alpha \phi(x) + R_N(x, h),  
 	\]
-	and since $\sum_{\abs{\alpha} \leq N} \frac{h^\alpha}{\alpha!} \pt^\alpha \phi(x)$ vanishes for $x \notin \clos{B_N}$, it is clear that $\supp(R_N(\cdot, h))$ must also be contained in $\clos{B_{N+1}}$ (again, for $\norm{h} \leq 1$). This shows that $\supp(R_N)$ is contained in $\clos{B_{N+1}}$ for $\abs{h}$ sufficiently small. 
+	and since $\sum_{\abs{\alpha} \leq N} \frac{h^\alpha}{\alpha!} \pt^\alpha \phi(x)$ vanishes for $x \notin K$, it is clear that $\supp(R_N(\cdot, h))$ must be contained in $\hat K$ (for $\norm{h} \leq \frac d2$). 
 	
 	Now let $\beta$ be a multi-index and define $C \ceq \frac{1}{N!} \max_{\abs{\alpha} = N+1, x \in \RR^n} \abs{(\pt^{\alpha + \beta})\phi(x)}$ (note that $C$ exists and is finite since all partial derivatives of $\phi$ have compact support), then we have
 	\begin{align*}
@@ -147,8 +175,10 @@
 	&\overset\star= \abs{\sum_{\abs{\alpha} = N+1} \frac{h^\alpha}{\alpha!}(N+1) \int_0^1 (1-t)^N (\pt^{\alpha + \beta}\phi)(x + th)\dd{t}} \\
 	&\leq \sum_{\abs{\alpha} = N+1} \frac{\abs{h^\alpha}}{\alpha!}(N+1) \int_0^1 (1-t)^N \abs{\qty(\pt^{\alpha + \beta}\phi)(x+th)} \dd{t} \\
 	&\leq \qty[\max_{\abs{\alpha} = N+1, x \in \RR^n} \abs{(\pt^{\alpha + \beta})\phi(x)}] \sum_{\abs{\alpha} = N+1} \frac{\abs{h^\alpha}}{\alpha!} (N+1) \\
-	&\leq C (N+1)! \sum_{\abs{\alpha}= N+1}\frac{\abs{h^\alpha}}{\alpha!} = C(\abs{h_1} + \dotsb + \abs{h_n})^{N+1}.
+	&= C (N+1)! \sum_{\abs{\alpha}= N+1}\frac{\abs{h^\alpha}}{\alpha!} = C(\abs{h_1} + \dotsb + \abs{h_n})^{N+1}.
 \end{align*}
+Here, $\star$ follows from differentiation under the integral sign since the integrand is bounded. 
+
 Since this upper bound does not depend on $x$, we also have
 \[
 \sup_x \abs{\pt^\beta R_N(x, h)} \leq C(\abs{h_1} + \dotsb + \abs{h_n})^{N+1}, 
@@ -173,7 +203,13 @@ and therefore that $\pt^\beta R_N(x, h) = o(\norm{h}^n)$ for all multi-indices $
 \end{question}
 
 \begin{solution}
-	Let $K \subseteq U_1$. Define $U_2 \ceq U_1 + B(0, 1)$ and let $\chi = \ind_{U_2}$. Now let $\psi \in \DD(\RR^n)$ satisfy $\int_{\RR^n} \psi \dd{x} = 1$ and $\supp\psi \subseteq B(0, 1)$. The we compute
+	Let $K \subseteq X$, then by \cref{lem:distance_compact_closed}, there is a nonzero distance $d$ from $K$ to $\RR^n \setminus X$, so we have neighbourhoods
+	\[
+	U_1 \ceq \qty{u \in X \mid d(u, K) < \frac d4}, \quad U_2 \ceq \qty{u \in X \mid d(u, K) < \frac{3d}{4}}
+	\]
+	which is an open neighbourhood of $K$ with $\clos U \subseteq X$. 
+	
+	 Let $\chi = \ind_{U_2}$. Now let $\psi \in \DD(\RR^n)$ satisfy $\int_{\RR^n} \psi \dd{x} = 1$ and $\supp\psi \subseteq B(0, \frac d4)$. The we compute
 	\begin{align*}
 		(\chi * \psi)(x) &= \int_{\RR^n} \chi(y) \psi(x - y) \dd{y} = \int_{U_2} \psi(x - y) \dd{y}.
 	\end{align*}
@@ -181,7 +217,7 @@ and therefore that $\pt^\beta R_N(x, h) = o(\norm{h}^n)$ for all multi-indices $
 	\[
 	\int_{U_2} \psi(x - y) \dd{y} = \int_{U_2 - x} \psi(z) \dd{z} \overset\star= 1,
 	\]
-	since $B(0, 1) \subseteq U_2 - x$. This proves the claim.
+	since $\supp\psi \subseteq B(0, \frac d4) \subseteq U_2 - x$. This proves the claim.
 \end{solution}
 
 \begin{question}
@@ -267,18 +303,32 @@ We conclude that $\pt^\alpha T$ is a distribution, and that if $\ord(T) = m$, $\
 		\]
 		Note that the above is satisfied for $u = - \delta_0 + c$ for any constant $c$. \TODO is this the most general solution?
 		
-		\item Since $e^{2\pi i x} = 1 \iff x \in \ZZ$, intuitively it must be the case that $u'$ is 0, except ``on $\ZZ$'', whatever that may mean. Therefore, we guess that, for any sequence $(\alpha_n)_{n \in \ZZ} \subseteq \CC$ and constant $c \in \CC$, the map \[u = c + \sum_{n \in \ZZ} \alpha_n \ind_{x \geq n}.\] We compute the derivative of $u$. It is easily seen that $u' = \sum_{n \in \ZZ} \alpha_n \delta_n$ (the infiniteness of the sum does not pose a problem since the test functions are compactly supported, so $\ang{u, \phi}$ will always be a finite sum). 
+		\item Since $e^{2\pi i x} = 1 \iff x \in \ZZ$, it is clear that $\supp(u') \subseteq \ZZ$. We will show that this is also sufficient, i.e., that any distribution $u$ with $\supp(u') \subseteq \ZZ$ yields a solution. 
+		
+		It is easily seen that 
+		\begin{align*}
+		\supp(u') \subseteq  \ZZ &\iff u' = \sum_{n \in \ZZ} \alpha_n \delta_n \quad\text{for some $(\alpha_n)_{n \in \ZZ} \subseteq \CC$} \\
+		&\iff u = c + \sum_{n\in \ZZ} \alpha_n \ind_{x \geq n} \quad\text{for some $c \in \CC$, $(\alpha_n)_{n \in \ZZ} \subseteq \CC$}. 
+		\end{align*}
+		
+		Indeed, if $u = c + \sum_{n \in \ZZ} \alpha_n \ind_{x \geq n}$ then 
+		\[
+		\ang{u', \phi} = -\ang{u, \phi'} \overset\star= - \alpha_n \sum_{n \in \ZZ \cap \supp\phi} \int_n^\infty \phi'(x) \dd{x} = \sum_{n \in \ZZ \cap \supp\phi} \alpha_n \phi(n) = \ang{\sum_{n \in \ZZ} \alpha_n\delta_n, \phi}, 
+		\]
+		where $\star$ follows from the fact that there are only finitely many $n$ in $\ZZ \cap \supp\phi$ (since $\phi$ has compact support). 
+ 		
+%		Therefore, we guess that, for any sequence $(\alpha_n)_{n \in \ZZ} \subseteq \CC$ and constant $c \in \CC$, the map \[u = c + \sum_{n \in \ZZ} \alpha_n \ind_{x \geq n}.\] We compute the derivative of $u$. It is easily seen that $u' = \sum_{n \in \ZZ} \alpha_n \delta_n$ (the infiniteness of the sum does not pose a problem since the test functions are compactly supported, so $\ang{u, \phi}$ will always be a finite sum). 
 %		We have for arbirary $\phi$ that
 %		\begin{align*}
 %		\ang{u', \phi} &= - \ang{u, \phi'} = -\int_\RR \sum_{n \in \ZZ} \qty(\alpha_n \ind_{x \geq n}) \phi'(x) \dd{x}	\overset\star= - \sum_{n \in \ZZ} \alpha_n \int_n^\infty \phi'(x) \dd{x} = \sum_{n \in \ZZ} \alpha_n \phi(n),	
 %		\end{align*}
 %	where $\star$ follows from the fact that the sum is finite since $\phi'$ is compactly supported. 
 %	Therefore, we can conclude $u' = \sum_{n \in \ZZ} \alpha_n \delta_n$, and indeed we find
-From this, we see that
+Finally, we compute that 
 	\[
 	\ang{(e^{2\pi i x} - 1) u', \phi} = \ang{u', (e^{2\pi i x} -1 )\phi} = \sum_{n \in \ZZ} \alpha_n (e^{2\pi i n} - 1) \phi(n) = 0,
 	\]
-	so $u$ satisfies the equation. \TODO Why is this the most general solution? Intuitively clear, but how to make this rigorous?
+	so $u$ satisfies the equation. 
 	\end{enumerate}
 \end{solution}
 
