@@ -63,7 +63,7 @@ We will now consider a bigger space of test functions, which yields a smaller sp
 	which is independent of choice of extension. 
 \end{proof}
 
-\subsection{Convolution between $\EE'(\RR^n)$ and $\DD'(\RR^n)$}
+\subsection{Convolution between distributions}
 \begin{definition}
 	Define for $u \in \EE'(\RR^n), \phi \in \EE(\RR^n)$ the \emph{convolution}
 	\[
@@ -100,7 +100,7 @@ We will show (example sheet 2, question 1) that $u * v$ is uniquely defined and 
 \begin{definition}
 	For any $f \colon \RR^n \to \CC$ and multi-indices $\alpha, \beta$ we define $\norm{f}_{\alpha, \beta} \ceq \sup_{x \in \RR^n} \abs{x^\alpha \pt^\beta\phi}$. 
 	
-	We define the \emph{Schwarz space}
+	We define the \emph{Schwartz space}
 	\[
 	\Cal S(\RR^n) \ceq \qty{f \in C^\infty(\RR^n) : \norm{f}_{\alpha, \beta} < \infty \text{ for all $\alpha, \beta$}}.
 	\]
@@ -131,10 +131,12 @@ We will show (example sheet 2, question 1) that $u * v$ is uniquely defined and 
 	\[
 	\abs{\ang{u, \phi}} \leq C \sum_{\abs{\alpha}, \abs{\beta} \leq N} \norm{\phi}_{\alpha, \beta} \quad\text{for all $\phi \in \SS(\RR^n)$}. 
 	\]
+	The space of tempered distributions is denoted by $\SS'(\RR^n)$. 
 \end{definition}
+
 This definition is equivalent to sequential continuity. 
 
-\subsection{The Fourier transform on $\SS(\RR^n)$}
+\subsection{The Fourier transform on Schwartz functions}
 
 \begin{convention}
 	We write $D \ceq -i\pt$ and $D^\alpha = (-i)^{\abs{\alpha}} \pt^\alpha$. 
@@ -143,7 +145,7 @@ This definition is equivalent to sequential continuity.
 \begin{definition}
 	For $f \in L^1(\RR^n)$, define the \emph{Fourier transform} of $f$ by  
 	\[
-	[\FF(f)](\lambda) = \hat f(\lambda) \ceq \int_{\RR^n} e^{-i\lambda x} f(x) \dd{x} \quad\text{where $\lambda \in \RR^n$}. 
+	[\FF(f)](\lambda) = \hat f(\lambda) \ceq \int_{\RR^n} e^{-i\lambda \vdot x} f(x) \dd{x} \quad\text{where $\lambda \in \RR^n$}. 
 	\]
 \end{definition}
 
@@ -154,29 +156,29 @@ This definition is equivalent to sequential continuity.
 \begin{proof}
 	If $\lambda_m \to \lambda \in \RR^n$, then by the dominated convergence theorem we have
 	\[
-	\hat f(\lambda_m) = \int_{\RR^n} e^{-i\lambda_m x} f(x) \dd{x} \overset{\text{DCT}}= \int_{\RR^n} e^{-i\lambda x} f(x) \dd{x} = \hat f(\lambda),
+	\hat f(\lambda_m) = \int_{\RR^n} e^{-i\lambda_m \vdot x} f(x) \dd{x} \overset{\text{DCT}}= \int_{\RR^n} e^{-i\lambda \vdot x} f(x) \dd{x} = \hat f(\lambda),
 	\]
 	where we were able to use the dominated convergence theorem since the integrand is absolutely bounded by $\abs{f}$ and $f \in L^1$. 
 \end{proof}
 
 It turns out that this idea generalises: the faster the function $f$ decays, the smoother the Fourier transform $\hat f$ is.  
 
-\begin{lemma}
+\begin{lemma} \label{lem:differentiate_fourier}
 	For $\phi \in \SS(\RR^n)$, we have $\FF[D_x^\alpha \phi](\lambda) = \lambda^\alpha \hat\phi(\lambda)$ and $\FF[x^\beta\phi](\lambda) = (-1)^{\abs{\beta}} D_\lambda^\beta \hat\phi(\lambda)$. 
 \end{lemma}
 
 \begin{proof}
 	Since $\abs{x^\alpha D^\beta\phi} \to 0$ as $\norm{x} \to \infty$, we have using integration by parts
 	\begin{align*}
-		\FF[D_\lambda^\alpha\phi](\lambda) &= \int_{\RR^n} e^{-i\lambda x} D_x^\alpha \phi(x) \dd{x} \\
-		&= (-1)^{\abs{\alpha}} \int_{\RR^n} D_x^\alpha(e^{-i\lambda x}) \phi(x) \dd{x} \\
+		\FF[D_\lambda^\alpha\phi](\lambda) &= \int_{\RR^n} e^{-i\lambda \vdot x} D_x^\alpha \phi(x) \dd{x} \\
+		&= (-1)^{\abs{\alpha}} \int_{\RR^n} D_x^\alpha(e^{-i\lambda \vdot x}) \phi(x) \dd{x} \\
 		&= \lambda^\alpha\hat\phi(\lambda). 
 	\end{align*}
 	
 	For the second part of the lemma, by differentiation under the integral sign we get
 	\begin{align*}
-		 \FF[x^\beta \phi](\lambda) &=  \int_{\RR^n} e^{-i\lambda x} x^\beta \phi(x) \dd{x} \\
-		 &= \int_{\RR^n} ((-D_\lambda)^\beta e^{-i\lambda x}) \phi(x) \dd{x} \\
+		 \FF[x^\beta \phi](\lambda) &=  \int_{\RR^n} e^{-i\lambda \vdot x} x^\beta \phi(x) \dd{x} \\
+		 &= \int_{\RR^n} ((-D_\lambda)^\beta e^{-i\lambda \vdot x}) \phi(x) \dd{x} \\
 		 &= (-1)^{\abs{\beta}} D_\lambda^\beta \hat\phi(\lambda).
 	\end{align*}
 \end{proof}
@@ -184,36 +186,36 @@ It turns out that this idea generalises: the faster the function $f$ decays, the
 
 We define the \emph{inverse Fourier transform} by 
 \[
-\FF^{-1}[\hat f](x)  \ceq \frac{1}{(2\pi)^n} \int_{\RR^n} e^{i\lambda x} \hat f(\lambda) \dd{\lambda}. 
+\FF^{-1}[\hat f](x)  \ceq \frac{1}{(2\pi)^n} \int_{\RR^n} e^{i\lambda \vdot x} \hat f(\lambda) \dd{\lambda}. 
 \]
 We will now show that on $\SS(\RR^n)$, the inverse Fourier transform is indeed an inverse:
-\begin{theorem}
+\begin{theorem} \label{thm:fourier_transform_isomorphism}
 	The Fourier transform $\FF$ defines a continuous isomorphism from $\SS(\RR^n)$ to itself. 
 \end{theorem}
 
 \begin{proof}
 	Let $\phi \in \SS(\RR^n)$. First, we show that $\hat\phi \in \SS(\RR^n)$: by the previous lemma we have for multi-indices $\alpha, \beta$ that
 	\begin{align}
-		\abs{\lambda^\alpha (-D_\lambda)^\beta \hat\phi(\lambda)} &= \abs{\lambda^\alpha \FF[x^\beta\phi](\lambda)} = \abs{\FF[D^\alpha_x (x^\beta\phi)](\lambda)} = \abs{\int_{\RR^n} e^{-i\lambda x} D^\alpha(x^\beta\phi) \dd{x}} \nonumber \\
-		&\leq \int_{\RR^n} \abs{D^\alpha (x^\beta\phi)} \dd{x} \label{eq:fourier_schwarz_estimate},
+		\abs{\lambda^\alpha (-D_\lambda)^\beta \hat\phi(\lambda)} &= \abs{\lambda^\alpha \FF[x^\beta\phi](\lambda)} = \abs{\FF[D^\alpha_x (x^\beta\phi)](\lambda)} = \abs{\int_{\RR^n} e^{-i\lambda \vdot x} D^\alpha(x^\beta\phi) \dd{x}} \nonumber \\
+		&\leq \int_{\RR^n} \abs{D^\alpha (x^\beta\phi)} \dd{x} \label{eq:fourier_Schwartz_estimate},
 	\end{align}
-which is finite since $D^\alpha (x^\beta\phi)$ is also a Schwarz function and therefore integrable. 
+which is finite since $D^\alpha (x^\beta\phi)$ is also a Schwartz function and therefore integrable. 
 
 From the previous lemma we also infer that $\hat\phi$ is smooth, so indeed we have $\hat\phi \in \SS(\RR^n)$. 
-From \cref{eq:fourier_schwarz_estimate} it is also easily seen that if $\phi_m \to 0$ in $\SS(\RR^n)$, then $\hat\phi_m \to 0$ in $\SS(\RR^n)$ also, which shows that $\FF$ is continuous. 
+From \cref{eq:fourier_Schwartz_estimate} it is also easily seen that if $\phi_m \to 0$ in $\SS(\RR^n)$, then $\hat\phi_m \to 0$ in $\SS(\RR^n)$ also, which shows that $\FF$ is continuous. 
 
 To prove surjectivity and injectivity, we will show that $\FF^{-1}[\FF[f]](x) = f(x)$ (???). Indeed we have
 \begin{align*}
-	\FF^{-1} [\FF[\phi]](x) &= \frac{1}{(2\pi)^n} \int_{\RR^n} \int_{\RR^n} e^{i\lambda (x-y)} \phi(y) \dd{y}\dd{\lambda} \\
-	&= \frac{1}{(2\pi)^n} \lim_{\eps \downarrow 0} \int_{\RR^n} \int_{\RR^n} e^{i \lambda ( x- y) - \eps\norm{\lambda}^2} \phi(y) \dd{y}\dd{\lambda} \\
-	&\overset\star= \frac{1}{(2\pi)^n}\lim_{\eps \downarrow 0} \int_{\RR^n} \phi(y)\int_{\RR^n} e^{i\lambda(x- y) - \eps\norm{\lambda}^2} \dd{\lambda} \dd{y},
+	\FF^{-1} [\FF[\phi]](x) &= \frac{1}{(2\pi)^n} \int_{\RR^n} \int_{\RR^n} e^{i\lambda \vdot (x-y)} \phi(y) \dd{y}\dd{\lambda} \\
+	&= \frac{1}{(2\pi)^n} \lim_{\eps \downarrow 0} \int_{\RR^n} \int_{\RR^n} e^{i \lambda \vdot ( x- y) - \eps\norm{\lambda}^2} \phi(y) \dd{y}\dd{\lambda} \\
+	&\overset\star= \frac{1}{(2\pi)^n}\lim_{\eps \downarrow 0} \int_{\RR^n} \phi(y)\int_{\RR^n} e^{i\lambda \vdot (x- y) - \eps\norm{\lambda}^2} \dd{\lambda} \dd{y},
 	%&= \frac{1}{(2\pi)^n} \int_{\RR^n}\int_{\RR^n} e^{i\lambda(x- y)} \dd{\lambda} \dd{y}
 \end{align*}
 where $\star$ follows from Fubini's theorem. 
 
 Now we note that 
 \[
-\int_{\RR^n} e^{i\lambda(x-y) - \eps\norm{\lambda}^2} \dd{\lambda} = \prod_{i=1}^n \int_{\RR} e^{i\lambda_j(x_j - y_j) - \eps\lambda_j^2} \dd{\lambda} \overset{\star\star}= \prod_{i=1}^n \qty(\frac\pi e)^{1/2} e^{- \frac{(x_i - y_i)^2}{4\eps}} = \qty(\frac\pi\eps)^{n/2} e^{- \frac{\norm{x - y}^2}{4\eps}}.
+\int_{\RR^n} e^{i\lambda\vdot (x-y) - \eps\norm{\lambda}^2} \dd{\lambda} = \prod_{i=1}^n \int_{\RR} e^{i\lambda_j(x_j - y_j) - \eps\lambda_j^2} \dd{\lambda} \overset{\star\star}= \prod_{i=1}^n \qty(\frac\pi e)^{1/2} e^{- \frac{(x_i - y_i)^2}{4\eps}} = \qty(\frac\pi\eps)^{n/2} e^{- \frac{\norm{x - y}^2}{4\eps}}.
 \] 
 To explain $\star\star$, \TODO. 
 
@@ -229,4 +231,93 @@ where $\star\star\star$ follows from the substitution $x - y = 2\sqrt\eps y'$.
 Finally, continuity of $\FF^{-1}$ is easily shown with an argument analogous to that for continuity of $\FF$ (????). 
 \end{proof}
 
+\subsection{The Fourier transform on tempered distributions}
+\begin{lemma}
+	For $\phi, \psi \in \SS(\RR^n)$, we have $\int_{\RR^n} \phi(x) \hat\psi(x) \dd{x} = \int_{\RR^n} \hat\phi(x) \psi(x) \dd{x}$. 
+\end{lemma}
 
+\begin{proof}
+	This follows from Fubini's theorem:
+	\[
+	\int_{\RR^n}\phi(x) \hat \psi(x) \dd{x} = \int_{\RR^n}\int_{\RR^n} \phi(x) \psi(\lambda) e^{-i\lambda \vdot x} \dd{\lambda} \dd{x} = \int_{\RR^n}\int_{\RR^n} \psi(\lambda)  \phi(x) e^{-i\lambda \vd x} \dd{x} \dd{\lambda} = \psi(\lambda) \psi(\lambda) \hat\phi(\lambda) \dd{\lambda}. 
+	\]
+\end{proof}
+
+The above result can be rewritten as $\ang{\hat\phi, \psi} = \ang{\phi, \hat\psi}$, which motivates the definition of the Fourier transform for tempered distributions:
+\begin{definition}
+	For $u \in \SS'(\RR^n)$, we define its Fourier transform by
+	\[
+	\ang{\hat u, \phi} \ceq \ang{u, \hat\phi} \quad\text{for all $\phi \in \SS(\RR^n)$}. 
+	\]
+\end{definition}
+Using sequential continuity and \cref{thm:fourier_transform_isomorphism}, it is easily seen that $\hat u$ is indeed an element of $\SS'(\RR^n)$. 
+
+\begin{example}
+	It is easily checked that $\delta_0 \in \SS'(\RR^n)$, and we can compute
+	\[
+	\ang{\hat{\delta_0}, \phi} = \ang{\delta_0, \hat\phi} = \hat\phi(0) = \int_{\RR^n} \phi(x) \dd{x} = \ang{1, \phi},
+	\]
+	so we can write $\hat{\delta_0} = 1$. Analogously, by the Fourier inversion theorem we have
+	\[
+	\ang{\hat 1, \phi} = \ang{1, \hat\phi} = \int_{\RR^n} \hat\phi(\lambda) \dd{\lambda} = (2\pi)^n \phi(0) = \ang{(2\pi)^n \delta_0, \phi}, 
+	\]
+	so we write $\hat 1 = (2\pi)^n \delta_0$. 
+\end{example}
+
+We can easily generalise \cref{lem:differentiate_fourier} to the Fourier transform on $\SS'(\RR^n)$, so
+\[
+\FF[D^\alpha u] = \lambda^\alpha \hat u, \quad \FF[x^\beta u] = (-D^\beta) \hat u. 
+\]
+
+\begin{theorem}
+	The Fourier transform $\FF$ extends to a continuous isomorphism on $\SS'(\RR^n)$. 
+\end{theorem}
+
+\begin{proof}
+	We claim that $\refl u = (2\pi)^{-n} \FF[\FF[u]]$. To check this, note that by the Fourier inversion theorem we have for $\phi \in \SS(\RR^n)$ that
+	\[
+	\refl\phi(x) = \phi(-x) = (2\pi)^{-n} \int_{\RR^n} e^{-i\lambda\vd x} \hat\phi(\lambda) \dd{\lambda} = (2\pi)^{-n} \FF[\FF[\phi]](x),
+	\]
+	and therefore 
+	\[
+	\ang{\refl u, \phi} = \ang{u, \refl\phi} = \ang{u, (2\pi)^{-n} \FF[\FF[\phi]]} = \ang{(2\pi)^{-n} \FF[\FF[u]], \phi}. 
+	\]
+	
+	This shows that $\FF$ is bijective (since $\FF\circ \FF$ is bijective). For continuity of $\FF$ and its inverse: using \cref{thm:fourier_transform_isomorphism}, we find
+	\begin{align*}
+	&\phantom{\iff} u_m \to 0 \text{ in $\SS'(\RR^n)$} \\
+	&\iff \ang{u_m, \phi} \to 0 \ \forall \phi \in \SS(\RR^n) \\
+	&\iff \ang{u_m, \hat\phi} \to 0 \ \forall \phi \in \SS(\RR^n) \\
+	&\iff \ang{\hat u_m, \phi} \to 0 \ \forall \phi \in \SS(\RR^n) \\
+	&\iff \hat u_m \to 0 \text{ in $\SS'(\RR^n)$}.
+	\end{align*}
+\end{proof}
+
+\subsection{Sobolev spaces}
+\begin{convention}
+	We write $\ang{\lambda} \ceq (1 + \norm{\lambda})^2$ for $\lambda \in \RR^n$. Note that $\ang{\lambda} \sim 1$ as $\norm{\lambda} \to 0$ and $\ang{\lambda} \to \norm{\lambda}$ as $\norm{\lambda} \to \infty$. 
+\end{convention}
+
+\begin{definition}
+	For $s \in \RR$, define the \emph{Sobolev space} $H^s(\RR^n)$ to be the set of tempered distributions $u \in \SS'(\RR^n)$ for which $\hat u$ can be identified with a measurable function $\hat u \colon \RR^n \to \CC$ such that $\ang{\lambda}^s \hat u \in L^2(\RR^n)$. 
+\end{definition}
+
+% Suppose we have an open subset $X \subseteq \RR^n$, then we can define the \emph{localised} Sobolev space $H^s_\Rm{loc}(X)$ by sayin
+
+\begin{lemma}[Sobolev lemma]
+	If $u \in H^s(\RR^n)$ with $s > \frac n2$, then  $u$ is continuous. 
+\end{lemma}
+
+\begin{proof}
+	We will show that $\hat u$ is integrable. By Cauchy-Schwarz, we have
+	\begin{align*}
+		\int_{\RR^n} \abs{\hat u(\lambda)} \dd{\lambda} &= \int_{\RR^n}  \ang{\lambda}^{-s} \ang{\lambda}^s \abs{\hat u(\lambda)} \dd{\lambda} \\
+		&\leq \qty(\int_{\RR^n}  \ang{\lambda}^{-2s}\dd{\lambda})^{1/2} \norm{u}_{H^s} \\
+		&= C \norm{u}_{H^s} \qty(\int_0^\infty r^{n-1} (1 + r^2)^{-s} \dd{r})^{1/2}, 
+	\end{align*}
+where the last line follows from using polar coordinates and $C$ is the area of the $(n-1)$-sphere. 
+
+Writing $s = \frac n2 + \eps$, we find that the integrand $r^{n-1}(1 + r^2)^{-s}$ is of order $O(r^{-1 - 2\eps})$ as $r \to\infty$, and therefore the integral is finite, so indeed we have $\hat u \in L^1(\RR^n)$. 
+
+By applying \cref{thm:fourier_transform_isomorphism} to a test function, we can show that $u = (2\pi)^{-n} \int_{\RR^n} e^{i\lambda \vd x} \hat u(\lambda) \dd{\lambda}$, which is continuous by the dominated convergence theorem. 
+\end{proof}

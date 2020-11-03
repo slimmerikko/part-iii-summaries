@@ -51,6 +51,10 @@
 \newcommand{\QQ}{\Bb Q}
 \newcommand{\RR}{\Bb R}
 \newcommand{\EE}{\Bb E}
+\newcommand\HH{\Cal H}
+\newcommand\FF{\Cal F}
+\newcommand\Nn{\Cal N}
+\renewcommand\SS{\Cal S}
 
 % Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
 % For other delimiters: use \qty from the physics package (i.e., \qty(...))
@@ -81,6 +85,9 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator\Exp{Exp}
+\DeclareMathOperator\MSE{MSE}
+\DeclareMathOperator\MISE{MISE}
+\DeclareMathOperator\Bias{Bias}
 \DeclareMathOperator\Beta{Beta}
 \DeclareMathOperator\Gam{Gamma}
 \DeclareMathOperator\Cov{Cov}
@@ -88,7 +95,7 @@
 
 \title{Topics in Statistical Theory --- Example Sheet 1} % subject
 \author{Lucas Riedstra}
-\date{...} % date
+\date{8 November 2020} % date
 
 \begin{document}
 \maketitle
@@ -399,5 +406,56 @@ Clearly, if $j < r$, integral in the sum vanishes. If $j = r$, the integral yiel
 \[
 \int_{-\infty}^\infty u^j K_\ell(u) \dd{u} = (-1)^j H_j(0) + \sum_{r=0}^{j-1} \int_{-\infty}^\infty u^j \phi^{(r)}(u) \dd{u}. 
 \]
+
+??
+\end{proof}
+
+\begin{question}
+	For $\beta \in \NN$ and $L > 0$, define the \emph{Sobolev class} $\SS(\beta, L)$ to be the set of $(\beta - 1)$ times differentiable functions $f \colon \RR \to \RR$ for which $f^{(\beta - 1)}$ is absolutely continuous with $L^1$ derivative satisfying $\norm{f^{(\beta)}}_{L^2} \leq L$. Recalling the Nikolski class $\Nn(\beta, L)$ from lectures, prove that $\SS(\beta, L) \subseteq \Nn(\beta, L)$. Writing $\FF_\SS(\beta, L)$ for the densities in $\SS(\beta, L)$, deduce that a kernel density estimator $\hat f_n$ constructed from $X_1, \dotsc, X_n \iid f \in \FF_\SS(\beta, L)$ with a kernel $K$ of order $\ell \ceq \beta$ and bandwidth $h > 0$ satisfies
+	\[
+	\MISE(\hat f_n) \leq \frac1{nh} R(K) + \frac1{((\ell - 1)!)^2} R(f^{(\beta)}) \mu_\beta^2(K) h^{2\beta}. 
+	\]
+\end{question}
+
+\begin{proof}
+	Let $f \in \SS(\beta, L)$ and $t \in \RR$, then we have 
+	\begin{align*}
+		\int_\RR \qty[f^{(\beta - 1)}(x + t) - f^{(\beta - 1)}(x)]^2 \dd{x} &= \int_\RR \qty[\int_x^{x+t} f^{(\beta)}(y) \dd{y}]^2 \dd{x} \\
+		&= \int_\RR \qty[ \int_\RR \ind_{(x, x+t)}(y) f^{(\beta)}(y) \dd{y} ]^2 \dd{x} \\
+		&\overset{GM}\leq  \qty{ \int_\RR \qty( \int_\RR \ind_{(y-t, y)}(x) f^{(\beta)}(y)^2 \dd{x})^{1/2} \dd{y}}^2 
+	\end{align*}
+??
+\end{proof}
+
+\begin{question}
+	\begin{enumerate}
+		\item 	Verify the algebraic identity
+		\[
+		\phi_\sigma(x-\mu)\phi_{\sigma'}(x-\mu') = \phi_{\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2}}(x - \mu^*) \phi_{(\sigma + \sigma')^{1/2}}(\mu - \mu')
+		\]
+		where $\mu^* \ceq (\sigma'^2 \mu + \sigma^2\mu') / (\sigma^2 + \sigma'^2)$, and $\phi_\sigma$ is the $N(0, \sigma^2)$ density. 
+		
+		\item Let $X_1, \dotsc, X_n \iid N(0, \sigma^2)$. Taking $K$ to be the $N(0, 1)$ density, show that the MISE of the kernel density estimate $\hat f_n$ with kernel $K$ and bandwidth $h$ can be expressed exactly as
+		\[
+		\MISE(\hat f_n) = (2\pi)^{-1/2} \qty{\frac1{nh} + (1 - \frac1n) \frac{1}{(h^2 + \sigma^2)^{1/2}} - \frac{2^{3/2}}{(h^2 + 2\sigma^2)^{1/2}} + \frac1\sigma}. 
+		\]
+	\end{enumerate}
+
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}
+		\item \TODO
+		\item no.
+%		We have 
+%		\begin{gather*}
+%			\phi_{\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2}}(x - \mu^*) \phi_{(\sigma + \sigma')^{1/2}}(\mu - \mu') \\
+%			= \frac{1}{2\pi \sigma \sigma'} \exp(-\frac12\qty(\frac{(x - \mu^*)^2(\sigma^2 + \sigma'^2)}{\sigma^2 \sigma'^2} + \frac{(\mu - \mu^*)^2}{\sigma^2 + \sigma'^2})) \\
+%			= \frac{1}{2\pi \sigma \sigma'} \exp\qty(-\frac12\qty(\frac{(x - \mu^*)^2(\sigma^2 + \sigma'^2)^2 + \sigma^2 \sigma'^2 (\mu - \mu^*)^2}{\sigma^2 \sigma'^2(\sigma^2 + \sigma'^2)})) \\
+%			=  \frac{1}{2\pi \sigma \sigma'}\exp\qty(-\frac12\qty(\frac{
+%			x^2(\sigma^2 + \sigma'^2)^2 + (\sigma'^2\mu + \sigma^2\mu')^2 - 2x (\sigma'^2\mu + \sigma^2\mu') (\sigma^2 + \sigma'^2)	
+%		}{\sigma^2 \sigma'^2(\sigma^2 + \sigma'^2)}))
+%		\end{gather*}
+	\end{enumerate}
 \end{proof}
 \end{document}
