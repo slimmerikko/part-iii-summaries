@@ -274,10 +274,28 @@ Of course, the true limit is 0 for any $n$, which is only given by Bennett's ine
 \end{question}
 
 \begin{proof}
-	We have 
+	Define $x^* \ceq \frac{2^{1/2}\sigma}{n^{1/2}} \log^{1/2}(\frac1\delta) + \frac cn \log(\frac 1\delta)$. Then we have
 	\[
-	\PP(\bar X \geq x) \leq \exp(- \frac{nx^2}{2(\sigma^2 + cx)}) \eqqcolon \delta. 
+	(x^*)^2 = \frac{2\sigma^2}{n}\log(\frac1\delta) + \frac{2^{3/2}\sigma c}{n^{3/2}} \log^{3/2}\qty(\frac1\delta) + \frac{c^2}{n^2} \log^2\qty(\frac1\delta),
 	\]
+	and therefore
+	\begin{align*}
+	-\frac{n(x^*)^2}{2(\sigma^2 + cx)} &= - \frac{2\sigma^2 \log(\frac1\delta) + 2^{3/2}\sigma c \log^{3/2}(\frac1\delta)/n^{1/2} + c^2 \log^2(\frac1\delta)/n}{2\sigma^2 + 2^{3/2} \sigma c \log^{1/2}(\frac1\delta)/n^{1/2} + 2c^2\log(\frac1\delta)/n} \\
+	&= -\log(\frac1\delta) \frac{2\sigma^2 + 2^{3/2} \sigma c/n^{1/2} + c^2\log(1/\delta)/n}{2\sigma^2 + 2^{3/2} \sigma c/n^{1/2} + 2c^2\log(1/\delta)/n} \\
+	&\geq -\log(\frac1\delta) = \log(\delta),
+	\end{align*}
+	
+	so by Bernstein's inequality we have
+	\[
+	\PP(\bar X \geq x^*) \leq \exp(\log(\delta)) = \delta, 
+	\]
+	which is what we wanted to prove. 
+	
+%	We have 
+%	\[
+%	\PP(\bar X \geq x) \leq \exp(- \frac{nx^2}{2(\sigma^2 + cx)}) \eqqcolon \delta. 
+%	\]
+
 	Now we just need express $x$ in terms of $\delta$: taking logarithms on both sides we obtain
 	\[
 	- \frac{nx^2}{2(\sigma^2 + cx)} = \log(\delta) \implies nx^2 = 2(\sigma^2 + cx) \log(1/\delta) \implies nx^2 - 2c\log(1/\delta) x - 2\sigma^2\log(1/\delta) = 0.
@@ -287,8 +305,10 @@ Of course, the true limit is 0 for any $n$, which is only given by Bennett's ine
 	\begin{align*}
 	x &= \frac{2c \log(1/\delta) + \sqrt{4c^2\log^2(1/\delta) + 8n\sigma^2\log(1/\delta)}}{2n} \\
 	&= \frac cn \log(1/\delta) + \sqrt{\frac{c^2}{n^2}\log^2(1/\delta) + \frac{2\sigma^2}{n} \log(1/\delta)} \\
-	&= ???? 
+	&\geq \frac cn \log(1/\delta) + \sqrt{\frac{2\sigma^2}{n} \log(1/\delta)}. 
 	\end{align*}
+
+So we have ?????
 \end{proof}
 
 \begin{question}
@@ -400,14 +420,19 @@ Note that every term in the above sum vanishes except for the $r = 0$ term due t
 
 We verify that $K_\ell$ has order $\ell$: let $j \in \qty{1, \dotsc, \ell - 1}$, then we have
 \begin{align*}
-	\int_{-\infty}^\infty u^j K_\ell(u) \dd{u} = \sum_{r=0}^{\ell - 1} \frac{(-1)^r H_r(0)}{r!} \int_{-\infty}^\infty u^j \phi^{(r)}(u) \dd{u}.
+	\int_{-\infty}^\infty u^j K_\ell(u) \dd{u} = \sum_{r=0}^{\ell - 1} \frac{(-1)^r H_r(0)}{r!} \int_{-\infty}^\infty u^j H_r(u) \phi(u) \dd{u}.
 \end{align*}
-Clearly, if $j < r$, integral in the sum vanishes. If $j = r$, the integral yields $r!$. So we have
+Write $u^j = \sum_{k=0}^j c_k H_k(u)$, then the integral will vanish unless $k = r$, so we get
 \[
-\int_{-\infty}^\infty u^j K_\ell(u) \dd{u} = (-1)^j H_j(0) + \sum_{r=0}^{j-1} \int_{-\infty}^\infty u^j \phi^{(r)}(u) \dd{u}. 
+\int_{-\infty}^\infty u^j K_\ell(u) = \sum_{r=0}^{j} (-1)^r c_r H_r(0) = \sum_{r=0}^j c_r H_r(0) = 0^j = 0,
 \]
-
-??
+since $H_r(0) = 0$ for $r$ odd. 
+%Clearly, if $j < r$, integral in the sum vanishes. If $j = r$, the integral yields $r!$. So we have
+%\[
+%\int_{-\infty}^\infty u^j K_\ell(u) \dd{u} = (-1)^j H_j(0) + \sum_{r=0}^{j-1} \int_{-\infty}^\infty u^j \phi^{(r)}(u) \dd{u}. 
+%\]
+%
+%??
 \end{proof}
 
 \begin{question}
@@ -428,10 +453,10 @@ Clearly, if $j < r$, integral in the sum vanishes. If $j = r$, the integral yiel
 \end{proof}
 
 \begin{question}
-	\begin{enumerate}
+	\begin{enumerate}[(a)]
 		\item 	Verify the algebraic identity
 		\[
-		\phi_\sigma(x-\mu)\phi_{\sigma'}(x-\mu') = \phi_{\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2}}(x - \mu^*) \phi_{(\sigma + \sigma')^{1/2}}(\mu - \mu')
+		\phi_\sigma(x-\mu)\phi_{\sigma'}(x-\mu') = \phi_{\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2}}(x - \mu^*) \phi_{(\sigma^2 + \sigma'^2)^{1/2}}(\mu - \mu')
 		\]
 		where $\mu^* \ceq (\sigma'^2 \mu + \sigma^2\mu') / (\sigma^2 + \sigma'^2)$, and $\phi_\sigma$ is the $N(0, \sigma^2)$ density. 
 		
@@ -444,18 +469,24 @@ Clearly, if $j < r$, integral in the sum vanishes. If $j = r$, the integral yiel
 \end{question}
 
 \begin{proof}
-	\begin{enumerate}
-		\item \TODO
-		\item no.
-%		We have 
-%		\begin{gather*}
-%			\phi_{\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2}}(x - \mu^*) \phi_{(\sigma + \sigma')^{1/2}}(\mu - \mu') \\
-%			= \frac{1}{2\pi \sigma \sigma'} \exp(-\frac12\qty(\frac{(x - \mu^*)^2(\sigma^2 + \sigma'^2)}{\sigma^2 \sigma'^2} + \frac{(\mu - \mu^*)^2}{\sigma^2 + \sigma'^2})) \\
-%			= \frac{1}{2\pi \sigma \sigma'} \exp\qty(-\frac12\qty(\frac{(x - \mu^*)^2(\sigma^2 + \sigma'^2)^2 + \sigma^2 \sigma'^2 (\mu - \mu^*)^2}{\sigma^2 \sigma'^2(\sigma^2 + \sigma'^2)})) \\
-%			=  \frac{1}{2\pi \sigma \sigma'}\exp\qty(-\frac12\qty(\frac{
-%			x^2(\sigma^2 + \sigma'^2)^2 + (\sigma'^2\mu + \sigma^2\mu')^2 - 2x (\sigma'^2\mu + \sigma^2\mu') (\sigma^2 + \sigma'^2)	
-%		}{\sigma^2 \sigma'^2(\sigma^2 + \sigma'^2)}))
-%		\end{gather*}
+	\begin{enumerate}[(a)]
+		\item We have
+		\begin{align*}
+			&\phantom{=\ }\frac{(x-\mu)^2}{\sigma^2} + \frac{(x - \mu')^2}{\sigma'^2} \\
+			&= \frac{\sigma'^2(x - \mu)^2 + \sigma^2(x - \mu')^2}{\sigma^2\sigma'^2} \\
+			&= \frac{(\sigma^2 + \sigma'^2)x^2 - 2 (\sigma'^2 \mu + \sigma^2 \mu')x + \sigma'^2 \mu^2 + \sigma^2\mu'^2}{\sigma^2 \sigma'^2} \\
+			&=  \frac{(\sigma^2 + \sigma'^2)(x^2 - 2\mu^*x) + \sigma'^2 \mu^2 + \sigma^2\mu'^2}{\sigma^2 \sigma'^2} \\
+			&= \frac{(\sigma^2 + \sigma'^2)(x^2 - 2\mu^* + \mu^{*2}) - (\sigma^2 + \sigma'^2)\mu^{*2} + \sigma'^2 \mu^2 + \sigma^2\mu'^2}{\sigma^2 \sigma'^2} \\
+			&= \frac{(x - \mu^*)^2}{(\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2})^2} + \frac{\sigma'^2 \mu + \sigma^2 \mu'^2 - (\sigma'^2\mu + \sigma^2\mu')^2/(\sigma^2 + \sigma'^2)}{\sigma^2\sigma'^2} \\
+			&= \frac{(x - \mu^*)^2}{(\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2})^2} + \frac{(\sigma^2 + \sigma'^2)(\sigma'^2\mu + \sigma^2\mu'^2) - (\sigma'^2\mu + \sigma^2\mu')^2}{\sigma^2 \sigma'^2(\sigma^2 + \sigma'^2)} \\
+			&= \frac{(x - \mu^*)^2}{(\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2})^2} + \frac{(\mu - \mu')^2}{\sigma^2 + \sigma'^2} \\
+			&= \frac{(x - \mu^*)^2}{(\sigma\sigma'/(\sigma^2 + \sigma'^2)^{1/2})^2} + \frac{(\mu - \mu')^2}{((\sigma^2 + \sigma'^2)^{1/2})^2}, 
+		\end{align*}
+	which proves the claim. 
+	\item Let $K = \phi_1$ and define $K_h(x) \ceq h^{-1} K(x/h)$ so $K_h = \phi_h$. Then recall from the lectures that
+	\[
+	\MISE(\hat f_n) = \frac1n \int_\RR \qty[(\phi_h^2 * \phi_\sigma)(x) - (\phi_h * \phi_\sigma)^2(x)] \dd{x} + \int_{-\infty}^\infty \qty[ (\phi_h * \phi_\sigma)(x) - \phi_\sigma]^2 \dd{x}
+	\]
 	\end{enumerate}
 \end{proof}
 \end{document}
