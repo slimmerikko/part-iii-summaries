@@ -223,25 +223,28 @@ Note that $\frac{\alpha e^u}{\beta + \alpha e^u} \in [0, 1]$ since $\alpha, \bet
 
 \begin{solution}
 	Note that $X/n$ is the average of $n$ i.i.d.\ random variables $Y_i \sim \Rm{Bern}(p)$, where $Y_i \in [0, 1]$ for all $i$.  
-	
+	\begin{enumerate}
+		\item 
+
 	We start with Hoeffding's inequality. In this case, we have
 	\[
-	\PP(X/n - p \geq x) \leq \exp(-\frac{2n^2(1/2)^2}{n}) = \exp(- \frac n2),
+	\PP\qty(X/n - p \geq \frac12) \leq \exp(-\frac{2n^2(1/2)^2}{n}) = \exp(- \frac n2),
 	\]
 	and this bound also holds as $p \to 0$. 
 	
-	We continue with Bennett's inequality. We consider the random variables $Y_i - p$, which are bounded from above by $b = 1 - p$. Now Bennett's inequality tells us, with $\sigma_p^2 = \Var(Y_i - p) = p(1-p)$ that
+\item 	We continue with Bennett's inequality. We consider the mean-zero random variables $Y_i - p$, which are bounded from above by $b = 1 - p$. Now Bennett's inequality tells us that
 	\begin{align*}
-		\PP(X/n \geq x) &\leq \exp(- \frac{n}{(1-p)^2} h\qty(\frac{1-p}{2p(1-p)})) = \exp\qty(- \frac{n}{(1-p)^2} h\qty(\frac{1}{2p})).
+		\PP\qty(X/n \geq \frac12) &\leq \exp(- \frac{np(1-p)}{(1-p)^2} h\qty(\frac{1-p}{2p(1-p)})) = \exp\qty( -\frac{np}{1-p} \cdot  h\qty(\frac{1}{2p})).
 	\end{align*}
 We compute
 \[
-h\qty(\frac1{2p}) = (1 + \frac1{2p}) \log(1 + \frac1{2p}) - \frac1{2p} = \log(1 + \frac1{2p}) + \frac1{2p} \qty(\log(1 + \frac1{2p}) - 1) \overset{p \downarrow 0}\to +\infty. 
+h\qty(\frac1{2p}) = \qty(1 + \frac1{2p}) \log(1 + \frac1{2p}) - \frac1{2p} = \log(1 + \frac1{2p}) + \frac1{2p} \qty(\log(1 + \frac1{2p}) - 1),
 \]
-Since $\frac{n}{(1-p)^2}$ is clearly bounded by $n$, we conclude that 
+and therefore
 \[
-\PP(X/n \geq x) \to e^{-\infty} = 0. 
+\frac{np}{1-p} h\qty(\frac1{2p}) \geq  \frac{n}{2(1-p)} \qty(\log(1 + \frac1{2p}) - 1) \overset{p \to 0}\to \infty. 
 \]
+It follows that the Bennett upper bound converges to 0 as $p \to 0$. 
 	
 %   Bennett's inequality tells us that
 %	\[
@@ -252,17 +255,22 @@ Since $\frac{n}{(1-p)^2}$ is clearly bounded by $n$, we conclude that
 %	\exp(-n\nu h(x/\nu)) = \exp(-n p(1-p) \qty(1 + \frac{1}{2p(1-p)})\log(1 + \frac{1}{2p(1-p)}))
 %	\]
 
-We finish with Bernstein's inequality.  We have for $q \geq 3$ and $p \leq\frac12$ that 
+\item We finish with Bernstein's inequality.  We have for $q \geq 3$ that
+\[
+\frac{2(1-p)}{q!} \leq \frac2{q!} \leq 3^{2-q}, 
+\]
+and therefore we have
 \begin{align*}
 	\EE[(Y_i - p)_+^q] &= p(1-p)^q = \sigma_p^2 (1-p)^{q-1} = (q! \sigma_p^2 (1-p)^{q-2}/2)\cdot (2(1-p)/q!) \\
-	&\leq q!\sigma_p^2 ((1-p)/3)^{q-2}/2.
+	&\leq q!\sigma_p^2 ((1-p)/3)^{q-2}/2,
 \end{align*}
-
+so $Y_i - p$ satisfies Bernstein's condition with $c = \frac{1-p}{3}$.
 Now Bernstein's inequality tells us that
 \[
 \PP(X/n \geq \frac12 \leq \exp\qty(- \frac{n(1/2)^2}{2(\sigma_p^2 + (1-p)/6)}) = \exp(- \frac{n}{8\sigma_p^2 + 4(1-p)/3}) \overset{p \to 0}{\to} \exp(-\frac{3n}{4}). \]
+	\end{enumerate}
+Of course, the true limit is 0 for any $n$, which is only given by Bennett's inequality. We also see that Hoeffding's inequality gives the most loose bound. 
 
-Of course, the true limit is 0 for any $n$, which is only given by Bennett's inequality. We also see that Hoeffding's inequality gives the worst result. 
 \end{solution}
 
 \begin{question}
@@ -371,7 +379,7 @@ In the end, we find
 \begin{solution}
 	Note that $W_t = B_t - t B_1 = (1-t) (B_t - B_0) - t (B_1 - B_t)$. Now, since $(B_t - B_0)$ and $(B_1 - B_t)$ are independent with distributions $N(0, t)$ and $N(0, 1-t)$ distributions respectively, we find that 
 	\[
-	W_t \sim (1-t) N(0, t) + t N(0, 1 - t) = N\qty(0, \frac{t}{\sqrt{1 - t}}) + N\qty(0, \frac{1-t}{\sqrt t}) = N\qty(0, \frac{t}{\sqrt{1 - t}} + \frac{1-t}{\sqrt t}). 
+	W_t \sim (1-t) N(0, t) + t N(0, 1 - t) = N\qty(0, t(1-t)^2) + N\qty(0, t^2(1-t)) = N\qty(0, t(1-t)). 
 	\]
 	
 	??
@@ -462,7 +470,7 @@ since $H_r(0) = 0$ for $r$ odd.
 		
 		\item Let $X_1, \dotsc, X_n \iid N(0, \sigma^2)$. Taking $K$ to be the $N(0, 1)$ density, show that the MISE of the kernel density estimate $\hat f_n$ with kernel $K$ and bandwidth $h$ can be expressed exactly as
 		\[
-		\MISE(\hat f_n) = (2\pi)^{-1/2} \qty{\frac1{nh} + (1 - \frac1n) \frac{1}{(h^2 + \sigma^2)^{1/2}} - \frac{2^{3/2}}{(h^2 + 2\sigma^2)^{1/2}} + \frac1\sigma}. 
+		\MISE(\hat f_n) = \frac1{2\pi^{1/2}} \qty{\frac1{nh} + (1 - \frac1n) \frac{1}{(h^2 + \sigma^2)^{1/2}} - \frac{2^{3/2}}{(h^2 + 2\sigma^2)^{1/2}} + \frac1\sigma}. 
 		\]
 	\end{enumerate}
 
@@ -485,8 +493,120 @@ since $H_r(0) = 0$ for $r$ odd.
 	which proves the claim. 
 	\item Let $K = \phi_1$ and define $K_h(x) \ceq h^{-1} K(x/h)$ so $K_h = \phi_h$. Then recall from the lectures that
 	\[
-	\MISE(\hat f_n) = \frac1n \int_\RR \qty[(\phi_h^2 * \phi_\sigma)(x) - (\phi_h * \phi_\sigma)^2(x)] \dd{x} + \int_{-\infty}^\infty \qty[ (\phi_h * \phi_\sigma)(x) - \phi_\sigma]^2 \dd{x}
+	\MISE(\hat f_n) = \frac1n \int_\RR \qty[(\phi_h^2 * \phi_\sigma)(x) - (\phi_h * \phi_\sigma)^2(x)] \dd{x} + \int_{-\infty}^\infty \qty[ (\phi_h * \phi_\sigma)(x) - \phi_\sigma(x)]^2 \dd{x}
 	\]
+	
+	We will use the previous exercise to compute all these terms. 
+	We have in general 
+	\begin{align}
+		(\phi_h * \phi_\sigma)(x) &= \int_\RR \phi_h(x-z) \phi_\sigma(z) \dd{z}\nonumber \\
+		&= \int_\RR \phi_\sigma(z) \phi_h(z-x) \dd{z} \nonumber\\
+		&= \phi_{(\sigma^2 + h^2)^{1/2}}(x) \int_\RR \phi_\xi(z - \mu^*) \dd{z} \nonumber\\
+		&= \phi_{(\sigma^2 + h^2)^{1/2}}(x) \label{eq:normal_convolve}. 
+	\end{align}
+
+	We also have
+	\begin{equation} \label{eq:normal_squared}
+	\phi_\sigma^2(x-\mu) = \phi_{\sigma/\sqrt 2}(x - \mu) \phi_{\sqrt 2 \sigma}(0) = \frac{1}{2 \sigma \sqrt\pi} \phi_{\sigma/\sqrt 2}(x - \mu). 
+	\end{equation}
+
+	Combining \cref{eq:normal_convolve,eq:normal_squared} we get 
+	\begin{align*}
+		(\phi_h^2 * \phi_\sigma)(x) &= \int_\RR \phi_h^2(x-z) \phi_\sigma(z) \dd{z} \\
+		%&= \phi_{\sqrt 2 h}(0) \int_\RR \phi_{h/\sqrt 2}(x - z)  \phi_\sigma(z) \dd{z} \\
+		&= \frac{1}{2h \sqrt \pi } \int_\RR \phi_{h/\sqrt 2}(x - z) \phi_{\sigma}(z)  \dd{z} \\
+		&= \frac{1}{2h\sqrt \pi} (\phi_{h/\sqrt 2} * \phi_\sigma)(x) \\
+		&= \frac{1}{2h \sqrt\pi} \phi_{(\sigma^2 + h^2/2)^{1/2}}(x)
+%		&= \frac{1}{2h \sqrt \pi} \phi_{\xi'}(x) \int_\RR \phi_\xi(z - \mu^*) \dd{z} \\
+%		&= \frac{1}{2h\sqrt\pi} \phi_{\xi'}(x),
+	%\\ &= \frac{1}{2\sqrt{\pi h}} \int_\RR \phi_{\xi}(z - \mu^*) \phi_{(\sigma^2 + h^2/2)^{1/2}}(x-z)
+	\end{align*}
 	\end{enumerate}
+
+	We also get
+	\[
+	(\phi_h * \phi_\sigma)^2(x) = \phi_{(\sigma^2 + h^2)^{1/2}}^2(x) = \frac{1}{2 (\sigma^2 + h^2)^{1/2} \sqrt\pi} \phi_{(\sigma^2 + h^2)^{1/2}/\sqrt 2}(x).
+	\]
+	
+	Finally, we have
+	\begin{align*}
+		((\phi_h * \phi_\sigma)(x) - \phi_\sigma(x))^2 &= (\phi_h * \phi_\sigma)^2(x) - 2 (\phi_h * \phi_\sigma)(x) \phi_\sigma(x) + \phi_\sigma^2(x).
+	\end{align*}
+	The first term we already computed, the third term is $\frac{1}{2\sigma\sqrt\pi} \phi_{\sigma/\sqrt 2}(x)$, so we only need to compute
+	\begin{align*}
+		(\phi_h * \phi_\sigma)(x) \phi_\sigma(x) &= \phi_{(\sigma^2 + h^2)^{1/2}}(x) \phi_\sigma(x) = \phi_{\xi}(x) \phi_{(2\sigma^2 + h^2)^{1/2}}(0) = \frac{1}{\sqrt{2\pi} (2\sigma^2 + h^2)^{1/2}} \phi_\xi(x),
+	\end{align*}
+where $\xi$ is an irrelevant constant. 
+
+
+Combining all these terms and using that $\phi_\sigma(x-\mu)$ integrates to 1 for any $\mu, \sigma$, we get
+\begin{align*}
+	\MISE \hat f_n &= \frac1n \qty(\frac1{2h\sqrt\pi} - \frac{1}{2(\sigma^2 + h^2)^{1/2}\sqrt\pi}) + \frac{1}{2(\sigma^2 + h^2)^{1/2}\sqrt\pi} - \frac{\sqrt 2}{\sqrt\pi (2\sigma^2 + h^2)^{1/2}} + \frac{1}{2\sigma\sqrt\pi} \\
+	&= \frac{1}{2\sqrt\pi} \qty(\frac{1}{nh} + (1 - \frac1n) \frac{1}{(\sigma^2 + h^2)^{1/2}} - \frac{2^{3/2}}{(2\sigma^2 + h^2)^{1/2}} + \frac1\sigma). 
+\end{align*}
+\end{proof}
+
+\begin{question}
+	Use the expression from 10(b) to derive an upper bound of the form $\MISE \hat f_n \leq C_1/(nh) + C_2^2 h^4$ (where you should specify $C_1, C_2$). Show that $\phi_\sigma \in \FF_\Nn(2, L)$ with $L^2 = 3/(8 \pi^{1/2} \sigma^5)$, and hence compare the bound from the first part of this question with that obtained from the general theory from lectures. 
+\end{question}
+
+\begin{solution}
+	We have 
+	\[
+	\qty(1 - \frac1n) \frac{1}{(\sigma^2 + h^2)^{1/2}} - \frac{2^{3/2}}{(2\sigma^2 + h^2)^{1/2}} \leq \frac{1}{(\sigma^2 + h^2)^{1/2}}  - \frac{2}{(\sigma^2 + h^2/2)^{1/2}} < 0,
+	\]
+%	and therefore
+%	\[
+%	\MISE \hat f_n < \frac{1}{2\sqrt\pi} \qty(\frac1{nh} + \frac1\sigma). 
+%	\]
+	I do not know how to obtain an upper bound of the form $C_1/(nh) + C_2^2 h_4$ from this expression. 
+	
+	To show that $\phi_\sigma \in \FF_\Nn(2, L)$,  we must show that $\phi_\sigma \in \FF_\Nn(2, L)$. By question 9, it suffices to show that $\norm{\phi''_\sigma}_{L^2}^2 \leq L^2$. 
+	A simple computation gives
+	\[
+	\phi_\sigma''(x) = \frac{1}{\sqrt{2\pi} \sigma^5} \qty(x^2 - \sigma^2) \exp(-\frac{x^2}{2\sigma^2}) \leq \frac1{\sqrt{2\pi} \sigma^5} x^2 \exp(-\frac{x^2}{2\sigma^2})
+	\]
+	so
+	\begin{align*}
+	\norm{\phi_\sigma''}_{L^2}^2 &\leq \frac{1}{2\pi\sigma^{10}} \int_\RR x^4 \exp(-\frac{x^2}{\sigma^2}) \dd{x} \overset\star= \frac{1}{2\pi \sigma^{10}} \cdot \frac34 \sqrt{\pi} \sigma^5 = \frac{3}{8 \sqrt\pi \sigma^5} = L^2, 
+	\end{align*}
+where $\star$ can be computed using the fact that the integral is, up to scaling, the fourth moment of $N(0, \sqrt2\sigma)$ distribution. 
+
+Note that for $K = \phi_1$, we have 
+\[
+R(K) = \int_{-\infty}^\infty \phi_1^2(x) \dd{x} = \frac1{2\sqrt\pi}, 
+\]
+while
+\[
+\mu_2^2(K)=  \int_{-\infty}^\infty x^2 \phi_1(x) \dd{x} = 1.
+\]
+
+Plugging all the above into theorem 27 shows that 
+\[
+\MISE(\hat f_n) \leq \frac{1}{2\sqrt\pi} \frac1{nh} + \frac{3}{8\sqrt\pi \sigma^5} h^4.
+\]
+\end{solution}
+
+\begin{question}
+	Let $f$ be a bounded density that is twice differentiable at $x \in \RR$ and satisfies $R(f'') < \infty$. Let $h = h_n$ be deterministic, with $h \to 0$ and $nh \to \infty$ as $n\to\infty$, and let $K$ be a second-order kernel with $\max\qty{R(K), \mu_2(K)} < \infty$. Show that the KDE $\hat f_n \equiv \hat f_{n, h, K}$ satisfies
+	\[
+	\MSE (\hat f_n(x)) = \frac1{nh} R(K) f(x) + \frac14 \mu_2^2(K) f''(x)^2 h^4 + o\qty(\frac1{nh} + h^4)
+	\]
+	as $n\to\infty$. 
+\end{question}
+
+\begin{proof}
+	As in the proof of proposition 19, we have
+	\[
+	\Var \hat f_n(x) %= \frac1{nh} \int_{-\infty}^\infty K^2(u) f(x - uh) \dd{u}
+	\]
+%	Now we use a Taylor expansion 
+%	\[
+%	f(x - uh) = f(x) - f'(x) uh + \frac{(uh)^2}{2} \int_0^1 f''(x - \tau uh) (1 - \tau) \dd{\tau},
+%	\]
+%	and we obtain
+%	\[
+%	\Var \hat f_n(x) = \frac1{nh} \qty(f(x) \int_{-\infty}^\infty K^2(u) \dd{u})
+%	\]
 \end{proof}
 \end{document}

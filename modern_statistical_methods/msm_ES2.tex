@@ -200,7 +200,7 @@ which is of course equivalent to minimising
 	Consider the following algorithm for model selection when we have a response $Y \in \RR^n$ and a matrix of predictors $X \in \RR^{n \times p}$.
 	\begin{enumerate}[(a)]
 		\item First centre $Y$ and all the columns of $X$. Initiale the current model $M \subseteq \qty{1, \dotsc, p}$ to be $\emptyset$ and set the current residual $R$ to be $Y$. 
-		\item Find the variable $k^*$ in $M^c$ most correlated with the current residual $R$. Set $M$ to be $M \cup \qty{k^*}$. Replace $R$ with the residual from regressing $R$ onto $X_{k^*}$. Further replac eeach variable in $M^c$ with the residual from regressing itself onto $X_{k^*}$.
+		\item Find the variable $k^*$ in $M^c$ most correlated with the current residual $R$. Set $M$ to be $M \cup \qty{k^*}$. Replace $R$ with the residual from regressing $R$ onto $X_{k^*}$. Further replace each variable in $M^c$ with the residual from regressing itself onto $X_{k^*}$.
 		\item Continue the previous step unto $R = 0$. 
 	\end{enumerate}
 Show that this algorithm is equivalent to forward selection.
@@ -209,7 +209,7 @@ Show that this algorithm is equivalent to forward selection.
 \end{question}
 
 \begin{solution}
-	content...
+We follow the hint and use induction on the iteration $m$ of the algorithm. For the base case, note that centering $Y$  is equivalent to fitting an intercept-only model. ???
 \end{solution}
 
 \begin{question}
@@ -267,7 +267,104 @@ which shows that $W$ is sub-Gaussian with parameter $1 = (1 -(-1))/2$, so Hoeffd
 
 \begin{proof}
 	\begin{enumerate}[(a)]
-		\item 
+		\item We have
+		\begin{align*}
+		\PP(\abs{W/d - 1} \geq t) &= \PP(W/d - 1 \geq t)+ \PP(W/d - 1 \leq -t) \\
+		&= \PP(W\geq d(1+t)) + \PP(W \leq d(1 -t)). 
+		\end{align*}
+		
+		Now we use Chernoff bounds: we have 
+		\begin{align*}
+		\PP(W \geq d(1+t))  &\leq \inf_{\alpha > 0} e^{-\alpha d(1 + t)} \EE[e^{\alpha W}] \leq \inf_{0 < \alpha < \frac12} e^{-\alpha dt} \qty(\frac{e^{-\alpha}}{\sqrt{1 - 2\alpha}})^d  \\
+		&\leq \inf_{0 < \alpha < \frac14} e^{d(2\alpha^2 - \alpha t)} \overset\star=  e^{dt^2/8}, 
+		\end{align*}
+		where $\star$ is a consequence of plugging in the minimum $\alpha = t/4 \in (0, 1/4)$. 
+		
+		Analogously, we have for $\alpha > 0$ that
+		\begin{align*}
+			\PP(W \leq d(1-t)) &\leq \inf_{\alpha > 0} e^{\alpha d(1-t)} \EE[e^{-\alpha W}] \leq \inf_{-\frac12 < \alpha < 0} e^{\alpha d t} \qty(\frac{e^{-\alpha}}{\sqrt{1 - 2\alpha}})^d \\
+			&\leq \inf_{-\frac14 < \alpha < 0} e^{d(2\alpha^2 + \alpha t)} \overset\star= e^{dt^2/8},
+		\end{align*}
+	where $\star$ is now a consequence of plugging in the minimum $\alpha = -t/4 \in (-1/4, 0)$. 
+	
+	Plugging what we found back into our original equation we obtain for $t \in (0, 1)$ indeed
+	\[
+	\PP(\abs{W/d - 1} \geq t) \leq 2e^{dt^2/8}. 
+	\]
+	
+	\item We wish to show that $\norm{Au}^2/\norm{u}^2 \sim \chi_d^2$. For this, let $Z_1, \dotsc, Z_p$ be i.i.d.\ $N(0, 1)$ random variables, then 
+	\[
+	(Au)_i = \sum_{j=1}^p A_{ij} u_j \sim \sum_{j=1}^p u_j Z_j \sim N(0, \sum_i u_i^2) = N(0, \norm{u}_2^2). 
+	\]
+	Therfore, we have 
+	\[
+	\frac{\norm{Au}^2}{\norm{u^2}} = \frac{\sum_i (Au)_i^2}{\norm{u}^2} = \sum_i \qty(\frac{(Au)_i}{\norm{u}})^2 \sim \sum_i Z_i^2 \sim \chi_d^2. 
+	\]
+	Combining this with (a) proves the claim.
+	
+	\item We have
+	\begin{align*}
+			&\PP\qty(1 - t \leq \frac{\norm{w_i - w_j}_2^2}{\norm{u_i - u_j}_2^2} \leq 1 + t \text{ for all } i \neq j \in \qty{1, \dotsc, n})  \\
+			&= \PP\qty(\abs{\frac{\norm{A (u_i - u_j)}^2}{d \norm{u_i - u_j}^2} - 1} \leq t \text{ for all } i \neq j \in \qty{1, \dotsc, n}) \\
+			&= 1 - \PP\qty(\abs{\frac{\norm{A (u_i - u_j)}^2}{d \norm{u_i - u_j}^2} - 1} \geq t \text{ for some } i \neq j \in \qty{1, \dotsc, n}) \\
+			&\overset\star\geq - \frac{n^2}{2} \cdot 2e^{-dt^2/8} \geq 1 - \eps, 
+	\end{align*}
+where $\star$ follows from the fact that there are $\frac{n(n-1)}{2} \leq \frac{n^2}{2}$ pairs $i \neq j$, and the last inequality follows from 
+\[
+e^{-dt^2/8} \leq e^{-2 \log(n/\sqrt\eps)} = \qty(\frac{n}{\sqrt\eps})^{-2} = \frac\eps{n^2}. 
+\]
 	\end{enumerate}
+\end{proof}
+
+\begin{mdframed}
+	In the following questions, assume that $X$ has had its columns centred and scaled to have $\ell_2$-norm $\sqrt n$, and that $Y$ is also centred.
+\end{mdframed}
+
+\begin{question}
+	Show that any two Lasso solutions when $\lambda > 0$ must have the same $\ell_1$-norm. 
+\end{question}
+
+\begin{proof}
+	By proposition 21, $X\hat\beta_\lambda^L$ is unique, so if $\hat\beta$, $\hat\gamma$ are Lasso solutions then $X\hat\beta = X\hat\gamma$ so 
+	\[
+	Q_\lambda(\hat\beta) = \frac1{2n} \norm{Y - X\hat\beta}_2^2 + \lambda \norm{\hat\beta}_1 = \frac1{2n} \norm{Y - X\hat\beta}_2^2 + \lambda \norm{\hat\gamma}_1 = Q_\lambda(\hat\gamma), 
+	\]
+	which implies $\lambda \norm*{\hat\beta}_1 = \lambda \norm{\hat\gamma}_1$. For $\lambda > 0$ this shows $\norm{\hat\beta}_1 = \norm{\hat\gamma_1}$. 
+\end{proof}
+
+\begin{question}
+	Carath\'eodory's Lemma states that if $S \subseteq \RR^{d'}$ is in a subspace of dimension $d$, any $v$ that is a convex combination of points in $S$ can be expressed as a convex combination of $d+1$ points from $S$. 
+	
+	With this knowledge, show that for any value of $\lambda$, there is always a Lasso solution with no more than $n$ non-zero coefficients. 
+\end{question}
+
+\begin{proof}
+	By the previous question, all Lasso solutions have the same norm $x$, so the set of Lasso solutions is given by
+	\[
+	\argmin_{\norm{\beta}_1 = x} \norm{Y - X\beta}_2^2.
+	\]
+	Let $\hat\beta$ be any fixed Lasso solution, then we find that the entire solution set can also be described as
+	\[
+	\qty{\hat\gamma \mid \norm{\gamma} = x, \hat\beta - \hat\gamma \in \Nul(X)}. 
+	\]
+	??
+\end{proof}
+
+\begin{question}
+	Show that if $\lambda \geq \lambda_\Rm{max} \ceq \norm{X\T Y}_\infty / n$ then $\hat\beta_\lambda^L = 0$. 
+\end{question}
+
+\begin{proof}
+	By the KKT conditions any lasso solution satisfies $\frac1n X\T (Y - X\hat\beta) = \frac1n X\T Y - \frac1n X\T X\hat\beta= \lambda \hat\nu$ for some $\nu$ with $\norm{\hat\nu}_\infty \leq 1$ and $\hat\nu_{\hat S_{\lambda}} = \sign(\hat\beta^L_{\lambda, \hat S_\lambda})$. 
+	
+	Suppose $\lambda \geq \lambda_\Rm{max}$, and suppose also that $\hat\beta \neq 0$, so $\norm{\hat\nu}_\infty = 1$. Then we find
+	\[
+	\frac1n \norm{X\T (Y - X\hat\beta)}_\infty = \norm{\lambda\hat\nu} = \lambda  \geq \frac1n \norm{X\T Y}_\infty, 
+	\]
+	so 
+	\[
+	\norm{X\T Y - X\T X\hat\beta}_\infty \geq \norm{X\T Y}_\infty. 
+	\]
+	??
 \end{proof}
 \end{document}

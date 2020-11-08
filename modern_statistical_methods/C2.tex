@@ -22,8 +22,8 @@ As with ridge regression, we usually centre and scale the matrix $X$, as well as
 
 The main difference between the lasso estimator and the ridge regression estimator is that it is likely that the lasso estimator has some zero components. This means that the lasso estimator also estimates which variables are relevant. 
 
-We have the following:
-\begin{theorem}[Slow rate]
+We have the following bound on the prediction error:
+\begin{theorem}[Slow rate] \label{thm:lasso_slow_rate}
 	Assume $X$ has centred and scaled columns, and assume that $Y$ has been centred, so $Y = X\beta^0 + \eps - \bar\eps \vec 1$. Let $A > 0$ and suppose
 	\[
 	\lambda = A\sigma\sqrt{\frac{\log(p)}{n}}.
@@ -92,7 +92,7 @@ By Chernoff bounding, we obtain for a $\sigma$-sub-Gaussian random variable $W$ 
 \begin{lemma} \label{lem:probability_omega_bound}
 	Suppose $\eps_1, \dotsc, \eps_n$ are independent mean-zero $\sigma$-sub-Gaussian random variables and let $\lambda \ceq A\sigma \sqrt{\log(p)/n}$. Then
 	\[
-	\PP\qty(\frac{\norm{X\T\eps}_\infty}{n} \leq \lambda) \geq 1 - 2p^{-(A^2/2 - 1)}. 
+	\PP\qty(\frac{\norm{X\T\eps}_\infty}{n} \leq \lambda) \geq 1 - 2p\exp(\frac{-\lambda^2}{2(\sigma/\sqrt n)^2}) =  1 - 2p^{-(A^2/2 - 1)}. 
 	\]
 \end{lemma}
 
@@ -153,6 +153,193 @@ which proves the claim.
 \end{proof}
 
 \subsubsection{Optimisation theory and convex analysis}
+\subsubsection*{Lagrangian optimisation}
+\begin{definition}
+	For the optimisation problem
+	\begin{equation} \label{eq:opt_primal}
+	\inf \qty{f(x) \mid g(x) = 0, h(x) \leq 0},
+	\end{equation}
+ 	its \emph{Lagrangian} is given by
+ 	\[
+ 	L(x, \lambda,\nu) \ceq f(x) + \lambda h(x) + \nu g(x),
+ 	\]
+ 	and its \emph{Lagrange dual function} is
+ 	\begin{equation} \label{eq:opt_dual}
+ 	\tilde f(\lambda, \nu) = \inf_x L(x, \lambda, \nu). 
+ 	\end{equation}
+\end{definition}
+
+Note that if $p^*$ is the minimum value of \eqref{eq:opt_primal}, then for any feasible $x$ (i.e., $x$ with $g(x) = 0$, $h(x) \leq 0$)
+we have for $\lambda \geq 0$ that 
+\[
+f(x) \geq L(x, \lambda, \nu) \geq \tilde f(\lambda, \nu).
+\]
+By taking the infimum over $x$ in the left-hand side and the supremum over $\lambda, \nu$ in the right-hand side we find that
+\[
+p^*  \geq \sup_{\lambda \geq 0, \nu} \tilde f(\lambda, \nu),
+\]
+Sometimes we actually have equality here, and in this case we say that the \emph{duality gap} is zero. Note that $\tilde f$ is a concave function, and is therefore easy to maximise. 
+
+A sufficient condition for a zero duality gap is that $L(\cdot, \lambda, \nu)$ is convex and that the problem is feasible. 
+
+\subsubsection*{Convex analysis}
+
+Let $\rext = \RR \cup \qty{\infty}$, and define for any $f \colon \RR^d \to \rext$ its (\emph{effective}) \emph{domain} $\dom(f) \ceq \qty{x \mid f(x) < \infty}$.
 \begin{proposition}
 	Let $f \colon \RR^d \to \RR$ be twice continuously differentiable. Then $f$ is convex (resp.\ strictly convex) if and only if its Hessian is positive semi-definite (resp.\ positive definite) for all $x \in \RR^d$.
 \end{proposition}
+
+\begin{definition}
+	Let $f \colon \RR^d \to \rext$  be convex and $x \in \RR^d$. Then $v \in \RR^d$ is called a \emph{subgradient} of $f$ at $x$ if
+	\[
+	f(y) \geq f(x) + v\T(y-x) \qquad\forall y \in \RR^d. 
+	\]
+	The set of all subgradients of $f$ at $x$ is called the \emph{subdifferential} of $f$ at $x$, denoted by $\pt f(x)$. 
+\end{definition}
+
+\begin{proposition}
+	If $f$ is convex and differentiable at $x \in \Int(\dom f)$, then $\pt f(x) = \qty{\nabla f(x)}$. 
+\end{proposition}
+
+\begin{proposition}
+	Let $f, g \colon \RR^d \to \rext$ be convex with $\Int(\dom f) \cap \Int(\dom g) \neq\emptyset$, $x \in \RR^d$ and $\alpha > 0$. Then $\pt(\alpha f)(x) = \alpha \pt f(x)$ and $\pt(f+g)(x) = \pt f(x) + \pt g(x)$. 
+\end{proposition}
+
+\begin{proposition}[KKT conditions]
+	Let $f \colon \RR^d \to \rext$ be convex. Then $x^*$ is a global minimiser of $f$ if and only if $0 \in \pt f(x^*)$. 
+\end{proposition}
+
+\begin{proof}
+	Clearly $x^*$ is a global minimiser of $f$ if and only if $f(y) \geq f(x^*) + 0\T (y - x)$ for all $y \in \RR^d$. 
+\end{proof}
+
+We define for $x \in \RR$
+\[
+\sign(x) \ceq\begin{cases}
+	-1, &x<0,\\ 0, &x=0, \\ 1, &x>0,
+\end{cases}
+\]
+and for $x \in \RR^d$ we define $\sign(x) \ceq (\sign(x_1), \dotsc, \sign(x_n))$. 
+
+\begin{proposition}
+	Let $x \in \RR^d$ and $A \ceq \qty{j \mid x_j \neq 0}$. Then
+	\[
+	\pt \norm{x}_1 = \qty{v \in \RR^d : \norm{v}_\infty \leq 1 \text{ and } v_A = \sign(x_A)}. 
+	\]
+\end{proposition}
+
+\begin{proof}
+	Define $g_j(x) = \abs{x_j}$ so that $\norm{\cdot}_1 = \sum_j g_j$ and $\pt \norm{x}_1 = \sum_j \pt g_j(x)$. Now, if $x_j \neq 0$, then $g_j$ is differentiable at $x$ so $\pt g_j(x) = \qty{\sign(x_j) e_j}$. If $x_j = 0$, then it can be shown that
+	\[
+	\pt g_j(x) = \qty{c e_j \mid c \in [-1, 1]}.
+	\]
+	Combining the above facts proves the claim. 
+\end{proof}
+
+With the previous proposition, we can write characterise solutions to the Lasso: namely we have
+\[
+\hat\beta_\lambda^L = \argmin_\beta \frac1{2n} \norm{Y- X\beta}_2^2 + \lambda \norm{\beta}_1 = \argmin_\beta Q(\lambda)
+\]
+if and only if $0 \in \pt Q(\hat \beta_\lambda^L)$. A simple computation gives, with $A = \qty{k \mid \beta_k \neq 0}$, 
+\begin{align*}
+\pt Q(\beta) &= \pt(\frac1{2n} \norm{Y- X\beta}_2^2) + \pt(\lambda \norm{\beta}_1) \\
+&= \qty{-\frac1n X\T(Y - X\beta)} + \qty{\lambda \nu : \norm{\nu}_\infty \leq 1, \nu_A = \sign(\beta_A)}. 
+\end{align*}
+
+We conclude that $\hat\beta$ is a Lasso solution if and only if there exists a vector $\hat\nu$ with $\norm{\hat\nu}_{\infty} \leq 1$ and $\hat\nu_A = \sign(\hat\beta_A)$ such that
+\[
+\frac1n X\T(Y - X\hat\beta) = \lambda \hat\nu. 
+\]
+
+Note that $\hat\beta^L_\lambda$ need not be unique, however, the fitted values are unique:
+\begin{proposition}
+	$X\hat\beta_\lambda^L$ is unique. 
+\end{proposition}
+
+\begin{proof}
+	Write $\frac1{2n}\norm{Y- X\beta}_2^2 = Q_1(X \beta)$ and $\norm{\beta}_1 = Q_2(\beta)$. Note that $Q_1$ is strictly convex. Now, for any $t\in (0, 1)$ and any two lasso solutions $\hat\beta, \hat\gamma$ with $Q(\hat\beta) = Q(\hat\gamma) = c^*$ we have
+	
+	\begin{align*}
+		c^* &\leq Q(t\hat\beta + (1-t)\hat\gamma) = Q_1(tX\hat\beta+(1-t)X\hat\gamma) + Q_2(t\hat\beta + (1-t)\hat\gamma) \\
+		&\overset\star\leq t Q_1(X\hat\beta) + (1-t)Q_2(X\hat\gamma) + Q_2(t\hat\beta + (1-t)\hat\gamma) \\
+		&\leq t Q(\hat\beta) + (1-t)Q(\hat\gamma) = c^*,
+	\end{align*}
+so all inequalities must be equalities. In particular, by $\star$ we find $Q_1(tX\hat\beta + (1-t)X\hat\gamma) = t Q_1(X\hat\beta) + (1-t)Q_1(X\hat\gamma)$, and since $Q_1$ is strictly convex this implies $X\hat\beta = X\hat\gamma$. 
+\end{proof}
+
+\subsection{Variable selection}
+We consider the noiseless model $Y = X\beta^0$, where no randomness is involved. Let $S = \qty{k \mid \beta_k \neq 0}$, $N = \qty{1, \dotsc, p} \setminus S$, and assume that $S = \qty{1, \dotsc, s}$ (so $\beta_1, \dotsc, \beta_s$ are nonzero and $\beta_{s+1}, \dotsc, \beta_p$ are zero). 
+
+Furthermore, write $X = \mqty[ X_S & X_N]$ and assume that $\rank(X_S) = s$, so that $X_S\T X_S$ is invertible (NB in particular this implies $n \geq s$). 
+\begin{theorem}
+Let $\lambda > 0$ and define $\Delta = X_N\T X_S(X_S\T X_S)^{-1} \sign(\beta^0_S)$. 
+\begin{enumerate}
+	\item If $\norm{\Delta}_{\infty} \leq 1$ and for $k = 1, \dotsc, s$ we have
+	\[
+	\abs{\beta^0_k} > \lambda \abs{\sign(\beta^0_S)\T \qty[\frac1n X_S\T X_S]^{-1}_k},
+	\]
+	then there exists a Lasso solution $\hat\beta_\lambda^L$ with $\sign(\hat\beta_\lambda^L) = \sign(\beta^0)$. 
+	
+	\item If there exists a Lasso solution $\hat\beta_\lambda^L$ with $\sign(\hat\beta_\lambda^L) = \sign(\beta^0)$, then $\norm{\Delta}_{\infty} = 1$. 
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+	The condition $\norm{\Delta}_{\infty} \leq 1$ is called the \emph{irrepresentable condition}, and it roughly states that none of the insignificant predictors align ``too well'' with the response. \TODO Elaborate on this (lecture 12). 
+\end{remark}
+\begin{proof}
+	Let $\hat\beta$ be any lasso solution and write $\hat S = \qty{k \mid \beta_k \neq 0}$. Using the fact that $\beta^0_N = 0$, the KKT conditions for the Lasso can be expanded as
+	\begin{equation} \label{eq:expanded_lasso_conditions}
+	\frac1n \mqty(X_S\T X_S & X_S\T X_N \\ X_N\T X_S & X_N\T X_N) \mqty(\beta^0_S - \hat\beta_S\\ -\hat\beta_N) = \lambda \mqty(\hat\nu_S\\ \hat\nu_N)
+	\end{equation}
+	for some $\hat\nu$ with $\norm{\hat\nu}_\infty \leq 1$ and $\hat\nu_{\hat S} = \sign(\hat\beta_{\hat S})$. 
+	\begin{enumerate}
+		\item It is easily checked that taking
+		\begin{align*}
+		(\hat\beta_S, \hat\beta_N) &= \qty(\beta^0_S - \lambda \qty(\frac1n X_S\T X_S)^{-1} \sign(\beta^0_S), 0) \\
+		(\hat\nu_S, \hat\nu_N) &= (\sign(\beta^0_S), \Delta)
+		\end{align*}
+		is a Lasso solution with $\sign(\hat\beta^0_S) = \sign(\hat\beta_S)$. 
+		\item If $\sign(\hat\beta) = \sign(\beta^0)$, then $\hat S = S$, $\hat \nu_S= \sign(\beta^0_S)$ and $\hat\beta_N = 0$. The top block of \cref{eq:expanded_lasso_conditions} can be written as
+		\[
+		\frac1n X_S\T X_S (\beta^0_S - \hat\beta_S) = \lambda \sign(\beta^0_S) \implies \beta^0_S - \hat\beta_S = \lambda \qty[\frac1n X_S\T X_S]^{-1} \sign(\beta^0_S). 
+		\]
+		Plugging that into the bottom block of the same equation, we get
+		\[
+		\lambda \frac1n X_N\T X_S \qty[\frac1nX_S\T X_S]^{-1} \sign(\beta^0_S) = \lambda \hat\nu_N \implies \norm{\Delta}_\infty \leq 1. 
+		\]
+	\end{enumerate}
+\end{proof}
+
+\subsubsection{Prediction and estimation}
+\begin{definition}
+	Let $X \in \RR^{n \times p}$ be a design matrix and $S \subseteq \qty{1, \dotsc, p}$ where $s \ceq \abs{S} > 0$, then the \emph{compatibility constant} $\phi^2 = \phi^2(X, S)$ is defined as
+	\[
+	\phi^2 \ceq \inf\qty{\frac{\frac1n \norm{X\beta}_2^2}{\frac1s \norm{\beta_S}_1^2} : \beta \in \RR^p, \beta_S \neq 0, \norm{\beta_N}_1 \leq 3 \norm{\beta_S}_1}. 
+	\]
+	The \emph{compatibility condition} is that $\phi^2 > 0$. 
+\end{definition}
+
+Note that if $X_S$ is rank-deficient, then there exists  $\beta_S \neq 0$ with $X_S\beta_S = 0$, and by setting $\beta_N = 0$ we find that $\phi^2 = 0$. Therefore, $X_S$ must have full column rank for the compatibility condition to be satisfied, and in particular we must have $n \geq s$. 
+
+\begin{proposition}
+	If $X\T X/n$ has minimal eigenvalue $c_\Rm{min}$ then $\phi^2 \geq c_\Rm{min}$. In particular, if $X$ has full column rank (i.e., $c_\Rm{min} > 0$), the compatibility condition is always satisfied. 
+\end{proposition}
+
+\begin{proof}
+	We have
+	\[
+	\norm{\beta_S}_1 = \sign(\beta_S)\T \beta_S\leq \norm{\sign(\beta_S)}_2 \norm{\beta_S}_2 = \sqrt{s} \norm{\beta}_2.
+	\]
+	Therefore, we find
+	\[
+	\phi^2 \geq \inf_{\beta \neq 0}  \frac{\frac1n \norm{X\beta}_2^2}{\frac1s \norm{\beta}_1^2} \geq \frac1n \inf_{\beta \neq 0} \frac{\norm{X\beta}_2^2}{\norm{\beta}_2^2} = \inf_{\norm{\beta} =1 } \beta\T \qty(\frac{X\T X}{n}) \beta = c_\Rm{min}. 
+	\]
+\end{proof}
+
+Note that the converse of this proposition does not necessarily hold: $X$ does not need to have full column rank to satisfy the compatibility condition. In particular, it does not need to be the case that $n < p$. 
+
+Now we present the ``fast'' convergence rate of the lasso (compare with \cref{thm:lasso_slow_rate}):
+\begin{theorem}[Fast rate] \label{thm:lasso_fast_rate}
+	Let the conditions of \cref{thm:lasso_slow_rate} be satisfied and assume furthermore that the compatibility condition holds. 
+\end{theorem}

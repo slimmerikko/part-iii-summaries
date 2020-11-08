@@ -1,0 +1,138 @@
+\section{Applications of Fourier transform}
+\subsection{Elliptic regularity}
+Recall that $D = -i\pt$. If $p$ is an $N$-th order polynomial, then $p(D)$ is called an $N$-th order differential operator. 
+
+\begin{definition}
+	For an $N$-th order differential operator $p(D) = \sum_{\abs{\alpha} \leq N} c_\alpha D^\alpha$, define its \emph{principal symbol} $\sigma_p(\lambda)$ by \[
+	\sigma_p(\lambda) \ceq \sum_{\abs{\alpha} = N} c_\alpha \lambda^\alpha \qquad(\lambda \in \RR^n). 
+	\]
+	The operator $p(D)$ is called \emph{elliptic} if $\sigma_p(\lambda) \neq 0$ for $\lambda \neq 0$. 
+\end{definition}
+
+\begin{lemma}
+	If $p(D)$ is an $N$-th order elliptic partial differential operator, then there exist $R > 0$ such that, $C > 0$ such that 
+	\[
+	\abs{p(\lambda)} \geq C \ang{\lambda}^N \qquad\text{if } \norm{\lambda} > R. 
+	\]
+\end{lemma}
+
+\begin{proof}
+Let $C_0 > 0$ be the minimum of $\abs{\sigma_p}$ on $S^{n-1}$, then for $\lambda \neq 0$ we have
+\[
+\abs{\sigma_p(\lambda)} = \abs{\sum_{\abs{\alpha} = N} c_\alpha \lambda^\alpha} = \norm{\lambda}^N \abs{\sigma_p(\lambda/\norm{\lambda})}  \geq \norm{\lambda}^N C_0. 
+\]
+By the triangle inequality we find
+\[
+\abs{p(\lambda)} \geq \abs{\sigma_p(\lambda)} - \abs{\sigma_p(\lambda) - p(\lambda)} \geq \qty[ C_0 - \abs{\frac{p(\lambda) - \sigma_p(\lambda)}{\norm{\lambda}^N}}] \norm{\lambda}^N
+\]
+Since $p - \sigma_p$ is a polynomial of order $N - 1$, we can choose $R$ sufficiently large s.t.\ $\abs{\frac{p(\lambda) - \sigma_p(\lambda)}{\norm{\lambda}^N}} < C_0/2$. Since $\ang{\lambda} \sim \norm{\lambda}$ for $\lambda$ large enough, we find that there exists $C$ such that
+\[
+\abs{p(\lambda)} \geq \frac{C_0}{2} \norm{\lambda}^N \geq C \ang{\lambda}^N
+\]
+for $\norm{\lambda} > R$. 
+\end{proof}
+
+We will try to prove the \emph{elliptic regularity theorem}:
+\begin{theorem}[Elliptic regularity] \label{thm:elliptic_regularity}
+	Suppose $p(D)$ is an $N$-th order elliptic partial differential operator and $u \in \DD'(X)$ satisfies $p(D) u \in H^s\loc(X)$, then $u \in H^{s+N}\loc(X)$. 
+\end{theorem}
+
+\begin{corollary}
+	If $p(D)$ is $N$-th order elliptic and $p(D)u \in C^\infty(X)$, then $u \in C^\infty(X)$. 
+\end{corollary}
+
+We will first prove an ``easy version'' of \cref{thm:elliptic_regularity} using a \emph{parametrix}: 
+\begin{definition}
+	If $p(D)$ is an $N$-th order differential operator, then $E \in D'(\RR^n)$ is called a \emph{parametrix} for $p(D)$ if
+	\[
+	p(D)E = \delta_0 + \omega \qquad\text{for some $\omega \in \EE(\RR^n)$}. 
+	\]
+\end{definition}
+
+\begin{lemma}
+	Every elliptic partial differential operator $p(D)$ has a parametrix which is smooth on $\RR^n \setminus \qty{0}$. 
+\end{lemma}
+
+\begin{proof}
+	Since $p(D)$ is elliptic, we can choose $R > 0$, $C > 0$ such that $\abs{p(\lambda)} \geq C \ang{\lambda}^N$  for $\norm{\lambda} > R$. 
+	
+	Fix some $\chi_R \in \DD(\RR^n)$ such that $\chi_R = 1$ on $\norm{\lambda} \leq R$ and $\chi_R = 0$ on $\norm{\lambda} > R + 1$, and define
+	\[
+	\hat E(\lambda) \ceq \frac{1 - \chi_R(\lambda)}{p(\lambda)}. 
+	\]
+	Then $\tilde E$ is smooth and for $\lambda$ sufficiently large we have $\abs*{\hat E(\lambda)} \les \ang{\lambda}^{-N}$ since $\chi_R$ vanishes for large $\lambda$, which implies $\hat E \in \SS'(\RR^n)$. Therefore, $p(\lambda) \hat E = 1 - \chi_R(\lambda)$ is also a tempered distribution and we can take its inverse Fourier transform $p(D) E = \delta_0 + \omega$ for some $\omega \in \SS(\RR^n)$, which shows that $E$ is a parametrix. 
+	
+	To prove that $E$ is smooth on $\RR^n \setminus \qty{0}$, consider for $\norm{\lambda} > R + 1$
+	\[
+	\abs{\FF[D^\beta (x^\alpha E)]} = \abs{\lambda^\beta D^\alpha \hat E} = \abs{\lambda^\beta D^\alpha\qty(\frac1{p(\lambda)})} \overset\star\les \norm{\lambda}^{\abs{\beta} - \abs{\alpha} - N},
+	\]
+	where $\star$ can be shown with an induction argument. For each $\beta$, we can simply choose $\abs{\alpha}$ large enough such that $\FF[D^\beta (x^\alpha E)] \in L^1(\RR^n)$, and therefore $D^\beta(x^\alpha E)$ is continuous for $\abs{\alpha}$ large enough. Since $\beta$ was randomly chosen, $E$ will be smooth outside the origin. 
+\end{proof}
+
+We will now consider the proof of \cref{thm:elliptic_regularity} in the special case that $u$ and $f \ceq p(D)u$ have compact support. 
+\begin{proof}
+	Let $E$ be a parametrix for $P$, then we have
+	\[
+	u= \delta_0 * u = [p(D) E - \omega] * u = p(D)E * u - \omega * u = E * f - \omega * u. 
+	\]
+	Since $u$ has compact support, $\omega * u$ will be a Schwartz function, and it can be shown that
+	\[
+	\abs{\FF[E * f](\lambda)} = \abs{\hat E(\lambda) \hat f(\lambda)} \les \ang{\lambda}^{-N} \abs{\hat f(\lambda)}, 
+	\]
+	which shows that $f \in H^s(\RR^n) \implies u \in H^{s + N}(\RR^n)$. 
+\end{proof}
+
+To prove \cref{thm:elliptic_regularity} in general, we will need some facts which are proved on the second example sheet:
+\begin{enumerate}
+	\item If $s > t$ then $H^s(\RR^n) \subseteq H^t(\RR^n)$;
+	\item If $\phi \in \SS(\RR^n)$, $u \in H^s(\RR^n)$, then $\phi u \in H^s(\RR^n)$;
+	\item If $u \in \EE'(\RR^n)$, then $u \in H^t(\RR^n)$ for some $t \in \RR$;
+	\item If $u \in H^s(\RR^n)$, then $D^\alpha u \in H^{s - \abs{\alpha}}(\RR^n)$. 
+\end{enumerate}
+Now we prove the theorem:
+\begin{proof}
+	Fix $\phi \in \DD(X)$, we wish to prove that $\phi u \in H^{s + N}(\RR^n)$ given that $p(D) u \in H^s\loc(X)$.  Choosing $M \in \NN$, we introduce a collection $\qty{\psi_0, \dotsc, \psi_M} \subseteq \DD(X)$ such that
+	\[
+	\supp(\phi) \subseteq \supp(\psi_M) \subseteq \dotsb \subseteq \supp(\psi_0), \quad \psi_{i-1} = 1 \text{ on $\supp \psi_i$}, \quad \psi_M = 1 \text{ on $\supp\phi$}. 
+	\]
+	
+	Consider $\psi_0 u \in \EE'(\RR^n)$. Then there exists $t \in \RR$ for which $\phi_0 u \in H^t(\RR^n)$. We compute
+	\begin{align*}
+		p(D)(\psi_1 u) = \psi_1 p(D) u + [p(D), \psi_1](u) = \psi_1 f + [p(D), \psi_1](\psi_0 u),
+	\end{align*}
+where the last equality follows from the fact that $\psi_0 u \equiv u$ on $\supp \psi_1$. Now note that $[p(D), \psi_1]$ is an order $N-1$ differential operator. So we have $\psi_1 f \in H^s(\RR^n)$ and $[p(D), \psi_1](\psi_0 u) \in H^{t - N + 1}(\RR^n)$.
+Setting $\tilde A_1 \ceq \min(s, t - N + 1)$ we find that $p(D)(\psi_1 u) \in H^{\tilde A_1}(\RR^n)$. 
+
+Since $\abs{p(\lambda)} \ges \ang{\lambda}^N$, we find that
+\begin{align*}
+p(D)(\psi_1 u) \in H^{\tilde A_1}(\RR^n) &\implies \int_{\RR^n} \ang{\lambda}^{2 \tilde A_1} \abs{p(\lambda) \FF[\psi_1u](\lambda)}^2 \dd{\lambda} \\
+&\implies \int_{\RR^n} \ang{\lambda}^{2\tilde A_1 + 2N} \abs{\FF[\psi_1 u](\lambda)}^2 \dd{\lambda} \\
+&\implies \psi_1 u \in H^{\tilde A_1 + N}(\RR^n).
+\end{align*}
+Define $A_1 \ceq \tilde A_1 + N = \min\qty{s + N, t + 1}$, then we have shown that $\psi_1 u \in H^{A_1}(\RR^n)$. By carrying on inductively, we can show that $\psi_M u \in H^{A_M}(\RR^n)$ where $A_M = \min\qty{s + N, t + M}$. By choosing $M$ large enough we conclude $\psi_M u \in H^{s + N}(\RR^n)$, and since $\psi_M = 1$ on $\supp\phi$, this also shows that $\phi u \in H^{s + N}(\RR^n)$. Since $\phi$ was randomly chosen, it follows that $u \in H^{s+N}\loc(X)$.  
+\end{proof}
+
+\subsection{Fundamental solutions}
+\begin{definition}
+	Let $p(D)$ be a partial differential operator, then $E \in \DD'(\RR^n)$ is called a \emph{fundamental solution} for $p(D)$ if $p(D)E = \delta_0$. 
+\end{definition}
+
+\begin{example}
+	Let $z = x_1 + i x_2 \in \CC$ and define the Cauchy-Riemann operator as $\pdv{\bar z} \ceq \frac12 \qty(\pdv{x_1} + i \pdv{x_2})$. 
+	It can be shown that $E \ceq \frac1{\pi z}$ is a fundamental solution of this equation. 
+\end{example}
+
+\begin{example}
+	Let $p(D) = \pdv{t} - \Delta x$ be the heat operator (where $\Delta = \pdv[2]x_1 + \dotsb + \pdv[2]{x_n}$) with coordinates $(t, x) \in \RR \times \RR^n$. Then it can be shown that
+	\[
+	E \ceq \begin{cases}
+		(4\pi t)^{-n/2} \exp(-\frac{\norm{x}}{4t}), &t > 0, \\ 0, & t \leq 0,
+	\end{cases}
+	\]
+	is a fundamental solution. 
+	
+	Furthermore, if $f$ has compact support, then $u = E * f$ solves $p(D) u = f$, since in this case
+	\[
+	p(D)(E * f) = (p(D) E * f) = \delta_0 * f = f. 
+	\]
+\end{example}

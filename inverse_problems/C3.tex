@@ -277,7 +277,7 @@ Then the function $\Phi_\alpha(u) \ceq \frac12\norm{Au - f}^2 + \alpha \JJ(u)$ i
 	Since $\Phi_\alpha(u_j)$ is bounded, $\norm{Au_j - f}$ is also bounded, and the other terms are also all bounded, so we conclude that $(u_j^{\Cal N})$ is bounded, and therefore that $(u_j)$ is bounded. 
 \end{proof}
 
-\begin{theorem}
+\begin{theorem} \label{thm:minimiser_existence}
 	Let $\XX, \YY$ be Banach spaces with topologies $\tau_\XX, \tau_\YY$. Assume that:
 	\begin{enumerate}[(a)]
 		\item bounded sequences in $\XX$ have $\tau_\XX$-convergent subsequences;
@@ -314,3 +314,144 @@ Then:
 	\end{enumerate}
 \end{proof}
 
+\begin{theorem}
+	Let the assumptions of \cref{thm:minimiser_existence} be satisfied and suppose that $\inf\limits_{v \in \XX} \norm{Av - f} = 0$. 
+	Let $\alpha = \alpha(\delta)$ satisfy \[
+	\lim_{\delta\to0} \alpha(\delta) = 0  = \limsup_{\delta \to 0} \frac{\delta^2}{\alpha(\delta)}. 
+	\]
+	Then any sequence $(\delta_n) \to 0$ has a subsequence $(\delta_n) \to 0$ such that $u_{\delta_n} \ceq u_{\alpha(\delta_n)} \to u_\JJ \D$ and $\JJ(u_\delta) \to \JJ(u_\JJ\D)$, where $u_\JJ\D$ is a $\JJ$-minimising solution. 
+\end{theorem}
+
+\begin{proof} 
+	By \cref{lem:regulariser_coercive}, we know that $\Phi_\alpha$ is coercive, and by \cref{thm:minimiser_existence}, we know there exists a $\JJ$-minimising solution $u_\JJ\D$. For any $(u_{\delta_n})$ with $\delta_n \to 0$ we find
+	\begin{equation} \label{eq:phi_alpha}
+	\Phi_\alpha(u_{\delta_n}) \leq \Phi_\alpha(u_\JJ\D) = \frac12\norm{A u_\JJ\D - f_\delta}^2 + \alpha(\delta) \JJ(u_\JJ\D) \leq \frac{\delta^2}{2} + \alpha(\delta)\JJ(u_\JJ\D),
+	\end{equation}
+	which is bounded, so by coercivity of $\Phi_\alpha$ we conclude that $(u_{\delta_n})$ is bounded. 
+	
+	After taking a subsequence if necessary, we conclude that $u_{\delta_n} \overset{\tau_X}\to u_0$. We show that $u_0$ is a $\JJ$-minimising solution. Since $A \colon \tau_X \to \tau_Y$ is continuous and $\norm{\cdot}_\YY$ is $\tau_\YY$-LSC, we get
+	\[
+	\norm{Au_0 - f} \leq \liminf_{n\to\infty} \norm{Au_{\delta_n} - f} \leq \liminf_{n\to\infty} \norm{Au_{\delta_n} - f_{\delta_n}} + \norm{f - f_{\delta_n}} = 0,
+	\]
+	since $\norm{Au_{\delta_n} - f\delta_n} \leq 2 \Phi_\alpha(u_{\delta_n}) \to 0$ by \cref{eq:phi_alpha}. This shows that $u_0$ is a least-squares solution.
+	
+	Furthermore, we have 
+	\[
+	\JJ(u_0) \leq \liminf_{n\to\infty} \JJ(u_{\delta_n}) \leq \limsup_{n\to\infty} \JJ(u_{\delta_n}) \leq \limsup_{n\to\infty} \frac{\Phi_\alpha(u_{\delta_n})}{\alpha(\delta)} \leq \limsup_{n\to\infty} \frac12 \frac{\delta_n^2}{\alpha(\delta_n)} + \JJ(u_\JJ\D) = \JJ(u_\JJ\D)
+	\]
+	which proves that $u_0$ minimises $\JJ$. 
+	
+	To prove that $u_{\delta_n}$ is actually a minimising sequence, note that all above inequalities are in fact equalities, so $\liminf_{n\to\infty} \JJ(u_{\delta_n}) = \limsup_{n\to\infty} \JJ(u_{\delta_n}) = \lim_{n\to\infty} \JJ(u_{\delta_n}) = \JJ(u_\JJ\D)$.
+
+%	By the previous theorem, we know there exists a $\JJ$-minimising solution $u_0$, and for every $\alpha > 0$ we know there exists
+%	\[
+%	u_\delta \ceq u_{\alpha(\delta)} \in \argmin_u \frac12 \norm{Au - f}^2 + \alpha \JJ(u). 
+%	\]
+%	
+%	Therefore, we have 
+%	\begin{equation} \label{eq:estimate}
+%	\frac12 \norm{Au_\delta - f_\delta}^2 + \alpha(\delta) \JJ(u_\delta) \leq \frac12 \norm{A u_0 - f_\delta}^2 + \alpha(\delta) \JJ(u_0) \leq \frac{\delta^2}{2} + \alpha(\delta) \JJ(u_0). 
+%	\end{equation}
+%	\Cref{eq:estimate} gives us two estimates: the first one is
+%	\[
+%	\alpha(\delta) \JJ(u_\delta) \leq \frac{\delta^2}{2} + \alpha(\delta) \JJ(u_0) \implies \JJ(u_\delta) \leq \frac12 \frac{\delta^2}{\alpha(\delta)} + \JJ(u_0), 
+%	\]
+%	so $\JJ(u_\delta)$ is bounded uniformly in $\delta$. From \cref{eq:estimate} we also infer
+%	\[
+%	\frac12 \norm{Au_\delta - f_\delta}^2 \leq \frac{\delta^2}{2} + \alpha(\delta) \JJ(u_0),
+%	\]
+%	from which it follows that $\norm{Au_\delta - f_\delta}$ is also uniformly bounded in $\delta$. 
+%	
+%	Writing $u_\delta = u_\delta^0 + u_\delta^{\Cal N}$
+\end{proof}
+
+\subsection{Total variation regularisation}
+\begin{definition}
+	Let $\Omega \subseteq \RR^n$ be a bounded comain and $u \in L^1(\Omega)$. Let
+	\[
+	\DD(\Omega, \RR^n) \ceq \qty{\phi \in C_0^\infty(\Omega, \RR^n) \mid \sup_{x \in \Omega} \norm{\phi(x)}_2 \leq 1}. 
+	\]
+	We define the \emph{total variation} of $u \in L^1(\Omega)$ as
+	\[
+	\TV(u) \ceq \sup_{\phi \in \DD(\Omega, \RR^n)} \int_\Omega u(x) (\div \phi)(x) \dd{x}. 
+	\]
+\end{definition}
+
+\begin{example}
+	If $u \in L^1(\Omega)$ has a weak derivative $\grad u \in L^1$ (i.e., $u \in W^{1, 1}$), then since any $\phi \in \DD(\Omega, \RR^n)$ is 0 on the boundary of $\Omega$, we have
+	\[
+	\TV(u) = \sup_{\phi \in \DD(\Omega, \RR^n)} \int_\Omega u(x) (\div\phi)(x) \dd{x} =  \sup_{\phi \in \DD(\Omega, \RR^n)} \int_\Omega -\grad u \vdot \phi \dd{x}, 
+	\]
+	By Cauchy-Schwarz we have $\abs{\nabla u(x) \vdot \phi(x)} \leq \norm{\nabla u(x)}_2 \norm{\phi(x)}_2$ which gives an upper bound for $\TV(u)$, and it can be shown that this upper bound is indeed an equality, so
+	\[
+	\TV(u) = \int_\Omega \norm{\nabla u}_2 \dd{x} = \norm{\nabla u}_{L^1}.
+	\]
+\end{example}
+
+\begin{proposition}
+	The functional $\TV$ is proper, convex, and absolutely one-homogeneous, and for any constant $c$ and any $u \in L^1(\Omega)$ we have
+	\[
+	\TV(c) = 0, \quad \TV(u + c) = \TV(u). 
+	\]
+\end{proposition}
+
+\begin{proof}
+	For any test function $\phi$ we have 
+	\[
+	\int_\Omega \div\phi \dd{x} = \int_{\pt\Omega} \phi \vdot \vec n \dd{x} = 0
+	\]
+	since $\phi = 0$ on the boundary. This shows immediately that $\TV(c) = 0$ and that $\TV(u + c) = \TV(u)$. 
+\end{proof}
+
+\begin{remark}
+	In fact, the converse also holds: $\TV(u) = 0$ if and only if $u$ is constant. 
+\end{remark}
+
+\begin{example}
+	Let $C \subseteq \Omega$ be a bounded domain with smooth boundary. Then we have
+	\[
+	\TV(\ind_C) = \sup_{\phi \in \DD(\Omega, \RR^n)} \int_C\div\phi \dd{x} = \sup_{\phi \in \DD(\Omega, \RR^n)} \int_{\pt C} \phi \vdot \vec n \dd{s} \leq \sup_{\phi \in \DD(\Omega, \RR^n)} \int_{\pt C} \norm{\phi}_2 \norm{\vec n}_2  \dd{s} = \int_{\pt C} 1 \dd{s},
+	\]
+	and we can show that the inequality here is in fact an equality, i.e., $\TV(\ind_C) = \int_{\pt C} 1 \dd{s}$, which is the perimeter of $C$. 
+\end{example}
+
+\begin{definition}
+	We define the space of functions of \emph{bounded variation} as
+	\[
+	\BV(\Omega) \ceq \qty{u \in L^1(\Omega) : \norm{u}_{\BV} \ceq \norm{u}_{L^1} + \TV(u) < \infty}.
+	\]
+\end{definition}
+\begin{remark}
+	It can be shown that BV is the dual of a separable Banach space, and that weak-$*$ convergence in BV is equivalent to strong convergence in $L^1$ and convergence of the values $\TV(u_n) \to \TV(u)$. 
+\end{remark}
+
+\begin{definition}
+	We define a \emph{domain} in $\RR^n$ as an open connected subset, and it is called a \emph{Lipschitz domain} if its boundary is locally the graph of a Lipschitz continuous function (see Wikipedia for the details). 
+\end{definition}
+
+\begin{theorem}
+	Let $\Omega \subseteq \RR^n$ be a bounded Lipschitz domain and $p, m \in \NN$. Define 
+	\[
+	p^* \ceq \begin{cases} \frac{np}{n - mp}, &n > mp, \\ \infty,& n \leq mp. \end{cases}
+	\]
+	Then the embedding $W^{m, p} \to L^q(\Omega)$ is continuous for all $q \in [1, p^*]$ and compact for all $q \in [1, p^*)$. 
+\end{theorem}
+
+A consequence ($p = m = 1$) is the following:
+\begin{corollary}
+	For any bounded Lipschitz domain $\Omega \subseteq \RR^n$, the $\BV(\Omega)$ is compactly embedded in $L^1(\Omega)$ for $n \geq 2$. For $n = 2$, the embedding $\BV(\Omega) \to L^2(\Omega)$ is continuous. 
+\end{corollary}
+
+\begin{theorem}
+	Let $\Omega \subseteq \RR^n$ be open and bounded. Then $\TV$ is LSC in $L^1(\Omega)$. 
+\end{theorem}
+
+\begin{proof}
+	Let $(u_j) \subseteq \BV(\Omega)$ converge to $u \in L^1(\Omega)$. Then for any test function we have
+	\begin{align*}
+		\TV(u) &= \sup_{\phi \in \DD(\Omega, \RR^n)}\int_\Omega u_j(x) (\div \phi)(x) \dd{x} \\
+		&= \sup_{\phi \in \DD(\Omega, \RR^n)} \lim_{j\to\infty} \int_\Omega u_j(x) (\div \phi)(x) \dd{x} \\
+		&\leq \liminf_{j\to\infty} \sup_{\phi \in \DD(\Omega, \RR^n)} \int_\Omega u_j(x) (\div\phi)(x) \dd{x} \\
+		&= \liminf_{j\to\infty} \TV(u_j). 
+	\end{align*}
+\end{proof}
