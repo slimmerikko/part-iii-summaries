@@ -341,5 +341,49 @@ Note that the converse of this proposition does not necessarily hold: $X$ does n
 
 Now we present the ``fast'' convergence rate of the lasso (compare with \cref{thm:lasso_slow_rate}):
 \begin{theorem}[Fast rate] \label{thm:lasso_fast_rate}
-	Let the conditions of \cref{thm:lasso_slow_rate} be satisfied and assume furthermore that the compatibility condition holds. 
+	Let the conditions of \cref{thm:lasso_slow_rate} be satisfied and assume furthermore that the compatibility condition holds. Then with probability at least $1 - 2p^{-(A^2/8 - 1)}$ we have
+	\[
+	\frac1n \norm{X(\beta^0 - \hat\beta)}_2^2 + \lambda \norm{\hat\beta - \beta^0}_1 \leq \frac{16\lambda^2s}{\phi^2} = \frac{16A^2 \log(p) \sigma^2 s}{\phi^2n }. 
+	\]
 \end{theorem}
+
+\begin{proof}
+	As in the proof of \cref{thm:lasso_slow_rate}, we have
+	\[
+	\frac1{2n} \norm{X(\beta^0 - \hat\beta)}_2^2 + \lambda \norm{\hat\beta}_1 \leq \frac1n \eps\T X(\hat\beta - \beta^0) + \lambda \norm{\beta^0}_1. 
+	\]
+	Define the event $\Omega = \qty{2 \norm{X\T \eps}_\infty/n \leq \lambda}$, then by H\"older's inequality we get, conditional on $\Omega$,
+	\[
+	\frac1n \norm{X(\hat\beta - \beta^0)}_2^2 + 2\lambda \norm{\hat\beta}_1  \leq \lambda \norm{\hat\beta - \beta^0}_1 + 2\lambda \norm{\beta^0}_1. 
+	\]
+	By \cref{lem:probability_omega_bound}, we find that $\PP(\Omega) \geq 1 - 2p^{-(A^2/8 - 1)}$. 
+	
+	Dividing by $\lambda$, we have
+	\begin{align*}
+		\frac1{\lambda n} \norm{X(\hat\beta - \beta^0)}_2^2 + 2 \norm{\hat\beta}_1 &\leq \norm{\hat\beta - \beta^0}_1 + 2 \norm{\beta^0}_1 \\
+		\frac1{\lambda n} \norm{X(\hat\beta - \beta^0)}_2^2 + 2 (\norm{\hat\beta_S}_1 + \norm{\hat\beta_N}_1) &\leq \norm{\hat\beta_S - \beta^0_S}_1 + \norm{\hat\beta_N}_1 + 2 \norm{\beta^0_S}_1\\
+		\frac1{\lambda n} \norm{X(\hat\beta - \beta^0)}_2^2 +  \norm{\hat\beta_N}_1 &\leq \norm{\hat\beta_S - \beta^0_S}_1 - 2 \norm{\hat\beta_S}_1 + 2 \norm{\beta^0_S}_1 \\
+		&\leq 3 \norm{\hat\beta_S - \beta^0_S}_1. 
+	\end{align*}
+	Now we note that $\norm{\hat\beta_N}_1 = \norm{\hat\beta_N + \beta^0_N}_1$, and we add $\norm{\hat\beta_S - \beta^0_S}_1$ to both sides of the inequality to get
+	\begin{equation} \label{eq:error_inequality}
+	\frac1{\lambda n} \norm{X(\hat\beta - \beta^0)}_2^2 + \norm{\hat\beta - \beta^0}_1  \leq 4 \norm{\beta_S - \beta^0_S}_1. 
+	\end{equation}
+	Assume that $\norm{\hat\beta - \beta^0} \neq 0$ (otherwise the theorem is definitely true), and note that $\norm{(\hat\beta - \beta^0)_N}_1 \leq 3 \norm{\hat\beta}_1 \leq 3 \norm{(\hat \beta - \beta^0)_S}$ by our previous inequality, we find that the compatibility constant satisfies
+	\[
+	\phi^2 \leq \frac{\frac1n \norm{X(\hat\beta - \beta^0)}_2^2}{\frac1s \norm{\hat\beta - \beta^0}_1^2} \implies \frac1{\phi} \geq \sqrt{\frac ns} \frac{\norm{\hat\beta - \beta^0}_1}{\norm{X(\hat\beta - \beta^0)}_2},
+	\]
+	and plugging this into \cref{eq:error_inequality} we get
+	\begin{equation} \label{eq:error_inequality_2}
+	\frac1{\lambda n} \norm{X(\hat\beta - \beta^0)}_2^2 + \norm{\hat\beta - \beta^0}_1  \leq 4 \norm{\beta_S - \beta^0_S}_1 \leq \frac4\phi \sqrt{\frac sn} \norm{X(\hat\beta - \beta^0)}_2,
+	\end{equation}
+	or equivalently
+	\[
+	\frac1{\lambda n} \norm{X(\hat\beta - \beta^0)}_2^2 - \frac4\phi \sqrt{\frac sn} \norm{X(\hat\beta - \beta^0)}_2 + \norm{\hat\beta - \beta^0}_1 \leq 0. 
+	\]
+	This is a quadratic inequality in $\norm{X(\hat\beta - \beta^0)}_2$, and solving it yields
+	\[
+	\frac1{\sqrt n} \norm{X(\hat\beta - \beta^0)}_2 \leq \frac{4\lambda \sqrt s}{\phi}. 
+	\] 
+	Plugging that into the right hand side of \cref{eq:error_inequality_2} yields the required result. 
+\end{proof}

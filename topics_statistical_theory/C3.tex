@@ -1,0 +1,13 @@
+\section{Nonparametric regression}
+\subsection{Fixed and random design}
+In \emph{fixed design}, we assume we have data $x_1 \leq \dotsb \leq x_n$ and the response variables satisfy 
+\[
+Y_i \ceq m(x_i) + \sqrt{v(x_i)} \eps_i,
+\]
+where the $\eps_i$ are independent, mean-zero random variables with $\Var(\eps_i) = 1$. The function $m$ is called the \emph{regression function}, and the function $v$ is the \emph{variance function}. If $v$ is constant, the model is called \emph{homoscedastic}, else it is called \emph{heteroscedastic}. 
+
+In \emph{random design}, we assume we have i.i.d.\ data pairs $(X_i, Y_i)$ with 
+\[
+Y_i = m(X_i) + \sqrt{v(X_i)} \eps_i, 
+\]
+where the $\eps_i$ are again independent with $\EE[\eps_1 | X_1] = 0$ and $\Var(\eps_1 | X_1) = 1$. The regression function is given by $m(x) = \EE(Y_1 | X_1 = x)$ and the variance function by $v(x) = \Var(Y_1 | X_1 = x)$. 

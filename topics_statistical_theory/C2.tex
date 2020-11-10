@@ -226,7 +226,7 @@ To obtain bounds on the integrated squared bias, we will require smoothness cond
 \end{proof}
 
 Putting everything together, we obtain the following:
-\begin{theorem}
+\begin{theorem} \label{thm:mise_bound}
 	Fix $\beta, L > 0$, and let $K$ be a kernel of order $\ell = \ceil\beta$ with $R(k)$ and $\mu_\beta(K)$ finite. Let $\hat f_n$ be the KDE with kernel $K$ and bandwidth $h$ based on $X_1, \dotsc, X_n \iid f \in \FF_\Nn(\beta, L)$. Then we have
 	\[
 	\MISE\hat f_n \leq \frac{R(K)}{nh} + \frac{L^2}{((\ell - 1)!)^2} \mu_\beta^2(K) h^{2\beta}. 
@@ -238,7 +238,10 @@ Putting everything together, we obtain the following:
 \end{theorem}
 
 \subsection{Bandwidth selection}
-The choice of bandwidth in the previous theorem is not practical since we have not specified $\alpha$ and $\beta$ is typically unknown. One possible approach is \emph{least squares cross validation}. For this, note that minimising the $\MISE$ is equivalent to minimising
+The choice of bandwidth in the previous theorem is not practical since we have not specified $\alpha$ and $\beta$ is typically unknown. 
+
+\subsubsection{Least squares cross validation}
+One possible approach is \emph{least squares cross validation}. For this, note that minimising the $\MISE$ is equivalent to minimising
 \[
 \MISE(\hat f_n) - \int_\RR f^2(x) \dd{x} = \EE\qty[ \int_\RR \hat f_n^2(x) \dd{x}] - 2\EE\qty[ \int_\RR \hat f_n(x) f(x) \dd{x}],
 \]
@@ -247,3 +250,22 @@ and it can be checked that an unbiased estimator for the above is given by
 \Rm{LSCV}(h) \ceq \int_\RR \hat f_n^2(x) \dd{x} - \frac2n \sum_{i=1}^n \hat f_{n, -i}(X_i),
 \]
 where $\hat f_{n, -i}$ is the KDE based on all observations except $X_i$. We now choose $h$ such that LSCV is minimised. 
+
+\subsubsection{Lepski}
+\TODO write this subsection (\TODO understand this first)
+
+\subsection{Choice of kernel}
+To choose a kernel, we first fix the scale of the kernel by setting $\mu_2(K) = 1$. Now, by our bound on the MISE (\cref{thm:mise_bound}) it is reasonable to minimise $R(K)$, where for simplicity we assume that $K$ is a nonnegative second-order kernel. The solution is the Epanechnikov kernel
+\[
+K_E(x) \ceq \frac{3}{4\sqrt 5} \qty(1 - \frac{x^2}{5}) \ind_{\abs{x} \leq \sqrt 5}, 
+\]
+and the ratio $R(K_E)/R(K)$ is called the \emph{efficiency} of a kernel $K$. We find that for different kernels, the efficiency is greater than 0.9, which shows that kernel shape does not affect efficiency greatly. 
+
+
+\subsection{Multivariate density estimation}
+The general $d$-dimensional KDE is 
+\[
+\hat f_n(x) \ceq \frac{1}{n \sqrt{\det H}} \sum_{i=1}^n K(H^{-1/2}(x - X_i)),
+\]
+where $H$ is a symmetric positive-definite bandwidth bandwidth matrix (often chosen to be diagonal or a multiple of $I$). If $H = h^2 I$, it can be shown that, under an appropriate definition of a $\beta$ smoothness class, we have an optimal bandwidth of order $n^{-1/(d + 2\beta)}$, and with this choise, a MISE of order $n^{-2\beta/(d + 2\beta)}$. This is called the ``curse of dimensionality'': the higher the dimension becomes, the harder nonparametric estimation gets. 
+

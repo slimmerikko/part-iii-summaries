@@ -314,7 +314,7 @@ Then:
 	\end{enumerate}
 \end{proof}
 
-\begin{theorem}
+\begin{theorem} \label{thm:minimiser_convergence}
 	Let the assumptions of \cref{thm:minimiser_existence} be satisfied and suppose that $\inf\limits_{v \in \XX} \norm{Av - f} = 0$. 
 	Let $\alpha = \alpha(\delta)$ satisfy \[
 	\lim_{\delta\to0} \alpha(\delta) = 0  = \limsup_{\delta \to 0} \frac{\delta^2}{\alpha(\delta)}. 
@@ -454,4 +454,21 @@ A consequence ($p = m = 1$) is the following:
 		&\leq \liminf_{j\to\infty} \sup_{\phi \in \DD(\Omega, \RR^n)} \int_\Omega u_j(x) (\div\phi)(x) \dd{x} \\
 		&= \liminf_{j\to\infty} \TV(u_j). 
 	\end{align*}
+\end{proof}
+
+\TODO what is the point/use of proposition 4.3.12 and corollary 4.3.13? 
+%\begin{proposition}
+%	Let $\Omega \subseteq \RR^n$ be a bounded Lipschitz domain, then there exists $C > 0$ such that for all $u \in \BV(\Omega)$, we have
+%	\[
+%	\norm{u - u_\Omega}_{L^1} \leq C \TV(u),
+%	\]
+%	where $u_\Omega$ is the mean value of $u$ over $\Omega$. 
+%\end{proposition}
+
+\begin{theorem}
+	Let $\XX = L^1(\Omega)$, where $\Omega \subseteq \RR^n$ is bounded Lipschitz, and $\YY$ a Banach space. Let $A \in \BB(L^1, \YY)$ such that $A(1) \neq 0$. Then $u_\delta$ converges strongly in $L^1$ (along a subsequence) to a TV-minimising solution as $\delta \to 0$ if $\alpha(\delta)$ is chosen as required by \cref{thm:minimiser_convergence}. 
+\end{theorem}
+
+\begin{proof}
+	We need to check that the conditions of  \cref{thm:minimiser_convergence} are satisfied. We have assumed that $\Ran(A)$ is dense, so $\inf_{v\in \XX} \norm{Av - f} = 0$. Since $\BV(\Omega)$ is compactly embedded in $L^1(\Omega)$, we know that sequences with a finite TV-value have (strongly) convergent subsequences. We have checked that $\TV$ is convex and LSC, that $\dim(\Nul(\TV)) < \infty$, and by assumption we have $\Nul(A) \cap \Nul(\TV) = \qty{0}$. Finally, $\TV$ is absolutely one-homogeneous, so all assumptions are valid. 
 \end{proof}

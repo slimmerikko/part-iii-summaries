@@ -73,7 +73,7 @@
 \renewcommand\P{^\perp}
 
 % Functions that appear frequently
-\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\sign}{sgn}
 \DeclareMathOperator{\Int}{Int}
 \DeclareMathOperator{\Span}{Span}
 \DeclareMathOperator{\Var}{Var}
@@ -339,15 +339,17 @@ e^{-dt^2/8} \leq e^{-2 \log(n/\sqrt\eps)} = \qty(\frac{n}{\sqrt\eps})^{-2} = \fr
 \end{question}
 
 \begin{proof}
-	By the previous question, all Lasso solutions have the same norm $x$, so the set of Lasso solutions is given by
+	Let $v_1, \dotsc, v_p \subseteq \RR^n$ be the columns of $X$. Because $X$ has centred columns, we know that $v_1, \dotsc, v_p$ lie in the $(n-1)$-dimensional subspace of vectors in $\RR^n$ with mean zero. 
+	
+	Now, let $\hat\beta$ be any lasso solution. If $\hat\beta = 0$, we are done, so suppose $\hat\beta \neq 0$, and write
 	\[
-	\argmin_{\norm{\beta}_1 = x} \norm{Y - X\beta}_2^2.
+	X\hat\beta = \mqty[ v_1 & \dotsb & v_p] \mqty[ \hat\beta_1 \\ \vdots \\ \hat\beta_p] = \norm{\hat\beta}_1 \mqty[\sign(\hat\beta_1) v_1 & \dotsb & \sign(\hat\beta_p) v_p] \mqty[ \abs{\hat\beta_1} / \norm{\hat\beta}_1\\ \vdots \\ \abs{\hat\beta_p}/\norm{\hat\beta}_1].
 	\]
-	Let $\hat\beta$ be any fixed Lasso solution, then we find that the entire solution set can also be described as
+	If we define $S = \qty{\norm{\hat\beta}_1 \sign(\hat\beta_1)v_1, \dotsc, \norm{\hat\beta}_1 \sign(\hat\beta_p)v_p}$, then we see that $X\hat\beta$ can be written as a convex combination of points in $S$. Since the points in $S$ also all have mean zero, by Caratheodory's lemma there exists a vector $\gamma \in \RR^p$ with at most $n$ nonzero coefficients, nonnegative entries, and $\norm{\gamma}_1 \geq 0$ such that
 	\[
-	\qty{\hat\gamma \mid \norm{\gamma} = x, \hat\beta - \hat\gamma \in \Nul(X)}. 
+	X\hat\beta = \norm{\hat\beta}_1 \mqty[\sign(\hat\beta_1) v_1 & \dotsb & \sign(\hat\beta_p) v_p] \gamma = X \qty(\norm{\hat\beta}_1 \mqty[\sign(\hat\beta_1) \gamma_1 \\ \vdots \\ \sign(\hat\beta_p) \gamma_p]) \eqqcolon X\hat\beta'. 
 	\]
-	??
+	Now, we have $X\hat\beta = X\hat\beta'$ and $\norm{\hat\beta}'_1 = \norm{\hat\beta}_1$, which shows that $\hat\beta'$ is a Lasso solution with no more than $n$ nonzero coefficients. 
 \end{proof}
 
 \begin{question}
@@ -355,16 +357,66 @@ e^{-dt^2/8} \leq e^{-2 \log(n/\sqrt\eps)} = \qty(\frac{n}{\sqrt\eps})^{-2} = \fr
 \end{question}
 
 \begin{proof}
-	By the KKT conditions any lasso solution satisfies $\frac1n X\T (Y - X\hat\beta) = \frac1n X\T Y - \frac1n X\T X\hat\beta= \lambda \hat\nu$ for some $\nu$ with $\norm{\hat\nu}_\infty \leq 1$ and $\hat\nu_{\hat S_{\lambda}} = \sign(\hat\beta^L_{\lambda, \hat S_\lambda})$. 
-	
-	Suppose $\lambda \geq \lambda_\Rm{max}$, and suppose also that $\hat\beta \neq 0$, so $\norm{\hat\nu}_\infty = 1$. Then we find
+	We first show that 0 is a lasso solution: we have
 	\[
-	\frac1n \norm{X\T (Y - X\hat\beta)}_\infty = \norm{\lambda\hat\nu} = \lambda  \geq \frac1n \norm{X\T Y}_\infty, 
+	\frac1n X\T (Y - X0) = \frac1n X\T Y = \lambda \cdot \frac{\frac1n X\T Y}{\lambda} \eqqcolon \lambda\hat\nu, 
 	\]
-	so 
+	and since 
 	\[
-	\norm{X\T Y - X\T X\hat\beta}_\infty \geq \norm{X\T Y}_\infty. 
+	\norm{\hat\nu}_\infty = \frac{\norm{X\T Y}_\infty / n}{\lambda} \leq \frac{\norm{X\T Y}_\infty / n}{\norm{X\T Y}_\infty /n} \leq 1
 	\]
-	??
+	it follows that 0 is a Lasso solution. By question 9, it follows that any other Lasso solution must also have norm 0, and therefore 0 is the only Lasso solution. 
+%	By the KKT conditions any lasso solution satisfies $\frac1n X\T (Y - X\hat\beta) = \frac1n X\T Y - \frac1n X\T X\hat\beta= \lambda \hat\nu$ for some $\nu$ with $\norm{\hat\nu}_\infty \leq 1$ and $\hat\nu_{\hat S_{\lambda}} = \sign(\hat\beta^L_{\lambda, \hat S_\lambda})$. 
+%	
+%	Suppose $\lambda \geq \lambda_\Rm{max}$, and suppose also that $\hat\beta \neq 0$, so $\norm{\hat\nu}_\infty = 1$. Then we find
+%	\[
+%	\frac1n \norm{X\T (Y - X\hat\beta)}_\infty = \norm{\lambda\hat\nu} = \lambda  \geq \frac1n \norm{X\T Y}_\infty, 
+%	\]
+%	so 
+%	\[
+%	\norm{X\T Y - X\T X\hat\beta}_\infty \geq \norm{X\T Y}_\infty. 
+%	\]
+%	??
 \end{proof}
+
+\begin{question}
+	Show that when the columns of $X$ are orthogonal (so necessarily $p \leq n$) and scaled to have $\ell_2$-norm $\sqrt n$, the $k$-th component of the Lasso estimator is given by
+	\[
+	\hat\beta^L_{\lambda, k} = (\abs{\hat\beta_k^\Rm{OLS}} - \lambda)_+ \sign(\hat\beta_k^\Rm{OLS}). 
+	\]
+	What is the corresponding estimator if the $\ell_1$ penalty $\norm{\beta}_1$ in the Lasso objective is replaced by the $\ell_0$ penalty $\norm{\beta}_0 \ceq \#\qty{k \mid \beta_k \neq 0}$? 
+\end{question}
+
+\begin{proof}
+	For simplicity, let $\hat\beta$ denote the proposed Lasso estimator and $\tilde\beta$ the OLS estimator. Since the columns of $X$ are orthogonal, $X$ is injective, so the Lasso estimator is unique (since $X\hat\beta_\lambda^L$ is unique). 
+	
+	Now, define $\gamma \in \RR^p$ by 
+	\[
+	\gamma_i = \begin{cases}
+		\tilde\beta_i, &\abs{\tilde\beta_i}\leq \lambda, \\ \lambda, &\abs{\tilde\beta_i} > \lambda, \\ -\lambda, &\abs{\tilde\beta_i} < -\lambda
+	\end{cases},
+	\]
+	so that $\hat\beta= \tilde\beta - \gamma$. Then we find
+	\[
+	\frac1n X\T (Y- X\hat\beta) = \frac1n X\T(Y - X(\tilde\beta - \gamma)) = \frac1n X\T (Y - X\tilde\beta)+ \frac1n X\T X\gamma = \frac1n \gamma = \lambda \frac1{n\lambda}\gamma, 
+	\]
+	since $Y - X\tilde\beta$ is orthogonal to the columns of $X$ so $X\T(Y - X\tilde\beta) = 0$. 
+	
+	Now, we have $\norm{\frac1{n\lambda} \gamma}_\infty = \frac1{n\lambda} \norm{\gamma}_\infty \leq \frac1n \leq 1$, and furthermore, if $\hat\beta_i \neq 0$, then it is clear that $\sign(\hat\beta_i) = \sign(\gamma_i)$. This shows that $\hat\beta$ is indeed a Lasso solution. 
+	
+	Suppose we replace the Lasso objective by the $\ell_0$ penalty. Let $\qty{X_1, \dotsc, X_p}$ be the columns of $X$ and expand them to an orthonormal basis $\qty{X_1, \dotsc, X_n}$ of $\RR^n$. Then we can write
+	\[
+	\norm{Y - X\beta}_2^2 = \norm{\sum_{i=1}^n P_{X_i} Y - \sum_{i=1}^p \beta_i X_i}_2^2 = \sum_{i=1}^p \qty(\ang{X_i, Y} - \beta_i)^2  + \sum_{j = p+1}^n \ang{X_{j}, Y}^2. 
+	\]
+	Since the latter sum does not depend on $\beta$, our objective function is equivalent to minimising
+	\[
+	\sum_{i=1}^p \frac1{2n}\qty(\ang{X_i, Y} - \beta_i)^2 + \lambda \ind_{\beta_i \neq 0}. 
+	\]
+	Clearly, this is minimised by choosing $\beta_i = \tilde\beta_i$ if $\lambda \leq \frac1{2n} \ang{X_i, Y}^2$ and $\beta_i = 0$ otherwise (note, if $\lambda = \frac1{2n} \ang{X_i, Y}^2$, then choosing $\beta_i =0 $ or $\beta_i = \tilde\beta_i$ gives the same outcome). 
+%	If we replace the Lasso objective by the $\ell_0$ penalty, note that with $P_{X_i}$ the projection onto $X_i$, we have
+%	\[
+%	\norm{Y - X\tilde\beta}_2^2 = \norm{Y}_2^2 - \sum_{i=1}^p \norm{P_{X_i}Y}_2^2,
+%	\]
+%	so we obtain the $\norm{\cdot}_0$ estimator by replacing $\tilde{\beta_i}$ by 0 if $\norm{P_{X_i} Y} > \lambda$. 
+	\end{proof}
 \end{document}

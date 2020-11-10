@@ -1,0 +1,184 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage[shortlabels]{enumitem}
+\usepackage{mathtools, amsmath, amssymb, amsthm, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+\newcommand\XX{\Cal X}
+\newcommand\YY{\Cal Y}
+\newcommand\UU{\Cal U}
+\newcommand\VV{\Cal V}
+\newcommand\LL{\Cal L}
+\newcommand\KK{\Cal K}
+\newcommand\BB{\Cal B}
+\newcommand\JJ{\Cal J}
+\newcommand\LLL{\Bb L}
+\newcommand\DD{\Cal D}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\renewcommand{\P}{^\perp}
+\newcommand{\D}{^\dagger}
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+\newcommand\clos\overline
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator\Dom{\Cal D}
+\DeclareMathOperator\Nul{\Cal N}
+\DeclareMathOperator\Ran{\Cal R}
+\DeclareMathOperator\TV{TV}
+\DeclareMathOperator\BV{BV}
+
+\newcommand\cw\rightharpoonup
+\newcommand\cws{\overset{*}{\rightharpoonup}}
+\newcommand\rext{\overline\RR}
+\newcommand\pt\partial
+\DeclareMathOperator\dom{dom}
+
+\title{Inverse Problems --- Example Sheet 2} % subject
+\author{Lucas Riedstra}
+\date{18 November 2020} % date
+
+\begin{document}
+\maketitle
+
+\begin{question}
+	Let $\UU$ be a Banach space and $J \colon \UU\to \rext$ a functional. We define the \emph{subdifferential} of $J$ at any $v \in \UU$ as
+	\begin{equation} \nonumber %\label{def:subdifferentiable}
+	\pt\JJ(v) \ceq \qty{p \in \UU^* \mid J(u) \geq J(v) + \ang{p, u - v} \text{ for all $u \in \UU$}}. 
+	\end{equation}
+	Characterise the subdifferential for the
+	\begin{enumerate}[(a)]
+		\item absolute value function: $\UU= \RR$, $J(v) = \abs{v}$,
+		\item $\ell^1$-norm: $\UU = \ell^2$,
+		\[
+		J(u) = \norm{u}_{\ell^1} \ceq \begin{cases}
+			\sum_{j=1}^\infty \abs{u_j} &\text{if $u \in \ell^1$}; \\ \infty &\text{else.}
+		\end{cases}
+		\]
+		\item characteristic function of the unit ball in $\RR$: $\UU = \RR$, $J(u) = \chi_C(u)$, $C \ceq \qty{ u\in \RR : \abs{u} \leq 1}$. 
+		\item Total Variation $\TV \colon L^1(\Omega) \to \rext$, where $\Omega \subset \RR^n$ is bounded Lipschitz
+		\[
+		\TV(u) = \sup_{\phi \in \DD} \ang{u, \div\phi}, \quad \DD = \qty{\phi \in \Cal C_0^\infty(\Omega; \RR^n) : \norm{\phi(x)}_2 \leq 1 \ \forall x \in \Omega}. 
+		\]
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	Note: the spaces $\UU$ in parts (a) to (c) are Hilbert spaces, which means we can identify $\UU^*$ with $\UU$ (since any functional in $\UU^*$ is of the form $\ang{u, \cdot}$ for some $u \in \UU$). 
+\begin{enumerate}[(a)]
+\item Let $v \in \RR$. We know that $\abs{\cdot}$ is differentiable at $v \neq 0$, so 
+\[
+v > 0 \implies \pt J(v) = \qty{1} \quad\text{and}\quad v < 0 \implies \pt J(v) = \qty{-1}. 
+\]
+For $v = 0$ we have
+\begin{align*}
+	p \in \pt J(v) &\iff \abs{u} \geq p \cdot u  \text{ for all $u \in \RR$} \\
+	&\iff p \in [-1, 1],
+\end{align*}
+so $\pt J(0) = [-1, 1]$. 
+
+\item Let $v \in \ell^2$. Firstly, if $v \notin \ell^1 = \dom(J)$, then we have $\pt J(v) = \emptyset$. Assume now that $v \in \ell_1 \cap \ell_2$. Then we have, for $p \in \ell^2$, that
+\begin{align}
+	p \in \pt J(v) &\iff \norm{u}_{\ell^1} \geq \norm{v}_{\ell^1} + \ang{p, u - v} &\text{for all $u \in \ell^2$}  \nonumber \\
+	&\iff \norm{u}_{\ell^1} - \norm{v}_{\ell^1} - \ang{p, u- v} \geq 0 &\text{for all $u \in \ell^2$} \nonumber \\
+	&\iff \sum_{j=1}^\infty \abs{u_i} - \abs{v_i} - p_i(u_i - v_i) \geq 0 &\text{for all $u \in \ell^2$} \label{subdiff1} \\
+	&\overset\star\iff \abs{x} - \abs{v_i} - p_i(x - v_i) \geq 0 &\text{for all $i \in \NN$ and $x \in \RR$}. \label{subdiff2}  
+\end{align}
+We first prove the bi-implication $\star$. If \eqref{subdiff2} holds, it is clear that \eqref{subdiff1} holds. If \eqref{subdiff2} does not hold, then we can find $x, i$ such that $\abs{x} - \abs{v_i} - p_i(x - v_i) < 0$. By now letting $u = x e_i$ in \eqref{subdiff1} we find  that \eqref{subdiff1} does not hold. 
+
+However, if we define $H(x) \ceq \abs{x}$,  we see that \cref{subdiff2} is equivalent to $p_i \in \pt H(v_i)$ for all $i$. Therefore, by (a) we have
+\[
+\pt J(v) = \qty{p \in \ell^2 \mid p_i = \sign(v_i) \text{ if $v_i \neq 0$ and } p_i \in [-1, 1] \text{ for all $i$}}. 
+\]
+
+\item Clearly, if $\abs{v} < 1$, then $\chi_C$ is differentiable with derivative 0 so $\pt J(v) = \qty{0}$. If $\abs{v} > 1$, then $v \notin \dom(J)$, and therefore $\pt J(v) = \emptyset$. 
+
+Consider the point $v = 1$, then we have
+\[
+p \in \pt J(\chi_C) \iff \chi_C(u) \geq p \cdot (u - 1) \ \forall u.
+\]
+For $u > 1$, this equation is satisfied regardless of $p$. Therefore, the above equation is equivalent to
+\[
+p \cdot(u-1) \leq 0 \ \forall u \leq 1, 
+\]
+which is satisfied for all $p \geq 0$, so we conclude $\pt J(1) = [0, \infty)$. 
+Analogously, we find $\pt J(-1) = (-\infty, 0]$. We conclude that
+\[
+\pt J(v) = \begin{cases}
+	\emptyset &\text{if $\abs{v} > 1$}; \\
+	(-\infty, 0] &\text{if $v = -1$}; \\
+	\qty{0} &\text{if $v \in (-1, 1)$}; \\
+	[0, \infty) &\text{if $v = 1$}. 
+\end{cases}
+\]
+
+\item 
+\end{enumerate}
+\end{solution}
+\end{document}

@@ -1,0 +1,41 @@
+\section{Convex Duality}
+We are looking for a convergence rate
+\[
+D_\JJ^\Rm{symm}(u_\delta, u_\JJ\D) \leq \psi(\delta) \qquad \psi \colon \RR_+ \to \RR_+, \quad \lim_{\delta\to0}\psi(\delta) = 0. 
+\]
+
+We will assume for simplicity that $\JJ$ is absolutely one-homogeneous.  We define
+\[
+E(y) \ceq \frac12 \norm{y - f}_\YY^2, \quad F(u) \ceq \alpha \JJ(u), 
+\]
+so that $u_\delta \in \argmin_{u \in \XX} E(u) + F(Au)$. 
+
+\begin{lemma}
+	Let $X$ be a Banach space and $\phi(x) = \frac12\norm{x}_X^2$. Then the convex conjugate of $\phi$ is
+	\[
+	\phi^*(\xi) = \frac12 \norm{\xi}_{X^*}^2. 
+	\]
+\end{lemma}
+
+\begin{proof}
+	We have
+	\[
+	\phi^*(\xi) = \sup_{x \in X} \ang{\xi, x} - \frac12 \norm{x}^2 \leq \sup_{x \in X} \norm{x} \norm{\xi} - \frac12 \norm{x}^2.
+	\]
+	The right-hand is a quadratic function in $\norm{x}$ with maximum $\frac12\norm{\xi}^2$. The inequality is in fact equality (\TODO show) which proves the result. 
+\end{proof}
+
+Now we compute
+\[
+E^*(\eta) = \ang{\eta, f} + \frac12 \norm{\eta}_{\YY^*}, \quad F^*(p) = \chi_{\pt \JJ(0)} (p/\alpha), 
+\]
+which gives the dual problem
+\[
+\sup_{\eta \in \YY^*} - \ang{\eta, f} - \frac12\norm{\eta}^2 - \chi_{\pt \JJ(0)} \qty(-\frac{A^*\eta}{\alpha}),
+\]
+which is equivalent to
+\[
+\sup_{\mu \in \YY^*, A^*\mu \in \pt \JJ(0)} \alpha \qty(\ang{\mu, f} - \frac\alpha2 \norm{\mu}^2)
+\]
+
+We need to 
