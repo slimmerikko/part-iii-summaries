@@ -11,3 +11,204 @@ In \emph{random design}, we assume we have i.i.d.\ data pairs $(X_i, Y_i)$ with
 Y_i = m(X_i) + \sqrt{v(X_i)} \eps_i, 
 \]
 where the $\eps_i$ are again independent with $\EE[\eps_1 | X_1] = 0$ and $\Var(\eps_1 | X_1) = 1$. The regression function is given by $m(x) = \EE(Y_1 | X_1 = x)$ and the variance function by $v(x) = \Var(Y_1 | X_1 = x)$. 
+
+\subsection{Local polynomial estimators}
+We will assume the fixed design setting. 
+\begin{definition}
+	Let $K$ be a kernel, $h > 0$ a bandwidth and $p \in \NN$. Then the \emph{local polynomial estimator of degree $p$ with bandwidth $h$ and kernel $K$}, denoted $\hat m_n (\cdot; p) \equiv \hat m_n(\cdot; p, h, K)$, is constructed at $x \in \RR$ by fitting a polynomial $p$ to the data using weighted least squares, where the pair $(x_i, Y_i)$ is assigned weight $K_h(x_i - x)$. 
+\end{definition}
+
+To write this in formulas, define $Q(u) \ceq (1, u, \frac{u^2}{2}, \dotsc, \frac{u^p}{p!}) \in \RR^{p + 1}$ and $Q_h(\cdot) = Q(\cdot/h)$, we then have
+\[
+\hat m_n(x; p) = \hat\beta_0, \quad\text{where } \hat\beta \ceq \argmin_{\beta \in \RR^{p+1}} \sum_{i=1}^n \qty(Y_i - \beta\T Q_h(x_i - x))^2 K_h(x_i - x). 
+\]
+
+
+In matrix-vector notation, writing 
+\begin{align*}
+X &\equiv X(x;p, h) \ceq \mqty(Q_h(x_1 - x)\T \\ \vdots \\ Q_h(x_n - x)\T) \in \RR^{n \times (p + 1)}, \quad Y \ceq \mqty(Y_1 \\ \vdots \\ Y_n) \in \RR^n, \\
+W&\equiv W(x; h, K) \ceq \diag(K_h(x_1 - x), \dotsc, K_h(x_n - x)) \in \RR^{n \times n}, 
+\end{align*}
+we have 
+\[
+\hat\beta = \argmin_{\beta \in \RR^{p+1}} (Y - X\beta)\T W (Y - X\beta).
+\]
+
+By standard weighted least squares theory, we know that $\hat\beta$ must satisfy $X\T W X\hat\beta = X\T W Y$. 
+\begin{proposition}
+	Suppose $X\T W X$ is positive definite. Then we have
+	\[
+	\hat\beta = (X\T W X)^{-1} X\T W Y. 
+	\]
+
+\end{proposition}
+
+We will assume from here on that $X\T W X$ is indeed positive definite. 
+In this case, since the entries of $W$ and $X$ are functions of $x_i - x$, we can write the local polynomial estimator in the form
+\[
+\hat m_n(x) = n^{-1} \sum_{i=1}^n w(x, x_i) Y_i.
+\]
+(??)
+The set of weights $\qty{w(x, x_i)}$ is called the \emph{effective kernel} at $x$. 
+
+For $p = 0$ and $p = 1$, there exist explicit formulas for the local polynomial estimator of degree $p$. 
+
+\begin{proposition}[Reproducing property] \label{prop_reproducing}
+	Let $\qty{w_p(x, x_i)}$ denote the effective kernel of a local polynomial estimator of degree $p$ based on data $(x_1, Y_1), \dotsc, (x_n, Y_n)$, and let $R$ denote a polynomial of degree at most $p$. If $X\T W X$ is positive definite, then 
+	\[
+	\frac1n \sum_{i=1}^n w_p(x, x_i) R(x_i) = R(x). 
+	\]
+\end{proposition}
+
+\begin{proof}
+	We have 
+	\begin{align*}
+		\frac1n \sum_{i=1}^n w_p(x, x_i) R(x_i) &= \hat\beta_0, 
+	\end{align*}
+where
+\begin{align*}
+	\hat\beta &= \argmin_{\beta \in \RR^{p + 1}} \sum_{i=1}^n \qty(R(x_i) - \beta\T Q_h(x_i - x))^2 K_h(x_i - x).
+\end{align*}
+By choosing $\hat\beta$ such that $\hat\beta\T Q_h(\cdot - x) = R$, we obtain 0, and therefore  this is indeed the minimiser. Since $Q_h(0) = e_1$, it follows that $R(x) = \hat\beta\T Q_h(x - x) = \hat\beta_0$, which concludes the proof. 
+\end{proof}
+
+Before we can study the bias and variance of local polynomial estimators, we require the following lemma:
+\begin{lemma}
+	Let $K$ be a kernel that vanishes outside $[-1, 1]$, and suppose that $n^{-1} X\T W X$ is positive definite with minimal eigenvalue $\lambda_0 \equiv \lambda_{0, n, x} > 0$. Then 
+	\begin{enumerate}[(i)]
+		\item $\sup_{x\in[0, 1]} \max_{i = 1, \dotsc, n} \frac1n \abs{w(x, x_i)} \leq \frac{2\norm{K}_\infty}{\lambda_0 n h}$;
+		\item $n^{-1} \sum_{i=1}^n \abs{w(x, x_i)} \leq \frac{2\norm{K}_\infty}{\lambda_0 n h}\cdot  \sum_{i=1}^n \ind_{\abs{x_i - x} \leq h}$;
+		\item $w(x, x_i) = 0$ when $\abs{x_i - x} > h$. 
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+	\begin{enumerate}[(i)]
+		\item
+	Note that $n^{-1} w(x, x_i)$ is the $(0, i)$ entry of the matrix $(X\T W X)^{-1} X\T W$, and it is therefore less than the norm of the $i$-th column of $(X\T W X)^{-1} X\T W$.  For $x \in [0, 1]$ and $i = 1, \dotsc, n$, we find
+	\begin{align*}
+		\frac1n \abs{w(x, x_i)} &\leq \norm{(X\T W X)^{-1} Q_h(x_i - x) K_h(x_i - x)} \overset\star\leq  \norm{K_h}_\infty \norm{(X\T W X)}^{-1} \norm{Q_h(x_i - x)} \ind_{\abs{x_i - x} \leq h} \\
+		&= \frac{\norm{K}_\infty}{h} \frac{1}{\lambda_0 n}\norm{Q_h(x_i - x)} \ind_{\abs{x_i - x} \leq h}  \leq \frac{\norm{K}_\infty}{\lambda_0 n h} \norm{Q(1)} = \frac{\norm{K}_\infty}{\lambda_0 n h} \qty(\sum_{j=0}^p \frac1{(j!)^2})^{1/2} \\
+		&\leq \frac{\norm{K}_\infty}{\lambda_0 n h} e^{1/2} \leq \frac{2 \norm{K}_\infty}{\lambda_0 nh}. 
+	\end{align*}
+	Here, the indicator function in $\star$ appears because $K$ vanishes outside $[-1, 1]$. 
+	Since the upper bound is independent of both $x$ and $i$, the claim is proven. 
+	
+	\item Similarly as before, we find 
+	\[
+	\frac1n \sum_{i=1}^n \abs{w(x, x_i)} \leq \frac{\norm{K}_\infty}{\lambda_0 n h} \sum_{i=1}^n \norm{Q_h(x_i - x)} \ind_{\abs{x_i - x} \leq h} \leq \frac{2 \norm{K}_\infty}{\lambda_0 n h} \sum_{i=1}^n \ind_{\abs{x_i - x} \leq h}. 
+	\]
+	
+	\item This follows immediately from inequality $\star$ in the proof of (i). 
+
+	\end{enumerate}
+\end{proof}
+
+Now, we can compute bounds on the variance and bias of our local polynomial estimator. For simplicity, we will assume $x_i = i/n$. 
+\begin{proposition}
+Assume the model $Y_i = m(x_i) + v^{1/2}\eps_i$ with $m \in \HH(\beta, L)$ on $[0, 1]$ and $\max_i v(x_i) \leq \sigma_\Rm{max}^2$. Let $K$ be a kernel that vanishes outside $[-1, 1]$, and suppose that $\lambda_0$, the minimal eigenvalue of $n^{-1} X\T W X$, is strictly positive. Then, for $p \geq \ceil{\beta} - 1 \eqqcolon \beta_0$ and for each $x_0 \in [0, 1]$, $n \in \NN$ and $h \geq 1/(2n)$, we have 
+\[
+\Var \hat m_n(x_0;p) \leq \frac{16 \norm{K}_\infty^2\sigma_\Rm{max}^2}{\lambda_0^2 n h}, \quad \abs{\Bias \hat m_n(x_0;p)} \leq \frac{8L \norm{K}_\infty}{\lambda_0 \beta_0!} h^\beta. 
+\]
+\end{proposition}
+
+\begin{proof}
+	Using the previous lemma, we obtain
+	\begin{align*}
+		\Var \hat m_n(x_0;p) &= \Var\qty(\frac1n \sum_{i=1}^n w(x_0, x_i) Y_i) = \frac1{n^2} \sum_{i=1}^n w(x_0, x_i)^2 \Var(Y_i) \\
+		&\leq \frac{\sigma_\Rm{max}^2}{n^2} \sum_{i=1}^n w(x_0, x_i)^2  \leq \sigma_\Rm{max}^2 \qty(\sup_{x \in [0, 1]} \max_i \frac1n \abs{w(x, x_i)}) \frac1n \sum_{i=1}^n \abs{w(x_0, x_i)} \\
+		&\leq \frac{4 \norm{K}_\infty^2 \sigma_\Rm{max}^2}{\lambda_0^2 n^2 h^2} \sum_{i=1}^n \ind_{\abs{i/n - x_0} \leq h}.
+	\end{align*}
+Now, we have $\abs{i/n - x_0} \leq h \iff i \in [n x_0 - nh, n x_0 + nh]$, and there are at most $2nh + 1$ integers in this interval. Recalling that $1 \leq 2nh$ we obtain 
+\[
+\Var \hat m_n(x_0; p) \leq \frac{4(2nh + 1) \norm{K}_\infty \sigma_\Rm{max}^2}{\lambda_0^2 n^2 h^2} \leq \frac{16 \norm{K}_\infty \sigma_\Rm{max}^2}{\lambda_0^2 nh} . 
+\]
+
+For the bias, we will first use a Taylor expansion combined with the reproducing property \cref{prop_reproducing}. 
+Firstly, since $\frac1n\sum_{i=1}^n w(x_0, x_i) = 1$ by this property, we have
+\[
+\Bias \hat m_n(x_0;p) = \qty(\frac1n \sum_{i=1}^n w(x_0, x_i) m(x_i)) - m(x_0) = \frac1n \sum_{i=1}^n w(x_0, x_i) \qty{m(x_i) - m(x_0)}.
+\] 
+Now, we apply a Taylor expansion to write \[
+m(x_i) - m(x_0) = P(x_i - x_0) + \frac{1}{\beta_0!} m^{(\beta_0)}(x_0 + \tau_i(x_i - x_0)) (x_i - x_0)^{\beta_0}, 
+\]
+where $P$ has degree at most $\beta_0 - 1 < p$ and a constant coefficient equal to 0,  and $\tau_i \in [0, 1]$. By the reproducing property we have $n^{-1} \sum_{i=1}^n w(x_0, x_i) P(x_i - x_0) = P(0) = 0$, so we obtain
+\begin{align*}
+\Bias \hat m_n(x;p) &= \frac1n w(x_0, x_i) \sum_{i=1}^n w(x_0, x_i) \frac{m^{(\beta_0)}(x_0 + \tau_i(x_i - x_0))}{\beta_0!} (x_i - x_0)^{\beta_0} \\
+&= \frac1n w(x_0, x_i) \sum_{i=1}^n w(x_0, x_i) \frac{m^{(\beta_0)}(x_0 + \tau_i(x_i - x_0)) - m^{(\beta_0)}(x_0)}{\beta_0!} (x_i - x_0)^{\beta_0},
+\end{align*}
+where the last line follows again from the reproducing property. Now we apply the fact that
+$m \in \HH(\beta, L)$ with the previous lemma and find
+\begin{align*}
+	\abs{\Bias \hat m_n(x;p)} &\leq \frac Ln \sum_{i=1}^n \abs{w(x_0, x_i)} \frac{\abs{x_i - x_0}^\beta}{\beta_0!} = \frac Ln \sum_{i=1}^n \abs{w(x_0, x_i)} \frac{\abs{x_i - x_0}^\beta}{\beta_0!} \ind_{\abs{x_i - x} \leq h} \\
+	&\leq \frac{Lh^\beta}{n\beta_0!} \sum_{i=1}^n \abs{w(x_0, x_i)} \leq \frac{8 L \norm{K}_\infty}{\lambda_0 \beta_0!}h^\beta. 
+\end{align*}
+\end{proof}
+
+So again, we have a variance term of order $1/nh$ and a bias term of order $h^\beta$. However, both our bounds depend on $\lambda_0$, which depends on both $n$ and $x$. 
+\begin{proposition}
+Suppose $x_i = i/n$ and that $K(u) \geq K_0 \ind_{\abs{u} \leq \Delta}$ for some $K_0, \Delta > 0$. Then, for $n \geq 2$ and $h \leq \frac1{4\Delta}$, 
+\[
+\inf_{x \in [0, 1]} \lambda_{0, n, x} \geq K_0 \inf_{v \in S^p} \min \qty{\int_0^\Delta (v\T Q(u))^2 \dd{u}, \int_{-\Delta}^0 (v\T Q(u))^2 \dd{u}} - \frac{(4\Delta + 2) K_0 e^{\Delta^2}}{nh}. 
+\]
+\end{proposition}
+
+\begin{proof}
+Since $\lambda_{0, n, x} = \inf_{v \in S^p} v\T \qty(\frac1n X\T W X)v$, we will try to bound this quantity from below. 
+	
+Let $u_i \ceq \frac{x_i - x}{h}$ for $i = 1, \dotsc, n$, so $u_1 \leq \frac{x_1}{h} = \frac{1}{nh}$, and let $u_0 \ceq 0$. 
+
+First, we assume $x < 1 - h\Delta$, so that $u_n > \frac{1 - (1 - h\Delta)}{h} = \Delta$. Then, for any $v \in S^p$, we have
+\begin{align*}
+v\T \qty(\frac1n X\T W X) &= \frac1n (Xv)\T W (Xv) = \frac1n \sum_{i=1}^n (Xv)_i^2  W_{ii}\\
+& = \frac1{nh} \sum_{i=1}^n (v\T Q(u_i))^2 K(u_i) \geq \frac{K_0}{nh} \sum_{i=1}^n (v\T Q(u_i))^2 \ind_{u_i \in [0, \Delta]} .
+\end{align*}
+This is a Riemann sum (since $u_{i+1} - u_i = 1/(nh)$) and we will try to approximate it by the corresponding integral $K_0 \int_0^\Delta (v\T Q(u))^2 \dd{u}$. 
+
+To do this, note that we have for $u \in [0, \Delta]$ that
+\[
+\norm{Q(u)}  \leq \qty{\sum_{\ell = 0}^p \frac{u^{2\ell}}{(\ell!)}}^{1/2} \leq \qty(\sum_{\ell = 0}^\infty \frac{u^{2\ell}}{\ell!})^{1/2} \leq e^{\Delta^2/2}. 
+\] 
+Furthermore, for $a, b \geq 0$, it can be shown that
+\[
+\abs{b^\ell - a^\ell} \leq \max(1, \ell / 2) (b^{\ell - 1} + a^{\ell - 1})\abs{b - a},
+\]
+and using this we obtain for $u, v \in [0, \Delta]$ that 
+\begin{align*}
+	\norm{Q(u)- Q(v)} &\leq \qty{\sum_{\ell =1 }^p \frac{\max(1, \ell^2/4) (u^{\ell - 1} + v^{\ell - 1})^2 (u - v)^2}{(\ell !)^2}}^{1/2} \\
+	&\leq \abs{u - v} \qty{\sum_{\ell = 1}^p \frac{\max(1, \ell^2/4)(2\Delta^{\ell - 1})^2}{(\ell!)^2}}^{1/2} \leq \abs{u - v} \qty{\sum_{\ell = 1}^p \frac{\max(4, \ell^2) \Delta^{2\ell - 2}}{(\ell!)^2}}^{1/2} 
+	 \\
+	 &\overset\star\leq  2\abs{u - v} \qty{\sum_{\ell = 0}^{p - 1} \frac{\Delta^{2\ell}}{(\ell!)^2}}^{1/2} \leq 	2 \abs{u - v} \qty{\sum_{\ell = 0}^\infty \frac{\Delta^{2\ell}}{\ell!}}^{1/2} = 2 e^{\Delta^2/2}\abs{u-v}, 
+\end{align*}
+where in $\star$ we used that $\max(4, \ell^2) \leq 4\ell^2$.
+
+Now we estimate the difference between the Riemann sum and the corresponding integral. Write $i_- \ceq \min\qty{i : u_i > 0}$ and $i_+ \ceq \min\qty{i \mid u_i > \Delta}$.  Then 
+\begin{align*}
+\frac1{nh} \sum_{i=1}^n (v\T Q(u_i))^2 \ind_{u_i \in [0, \Delta]} &= \sum_{i=i_-}^{i_+ -1 } \int_{u_{i-1}}^{u_i} (v\T Q(u_i))^2 \dd{u} \\
+&\leq \sum_{i = i_-}^{i_+} \int_{\max(u_{i-1}, 0)}^{\min(u_i, \Delta)} (v\T Q(u_i))^2 \dd{u} + \frac1{nh} \sup_{u \in [0, \Delta]} (v\T Q(u))^2.
+\end{align*}
+(Note that the last integral, from $u_{i-1}$ to $\Delta$, is 0 since )
+Therefore we obtain
+\begin{align}
+	&\abs{\frac{1}{nh} \sum_{i=1}^n (v\T Q(u_i))^2 \ind_{u_i \in [0, \Delta]} -  \int_0^\Delta (v\T Q(u))^2 \dd{u}} \nonumber \\
+	&\leq \abs{\sum_{i = i_-}^{i_+} \int_{\max(u_{i-1}, 0)}^{\min(u_i, \Delta)}(v\T Q(u_i))^2 - (v\T Q(u))^2 \dd{u}} + \frac1{nh} \sup_{u \in [0, \Delta]} (v\T Q(u))^2. \label{eq:integral_expr}
+\end{align}
+Now note that by Cauchy-Schwarz since $\norm{v} = 1$ we have 
+\begin{align*}
+\abs{(v\T Q(u_i))^2 - (v\T Q(u))^2} &= \abs{(v\T Q(u_i) + v\T Q(u))}\abs{(v\T Q(u_i) - v\T Q(u))}\\
+&\leq (\norm{Q(u_i)} + \norm{Q(u)}) \norm{Q(u_i) - Q(u)} \\
+&\leq 2 e^{\Delta^2/2} \cdot 2e^{\Delta^2/2} \abs{u_i - u} = 4 e^{\Delta^2} \abs{u_i - u}, 
+\end{align*}
+and  therefore
+\[
+\eqref{eq:integral_expr} \leq 4e^{\Delta^2} \sum_{i=i_-}^{i_+} \int_{\max(u_{i-1}, 0)}^{\min(u_i, \Delta)}(u_i - u) \dd{u} + \frac{e^{\Delta^2}}{nh} \leq \frac{(4\Delta + 1) e^{\Delta^2}}{nh},
+\]
+which concludes the case $x < 1- h\Delta$. 
+
+Suppose $x \geq 1 - h\Delta$, then we have $u_1 \leq -\Delta$ and $u_n \geq 0$, and we can apply very similar arguments to reach the desired conclusion. 
+\end{proof}
+%Suppose that $X\T W X$ is positive definite (this is a very weak condition), then we have
+%\begin{align*}
+%	\hat\beta = \argmin_{\beta \in \RR^{p+1}} (\beta - (X\T W X)^{-1} X\T W Y)\T (X\T W X) (\beta - (X\T W X)^{-1} X\T W Y),
+%\end{align*}
+%which is minimised at $\hat\beta = (X\T W X)^{-1} X\T WY$. 

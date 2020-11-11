@@ -102,7 +102,7 @@
 
 \title{Inverse Problems --- Example Sheet 2} % subject
 \author{Lucas Riedstra}
-\date{18 November 2020} % date
+\date{16 November 2020} % date
 
 \begin{document}
 \maketitle
@@ -178,7 +178,10 @@ Analogously, we find $\pt J(-1) = (-\infty, 0]$. We conclude that
 \end{cases}
 \]
 
-\item 
+\item Let $f \in L^1(\Omega) \setminus \BV(\Omega)$, then clearly $\pt \TV(f) = \emptyset$. Now suppose $f \in \BV(\Omega)$.  It is known that the dual of $L^1(\Omega)$ is $L^\infty(\Omega)$. Therefore, we have for $p \in L^\infty(\Omega)$ that 
+\begin{align*}
+	p \in \pt \TV(f) &\iff \TV(g) \geq \TV(f) + \int_{\Omega} p(x) (g - f)(x) \dd{x} \ \forall g \in L^1(\Omega)
+\end{align*}
 \end{enumerate}
 \end{solution}
 \end{document}

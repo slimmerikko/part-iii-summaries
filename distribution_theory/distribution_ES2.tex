@@ -1,0 +1,170 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage[shortlabels]{enumitem}
+\usepackage{mathtools, amsmath, amssymb, amsthm, mathabx, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand\ZZ{\Bb Z}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\KK}{\Bb K}
+\newcommand{\DD}{\Cal D}
+\newcommand\EE{\Cal E}
+\renewcommand\SS{\Cal S}
+\newcommand\FF{\Cal F}
+\newcommand\vd{\vdot}
+%\newcommand\ZZ{\Bb Z}
+
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+\newcommand\pt\partial
+\newcommand\locint{L^1_{\Rm{loc}}}
+\newcommand\refl\widecheck
+\newcommand\les\lesssim
+\newcommand\ges\gtrsim
+\newcommand\loc{_\Rm{loc}}
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\ord}{ord}
+
+\title{Distribution Theory --- Example Sheet 2} % subject
+\author{Lucas Riedstra}
+\date{18 November 2020} % date
+
+\begin{document}
+\maketitle
+\begin{question}
+Let $u, v \in \DD'(\RR^n)$, one of which has compact support. Show that the convolution $u * v$, defined as in your notes, is uniquely defined and gives rise to an element of $\DD'(\RR^n)$. 
+\end{question}
+
+\begin{proof}
+	The convolution between $u, v \in \DD'(\RR^n)$ is defined by the formula
+	\begin{equation} \label{def:convolution}
+	(u * v) * \phi = u * (v * \phi) \quad\text{for all $\phi \in \DD(\RR^n)$}. 
+	\end{equation}
+	To show that this is uniquely defined, recall that for all $u \in \DD'(\RR^n) \phi\in \DD(\RR^n)$, we have $\ang{u, \phi} = (u * \refl\phi)(0)$. Therefore, we have
+	\[
+	\ang{u * v, \phi} = ((u * v) * \refl\phi)(0) = (u * (v * \refl\phi))(0),
+	\]
+	which shows that the formula \cref{def:convolution} uniquely defines $\ang{u * v, \phi}$ for any $\phi \in \DD(\RR^n)$, and therefore that $u * v$ is well-defined. 
+	
+	Now we prove that $u * v \in \DD'(\RR^n)$: by the previous equation we have
+	\[
+	\ang{u * v, \phi} = (u * (v * \refl\phi))(0) = \ang{u, \refl{v * \refl\phi}}.
+	\]
+	
+	Suppose $u$ is compactly supported. Since $\refl{v * \refl\phi} \in \EE(\RR^n)$, there exists a compact $K \subseteq X$ and nonnegative $C, N$ such that
+	\begin{align*}
+		\abs{\ang{u, \refl{v * \refl\phi}}} &\leq C \sum_{\alpha \leq N} \sup_{x \in K} \abs{\pt^\alpha (\refl{v * \refl\phi})} = C \sum_{\alpha \leq N} \sup_{x \in -K} \abs{\pt^\alpha (v * \refl\phi)} = C \sum_{\alpha \leq N} \sup_{x \in -K} \abs{v * \pt^\alpha\refl\phi}\\
+		&= C \sum_{\abs{\alpha} \leq N} \sup_{x \in -K} \abs{\ang{v, \tau_x \refl{\pt^\alpha \refl\phi}}}.
+	\end{align*}
+	Note that if $\supp\phi \subseteq K'$, then $\supp\refl\phi \subseteq -K'$, and for $x \in -K$ we find $\supp \tau_x \refl{\pt^\alpha \refl\phi} \subseteq -K' -K$. Then by the previous equation we find that there exists $C', M$ with
+	\[
+	\abs{\ang{u * v, \phi}} \leq C' \sum_{\abs{\alpha} \leq N} \sum_{\abs{\beta} \leq M} \sup_{x \in -K' - K} \pt^\beta (\tau_x \refl{\pt^\alpha \refl\phi}) = C' \sum_{\abs{\alpha} \leq N} \sum_{\abs{\beta} \leq M} \sup_x \abs{\pt^{\alpha + \beta} \phi} \leq C'' \sum_{\abs{\alpha} \leq M + N} \sup_x \abs{\pt^\alpha \phi},
+	\]
+	which shows that $u* v \in \DD'(\RR^n)$. An analogous argument holds if $v$ is compactly supported. 
+\end{proof}
+
+\begin{question}
+	Show that if $u, v, w \in \DD'(\RR^n)$ and at least two of them have compact support, then the convolution is associative (i.e., $(u * v) * w) = u* (v * w)$). 
+\end{question}
+
+\begin{proof}
+	Note that the convolution between two compactly supported distributions is again compactly supported, which ensures that both expressions `make sense'. Now, let $\phi \in \DD(\RR^n)$, then we have
+	\begin{align*}
+		((u * v) * w) * \phi &= (u* v) * (w * \phi) = u * (v * ( w* \phi)) = u * ((v * w) * \phi) = (u * (v * w)) * \phi,
+	\end{align*}
+	which proves the theorem. 
+\end{proof}
+
+\begin{question}
+	Let $\phi \in \DD(\RR)$ and choose $\eps > 0$ sufficiently small so that $\supp(\phi) \subset I_\eps = (-1/\eps, 1/\eps)$. Given that $\phi$ has a uniformly convergent Fourier series on $I_\eps$ in the form
+	\[
+	\phi(x) = \sum_{n \in \ZZ} c_n e^{i \eps \pi n x}, \quad c_n = \frac\eps2 \int_\RR \phi(x) e^{-i\eps \pi n x} \dd{x},
+	\]
+	prove the Fourier inversion theorem on $\DD(\RR)$ by taking a suitable limit. 
+\end{question}
+
+\begin{proof}
+	Let $\psi \in \DD(\RR)$, then we want to prove that \[
+	\psi(x) = \frac1{(2\pi)^n} \iint e^{i \lambda (x - y)} \psi(y) \dd{y} \dd{\lambda}. 
+	\]
+	??
+\end{proof}
+
+\begin{question}
+	For $\phi \in \SS(\RR^n)$ prove that $\sum_m \phi(m) = \sum_n \hat\phi(2\pi n)$. This is the famous Poisson summation formula. 
+\end{question}
+
+\begin{proof}
+	We have
+	\begin{align*}
+		\sum_m \phi(m) = \frac1{(2\pi)^n} \sum_m \int e^{i\lambda m} \hat \phi(\lambda) \dd{\lambda} = \sum_m \int e^{2\pi i \lambda m} \hat \phi(2\pi \lambda) \dd{\lambda}
+	\end{align*}
+\end{proof}
+\end{document}
