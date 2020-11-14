@@ -1,0 +1,40 @@
+\section{High-dimensional covariance estimation and PCA}
+Until now, we've focused on regression. In this chapter, we will assume the samples $x_1, \dotsc, x_n$ are i.i.d.\ from some distribution in $\RR^d$. We are interested in estimating the covariance matrix of $x_i$. There are two reasons for this:
+\begin{enumerate}
+	\item Covariance can reveal underlying structure relating the variables.
+	\item When $d$ is large, interpreting the covariance matrix directly is hard. However, its largest eigenvalues and corresponding eigenvectors can reveal the principal modes of variation in the data. 
+\end{enumerate}
+
+\subsection{Covariance estimation}
+\subsubsection{Maximum likelihood in multivariate normal model}
+Let $x_1, \dotsc, x_n$ be i.i.d.\ samples from a $N_d(\mu, \Sigma)$ distribution. We will assume that $\Sigma$ is invertible with inverse $\Omega$ (this inverse is sometimes called the \emph{precision matrix}). Furthermore, we define the \emph{sample covariance} \[
+\hat\Sigma \ceq \frac1n \sum_{i=1}^n (x_i - \bar X)(x_i - \bar X)\T. 
+\]
+
+It can be shown that the maximum likelihood estimate for $\mu$ is $\bar X \ceq \frac1n \sum_{i=1}^n x_i$, and that the maximum likelihood estimate $\Omega$ is
+\[
+\Omega = \min_{\Omega \succ 0} \qty(-\log(\det\Omega) + \tr(\hat\Sigma\Omega)). 
+\]
+Since this is the minimisation of a convex function over a convex set, we know that $\Omega$ is a minimiser if and only if the derivative w.r.t.\ each element of $\Omega$ is 0. From this, we can compute that $(\hat\Omega^\Rm{ML})^{-1} = \hat\Sigma$. Therefore, if $X$ has full column rank so that $\hat\Sigma$ is invertible, we find $\hat\Omega^\Rm{ML} = \hat\Sigma^{-1}$, and since matrix inversion is a bijective map on the set of positive definite matrices, we conclude $\hat\Sigma^\Rm{ML} = \hat\Sigma$. 
+
+\subsubsection{Non-asymptotic error bounds}
+In the classical setting, we know that the maximum likelihood estimator is asymptotically optimal if we let $n \to \infty$ and keep all other parameters fixed. However, we are interested in \emph{non-asymptotic error bounds}, which do not rely on $n$ going to $\infty$. From these bounds, we can infer much more about the $n\to\infty$ case, namely, how much the other parameters are allowed to grow with $n$. 
+
+We will assume for simplicity that $\mu = 0$ and that $\hat\Sigma = \frac1n \sum_{i=1}^n x_i x_i\T$.  Recall that the largest (resp.\ smallest) eigenvalue of a symmetric matrix $A \in \RR^{n\times n}$ is given by the maximum (resp.\ minimum) of $v\T A v$ over all $v \in S^{n-1}$. It follows that the operator norm of $A$ is given by $\norm{A}_\Rm{op} = \max_{v \in S^{n-1}} \abs{v\T A v}$. 
+
+\begin{theorem}
+	Let $X \in \RR^{n\times d}$ have i.i.d.\ rows $x_1, \dotsc, x_n$ with mean 0 and covariance $\Sigma$, so that 
+	\[
+	\EE\qty[ e^{\lambda v\T x_1}] \leq e^{\lambda^2\sigma^2/2} \quad\text{for all $v \in S^{d-1}$}. 
+	\]
+	Then there are universal constants $c, C$ such that $\hat\Sigma$ satisfies 
+	\[
+	\EE\qty[e^{\lambda\norm{\hat\Sigma - \Sigma}_\Rm{op}}] \leq \exp\qty(c \qty[ \frac{\lambda^2\sigma^4}{n} + d]),
+	\]
+	and for all $\delta > 0$, we have
+	\[
+	\PP\qty(\frac{\norm{\hat\Sigma - \Sigma}_\Rm{op}}{\sigma^2} \leq C \qty(\frac{d + \delta}{n} \lor \sqrt{\frac{d + \delta}{n}})) \leq 1 - e^{-\delta}. 
+	\]
+\end{theorem}
+
+This is a non-asymptotic error bound. Note that, as long as $d/n \to 0$, the estimator $\hat\Sigma$ will be consistent. 

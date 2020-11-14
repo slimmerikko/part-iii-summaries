@@ -136,3 +136,167 @@ Define $A_1 \ceq \tilde A_1 + N = \min\qty{s + N, t + 1}$, then we have shown th
 	p(D)(E * f) = (p(D) E * f) = \delta_0 * f = f. 
 	\]
 \end{example}
+
+As a guess to construct fundamental solutions, we can use the Fourier transform: we have
+\begin{align*}
+	p(D) E = \delta_0 &\implies p(\lambda) \hat E = 1 \implies \hat E = \frac{1}{p(\lambda)}  \\
+	&\implies \ang{E, \phi} = \ang{E,\frac{1}{(2\pi)^n} \FF[\refl{\FF[\phi]}]} = \frac{1}{(2\pi)^n}\ang{\hat E, \refl{\FF[\phi]}} =\frac{1}{(2\pi)^n} \int \frac{\hat\phi(-\lambda)}{p(\lambda)} \dd{\lambda}. 
+\end{align*}
+
+Indeed, one can check that this $E$ ``works'', but the problem is that we have no guarantee that $E \in \DD'(\RR^n)$, since $p(\lambda)$ may cause problems at its roots. To circumvent this, we have to use a construction called \emph{H\"ormander's staircase}.
+For this, we will first need a lemma. For $x \in \RR^n$, we will write $x = (x', x_n)$ with $x' \in \RR^{n-1}$. 
+\begin{lemma}
+	For each $\phi \in \DD(\RR^n)$ and $\lambda' \in \RR^{n-1}$, the function $z \mapsto \hat\phi(\lambda', z)$ is analytic in $z\in\CC$. Furthermore, for each $m \in \NN_0$ there exists constants $c_m, \delta > 0$ (independent of $\lambda'$) such that
+	\[
+	\abs{\hat\phi(\lambda', z)} \leq c_m(1 + \abs{z})^{-m} e^{\delta \abs{\Im z}}. 
+	\] 
+\end{lemma}
+
+\begin{proof}
+	By definition of the Fourier transform and Fubini's theorem, we have
+	\[
+	\hat\phi(\lambda', z) = \int e^{-i\lambda' \cdot x'} \int e^{-i z x_n} \phi(x', x) \dd{x_n} \dd{x'}. 
+	\]
+	It is easily seen that this function is smooth in $z$ and satisfies the Cauchy-Riemann equations, which means it is analytic. 
+	
+	Integrating by parts we find
+	\begin{align*}
+		\abs{z^m \hat\phi(\lambda', z)} &= \abs{\int e^{-i\lambda' \vdot x'} \int \qty(i \pdv{x_n})^m e^{-i z x_n} \phi(x', x_n) \dd{x_n} \dd{x'} } \\
+		&= \abs{\int e^{-i\lambda' \vdot x'} \int e^{-i z x_n} \qty(\pdv[m]{x_n} \phi(x', x_m)) \dd{x_m} \dd{x'}} \\
+		&\leq \iint \abs{e^{-iz x_n}} \cdot \abs{\pdv[m]{x_n} \phi(x', x_n)} \dd{x_n} \dd{x'} \\
+	&\leq c_m e^{\delta \abs{\Im z}}, 
+	\end{align*}
+	where $\delta$ is chosen such that $\phi(x', x_n) = 0$ if $\abs{x_n}> \delta$. 
+\end{proof}
+
+Now, we can prove the main theorem of this section, which \emph{almost} gives an explicit construction for a fundamental solution:
+\begin{theorem}
+	Every nonzero constant-coefficient partial differential operator has a fundamental solution. 
+\end{theorem}
+
+\begin{proof}
+	By rotating our coordinate axes, we can assume $p$ takes the form
+	\[
+	p(\lambda', \lambda_n) = \lambda_n^M + \sum_{m=1}^{M-1} a_m(\lambda') \lambda_n^m, 
+	\]
+	(??) (i.e., we simply write $p$ as a polynomial in $\lambda_n$). Fix $\mu' \in \RR^{n-1}$, then we can write
+	\[
+	p(\mu', \lambda_n) = \prod_{i=1}^M (\lambda_n - \tau_i(\mu')), 
+	\]
+	where the $\tau_i$ are the roots of the polynomial $\lambda_n \mapsto p(\mu', \lambda_n)$. Now, by the pigeonhole principle, there exists a horizontal line $\Im\lambda_n = c(\mu')$ in the region $\abs{\Im\lambda_n} \leq M + 1$ such that
+	\[
+	\abs{\lambda_n - \tau_i(\mu')} > 1 \quad\text{on $\Im\lambda_n = c(\mu')$} \quad (i = 1, \dotsc, m)
+	\]
+	Therefore, on $\Im(\lambda_n) = c(\mu')$ we have $\abs{p(\lambda', \lambda_n)} \ges 1$. 
+	
+	Since roots of a polynomial vary continuously with its coefficients, we can use the same horizontal line $\Im\lambda_n = c(\mu')$ for all $\lambda'$ in a (small) neighbourhood $N(\mu')$ of $\mu'$. We can cover all of $\RR^{n-1}$ with such neighbourhoods, and by the Heine-Borel theorem, we can extract a locally finite subcover $N_1 = N(\mu_1'), N_2 = N(\mu_2'), \dotsc$. Furthermore, we can modify these neighbourhoods so that they are disjoint by defining 
+	\[
+	\Delta_i = N_i \setminus \qty(\bigcup_{j=1}^{i-1} \overline{N_j}). 
+	\]
+	The $\Delta_i$ are all open, disjoint, and satisfy $\RR^{n-1} = \cup_i \overline{\Delta_i}$.
+	Now we define
+	\[
+	\ang{E, \phi} \ceq \frac1{(2\pi)^n} \sum_{i=1}^\infty \int_{\Delta_i} \int_{\Im\lambda_n = c_i} \frac{\hat\phi(-\lambda' - \lambda_n)}{p(\lambda', \lambda_n)} \dd{\lambda_n} \dd{\lambda'}. 
+	\]
+	In ES3, it is shown that $E \in \DD'(\RR^n)$. Furthermore, we have
+	\begin{align*}
+		\ang{p(D)E, \phi} &= \ang{E, p(-D)\phi} = \frac1{(2\pi)^n} \sum_{i=1}^\infty \int_{\Delta_i} \int_{\Im\lambda_n = c_i} \frac{p(\lambda', \lambda_n)}{p(\lambda', \lambda_n)} \hat\phi(-\lambda' - \lambda_n) \dd{\lambda_n} \dd{\lambda'} \\
+		&= \frac1{(2\pi)^n} \sum_{i=1}^\infty \int_{\Delta_i} \int_{\Im\lambda_n = c_i}  \hat\phi(-\lambda' - \lambda_n) \dd{\lambda_n} \dd{\lambda'}  \\
+		&\overset\star= \frac1{(2\pi)^n} \sum_{i=1}^\infty \int_{\Delta_i} \int_{\Im\lambda_n = 0}  \hat\phi(-\lambda' - \lambda_n) \dd{\lambda_n} \dd{\lambda'} = \frac1{(2\pi)^n} \int_{\RR^n} \hat\phi(-\lambda) \dd{\lambda} = \phi(0).
+	\end{align*} 
+by the Fourier inversion theorem. Here, $\star$ follows from the Cauchy's theorem and the previous lemma ($\hat\phi$ decays rapidly in the horizontal direction, so taking a contour integral over a rectangle and letting the vertical side go to infinity shows that the integral over $\Im \lambda_n = c_i$ equals the integral over $\Im\lambda_n = 0$). We conclude that $p(D)E = \delta_0$. 
+\end{proof}
+
+Note that the only nonconstructive part of the theorem is the extraction of a locally finite subcover of the neighbourhoods $N(\mu')$. 
+
+\subsection{Structure theorem for distributions of compact support}
+In this section, we will prove that every $u \in \EE'(X)$ can be written as a finite sum $u = \sum_\alpha \pt^\alpha f_\alpha$ where the $f_\alpha$ are continuous. The theorem generalises to $u \in \DD'(X)$ (the sum can then be infinite, but locally finite), but we will not prove this, since it requires the use of partitions of unity. 
+
+We start with a lemma:
+\begin{lemma}
+	For $u \in \EE'(\RR^n)$, the Fourier transform $\hat u \in \SS'(\RR^n)$ can be identified with the smooth (analytic) function $\lambda \mapsto \ang{u(x), e^{-i\lambda\vdot x}}$, which we will denote $\hat u(\lambda)$. 
+\end{lemma}
+
+\begin{proof}
+	We will first prove the density of $\DD(\RR^n)$ in $\SS(\RR^n)$. 
+	Fix $\phi \in \SS(\RR^n)$ and $\chi \in \DD(\RR^n)$ with $\chi = 1$ on $\norm{x}\leq1$ and $\chi = 0$ on $\norm{x}>2$. Define $\phi_m \in \DD(\RR^n)$ by $\phi_m(x) \ceq \phi(x) \chi(x/m)$. We will show that $\phi_m \to \phi \in \SS(\RR^n)$. 
+	
+	For each pair of multi-indices $\alpha, \beta$, we have
+	\begin{align*}
+		\norm{\phi - \phi_m}_{\alpha, \beta} &= \norm{x^\alpha D^\beta( \phi - \phi_m)}_\infty = \norm{x^\alpha D^\beta(\phi \cdot \qty{1 - \chi(x/m)})} \\
+		&= \norm{x^\alpha \sum_{\gamma \leq \beta} \binom\beta\gamma (D^\gamma\phi)(x) \cdot D^{\beta - \gamma} (1 - \chi(x/m))}. 
+	\end{align*}
+	For $\gamma \neq \beta$, the derivative $D^\gamma\phi$ is bounded uniformly while the derivative $D^{\beta - \gamma} (1 - \chi(x/m))$ will converge uniformly to 0 since it will have at least one factor $1/m$. For $\gamma = \beta$, we have
+	\[
+	\norm{x^\alpha (1 - \chi(x/m)) D^\beta\phi}_\infty \leq \sup_{\norm{x} > M} \norm{x^\alpha D^\beta\phi} \to 0,
+	\]
+	since $D^\beta\phi$ decays rapidly. We conclude that $\norm{\phi - \phi_m}_{\alpha, \beta} \to 0$, and therefore that $\phi_m \to \phi$ in $\SS(\RR^n)$. 
+	
+	Now, by a Riemann sum argument (like the one we have used in \cref{lem:convolution_associative}) we have
+	\begin{align*}
+		\ang{\hat u, \phi_m} &= \ang{u, \hat \phi_m} = \ang*{u(x), \int e^{-i\lambda\vdot x} \phi_m(\lambda) \dd{\lambda}} 
+		\overset\star= \int \ang{u(x), e^{-i\lambda\cdot x}} \phi_m(\lambda) \dd{\lambda}, 
+		\end{align*}
+	where $\star$ is the Riemann sum argument (here, we need that $\phi_m$ has compact support).  Now, since $u \in \EE'(\RR^n)$, there exists a compact $K$ and constants $C', N > 0$ such that
+	\[
+	\abs{\ang{u(x), e^{-i\lambda\cdot x}}} \leq C' \sum_{\abs{\alpha} \leq N} \sup_K \abs{D_x e^{-i\lambda\cdot x}} \leq C \ang{\lambda}^N, 
+	\]
+	so $\lambda \mapsto \ang{u(x), e^{-i\lambda\cdot x}}$ is polynomially bounded, and therefore we can use the dominated convergence theorem to conclude
+	\[
+	\ang{\hat u, \phi} = \lim_{n\to\infty} \ang{\hat u, \phi_m} = \lim_{n\to\infty} \int \ang{u(x), e^{-i\lambda\cdot x}} \phi_m(\lambda) \dd{\lambda} = \int \ang{u(x), e^{-i\lambda\cdot x}} \phi(\lambda) \dd{\lambda}, 
+	\]
+	which proves that $\hat u$ can be identified with the function $\hat u(\lambda) = \ang{u(x), e^{-i\lambda\vdot x}}$. 
+\end{proof}
+
+Furthermore, it is clear that for $u \in \EE'(\RR^n)$, we have 
+\begin{equation} \label{eq:fourier_estimate}
+	\abs{\hat u(\lambda)} \leq C \sum_{\abs{\alpha} \leq N} \sup_K \abs{\pt^\alpha_x e^{-i\lambda x}} \les \ang{\lambda}^N.
+\end{equation}
+
+\begin{theorem}[Structure theorem]
+	For $u \in \EE'(X)$, there exists a finite collection $\qty{f_\alpha} \subseteq C(X)$ with $\supp(f_\alpha) \subseteq X$ such that $u = \sum_\alpha \pt^\alpha f_\alpha$ in $\EE'(X)$. 
+\end{theorem}
+
+\begin{proof}
+	Fix $\rho \in \DD(X)$ with $\rho = 1$ on a neighbourhood of $u$, then we can extend $u$ to $\EE'(\RR^n)$ by setting $\ang{u, \phi} \ceq \ang{u, \rho\phi}$ (note that $\rho\phi \in \DD(X)$ for all $\phi \in \EE(\RR^n)$). Since $\rho\phi \in \SS(\RR^n)$, we know there exist $\psi \in \SS(\RR^n)$ such that
+	\[
+	\rho\phi = \FF[\FF[\psi]] = (2\pi)^n \refl\psi, 
+	\]
+	and therefore
+	\[
+	\ang{u, \rho\phi} = \ang{u, \FF[\FF[\psi]]} = \ang{\hat u, \hat\psi}. 
+	\]
+	Using the Laplacian $\Delta = \sum_i \pt^i \pt^i$, we can write for any $m \in \NN$
+	\[
+	\hat\psi = \ang{\lambda}^{-2M} \FF\qty[(1 - \Delta)^M \psi],
+	\]
+	since $\FF\qty[(1 - \Delta)^m \psi] = (1 + \norm{\lambda}^2)^m \hat\psi = \ang{\lambda}^{2M}\hat\psi$. 
+	
+	Plugging this back into our previous equations, we have
+	\begin{equation} \label{eq:fourier_laplace}
+		\ang{\hat u, \hat\psi} = \ang{\hat u, \ang{\lambda}^{-2M} \FF[(1 - \Delta)^M \psi]} = \ang*{\FF[\hat u \ang{\lambda}^{-2M}], (1 - \Delta)^M \psi}.
+	\end{equation}
+Now, by \cref{eq:fourier_estimate}, we have $\abs{\hat u(\lambda)} \les \ang{\lambda}^N$, so we can choose $M$ large enough such that $\hat u(\lambda) \cdot \ang{\lambda}^{-2M} \in L^1(\RR^n)$, and by the dominated convergence theorem, the function
+\[
+f(x) = \frac1{(2\pi)^n} \int e^{-i\lambda \vdot x} \ang{\lambda}^{-2M} \hat u(\lambda) \dd{\lambda} 
+\]
+is continuous, and it is easily checked that $(2\pi)^n \refl f = \FF[\ang{\lambda}^{2M} \hat u(\lambda)]$. 
+
+Using the fact that $(2\pi)^n \refl\psi = \rho\phi$, and going back to \cref{eq:fourier_laplace} we see
+\[
+\ang{u, \rho\phi} = \ang{(2\pi)^n \refl f, (1 - \Delta)^M \psi} = \ang{\refl f, (1 -\Delta)^M \refl{(\rho\phi)}} = \ang{f, (1 - \Delta)^M (\rho\phi)}, 
+\]
+where the last step follows from the fact that the Laplacian is reflection invariant. 
+
+Expanding the derivatives using the Leibniz rule yields
+\[
+(1 -\Delta)^M (\rho\phi) = \sum_\alpha (-1)^{\abs{\alpha}} \rho_\alpha \pt^\alpha\phi
+\]
+for suitable $\rho_\alpha \in \DD(X)$, and therefore we have
+\[
+\ang{u, \phi} = \sum_\alpha \ang{f, (-1)^{\abs{\alpha}} \rho_\alpha \pt^\alpha\phi} = \ang*{\sum_\alpha \pt^\alpha(\rho_\alpha f), \phi},
+\]
+so $u = \sum_\alpha \pt^\alpha(\rho_\alpha f) = \sum_\alpha \pt^\alpha f_\alpha \in \EE'(\RR^n)$, where $f_\alpha$ is continuous and $\supp(f_\alpha) = \supp(\rho_\alpha f) \subseteq X$. 
+\end{proof}
+
+There also exist nonconstructive proofs for the previous theorem using Hahn-Banach. 

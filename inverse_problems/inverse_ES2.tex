@@ -182,6 +182,182 @@ Analogously, we find $\pt J(-1) = (-\infty, 0]$. We conclude that
 \begin{align*}
 	p \in \pt \TV(f) &\iff \TV(g) \geq \TV(f) + \int_{\Omega} p(x) (g - f)(x) \dd{x} \ \forall g \in L^1(\Omega)
 \end{align*}
+(??)
 \end{enumerate}
 \end{solution}
+
+\begin{question}
+	Let $\UU$ be a Banach space and let $E \colon \UU\to \rext$ be proper, lower semi-continuous and convex. Then the \emph{Fenchel conjugate} or \emph{convex conjugate} of $E$ is defined to be the mapping $E^* \colon \UU^* \to \RR$ with
+	\[
+	E^*(v) \ceq \sup_{u \in \UU} \qty{\ang{v, u} - E(u)}. 
+	\]
+	\begin{enumerate}[(a)]
+		\item Compute the convex conjugates of the following functionals.
+		\begin{enumerate}[(i)]
+			\item $E(u) = \norm{u}_\UU$ for a Banach space $\UU$,
+			\item $E(u \mid f) = \sum_{i=1}^n u_i \log(\frac{u_i}{f_i})$, where $f \in \RR^n_{>0}$ is a positive vector and $u \in \RR^n$. What is the effective domain of $E$? 
+		\end{enumerate}
+	\item Let $E \colon \UU\to\rext$ be a proper, lower semi-continuous and convex functional. Show that
+	\[
+	p \in \pt E(u) \iff u \in \pt E^*(p)
+	\]
+	for all $u, p \in \UU$. 
+	
+	\emph{Hint:} You may exploit the fact that under the stated assumptions $E = E^{**}$ holds true. 
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[(a)]
+		\item \begin{enumerate}[(i)]
+			\item We have
+			\[
+			E^*(v) = \sup_{u \in \UU} \qty(\ang{v, u} - \norm{u}). 
+			\]
+			Suppose $\ang{v, u^*} - \norm{u^*} = \xi > 0$ for some $u^*$. Then we have for $\alpha > 0$ that
+			\[
+			\ang{v, \alpha u^*} - \norm{\alpha u^*} = \alpha \qty(\ang{v, u^*} - \norm{u^*}) = \alpha\xi, 
+			\]
+			and therefore clearly $E^*(v) = \infty$. 
+			
+			On the other hand, if $\ang{v, u} - \norm{u}\leq0$ for all $u$, then the supremum is attained in $u = 0$ with value $0$, and therefore $E^*(v) = 0$. 
+			
+			We see that
+			\begin{align*}
+				&\ang{v, u^*} - \norm{u^*} > 0 &\text{for some $u^* \in \UU$}; \\
+				&\iff \ang{v, u^*} > \norm{u^*} &\text{for some $u^* \in \UU$}; \\
+				&\iff \norm{v}_{\UU^*} > 1. 
+			\end{align*}
+		We conclude that
+		\[
+		E^*(v) = \chi_\qty{\norm{v} \leq 1} = \begin{cases}
+			0 &\text{if $\norm{v} \leq 1$}, \\ \infty &\text{else.}
+		\end{cases}
+		\]
+		
+		\item Suppose first that $p \in \pt E(u)$. Then we have
+		\begin{align*}
+&\phantom{\implies}	p \in \pt E(u) \\
+&\implies E(v) \geq E(u) + \ang{p, v - u} &\text{for all $v$} \\
+&\implies \ang{p, u} - E(u) \geq \ang{p, v} - E(v) &\text{for all $v$} \\
+&\implies \ang{p, u} - E(u) \geq \sup_v \qty(\ang{p, v} - E(v)) = E^*(p) \\
+&\implies \ang{p, u} - E(u) + \ang{q - p, u} \geq E^*(p) + \ang{q - p, u} &\text{for all $q$} \\
+&\implies \ang{q, u} - E(u) \geq E^*(p) + \ang{q - p, u} &\text{for all $q$} \\
+&\implies \sup_v \qty(\ang{q, v} - E(v)) \geq E^*(p) + \ang{q - p, u} &\text{for all $q$} \\
+&\implies E^*(q) \geq E^*(p) + \ang{q -p, u} &\text{for all $q$} \\
+&\implies u \in \pt E^*(p). 
+		\end{align*}
+	Now, for the reverse implication, note that by what we just proved we have
+	\[
+	u \in \pt E^*(p) \implies p \in \pt E^{**}(u) \iff p \in \pt E(u), 
+	\]
+	which proves the claim.
+		\end{enumerate}
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let $u, v \in \UU$ and $p \in \pt J(v)$. Recall that the Bregman distance of $J$ at $u, v$ is defined as
+	\[
+	D_J^p(u, v) \ceq J(u) - J(v) - \ang{p, u - v}.
+	\]
+	\begin{enumerate}[(a)]
+		\item Show that Bregman distances are non-negative. 
+		\item Show that Bregman distances may not be symmetric, i.e., there exists a $J$ and $u, v \in \UU$ with $p \in \pt J(v), q \in \pt J(u)$ such that $D_J^p(u, v) \neq D_J^q(v, u)$.
+		\item Show that a vanishing Bregman distance may not imply that the two arguments are the same. What if $J$ is strictly convex?
+	\end{enumerate}
+
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}[(a)]
+		\item Since $p \in \pt J(v)$, we have $J(u) \geq J(v) + \ang{p, u - v}$, or equivalently $J(u) - J(v) - \ang{p, u- v} \geq 0$. 
+		
+		\item Let $\UU = \RR$, $J(x) = \abs{x}$, and choose $u = 0, v = 1$ and $p = 1, q = 0$. Then 
+		\[
+		D^p_J(u, v) = -1 - (-1) =  0 \quad\text{and}\quad D^q_J(v, u) = 1. 
+		\]
+		
+		\item In the previous part we had an example $J(x)= \abs{x}, u = 0, v = 1, p = 1$, where $D_J^p(u, v) = 0$ while $u \neq v$. 
+		
+		Suppose that $J$ is strictly convex and that $u \neq v$ but $D_J^p(u, v) = 0$, so $J(u) = J(v) + \ang{p, u-v}$. Then we have for all $t \in (0, 1)$ that 
+		\begin{align*}
+			J(v) + \ang{p, (1-t)(u-v)} &= J(v) + \ang{p,  \qty(tv + (1-t)u) -v} \\
+			&\overset\star\leq J(tv + (1-t) u) \\
+			&< t J(v) + (1-t) J(u) \\
+			&= t J(v) + (1-t) \qty(J(v) + (1-t)\ang{p, u-v}) \\
+			&= J(v) + \ang{p, (1-t)(u-v)}, 
+		\end{align*}
+	a contradiction (here $\star$ follows from $p \in \pt J(v)$). We conclude that, if $J$ is strictly convex, the Bregman distance does satisfy $u \neq v \implies D_J^p(u, v) > 0$. 
+		
+	\end{enumerate}
+\end{proof}
+
+\begin{question}
+	Recall that a function $J \colon \UU\to \rext$ is called absolutely one-homogeneous if $J(\lambda u) = \abs{\lambda} J(u)$ for all $\lambda \in \RR, u \in \UU$. Let $J$ be convex, proper, l.s.c.\ and absolutely one-homogeneous. 
+	\begin{enumerate}[(a)]
+		\item Show that $p \in \pt J(v)$ if and only if $p \in \pt J(0)$ and $J(v) = \ang{p, v}$.
+		Therefore, 
+		\[
+		D_J^p(u, v) = J(u) - \ang{p, u}. 
+		\]
+		Show that
+		\[
+		\pt J(0) = \bigcup_{u \in \UU} \pt J(u). 
+		\]
+		
+		\item Show that the Bregman distances associated with absolutely one-homogeneous functionals fulfill the triangle inequality in the first argument, i.e., for all $u, v, w \in \UU$ and $p \in \pt J(w)$ there is
+		\[
+		D_J^p(u + v, w) \leq D_J^p(u, w) + D_J^p(v, w). 
+		\]
+		
+		\item Show that the convex conjugate $J^*(\cdot)$ is the characteristic function of the convex set $\pt J(0)$. Compare this to the results of Exercise 2(a)(i). 
+	\end{enumerate}
+\end{question}
+
+\begin{proof}
+	It is clear that $J(0) = 0$. 
+	\begin{enumerate}[(a)]
+		\item Suppose $p \in \pt J(v)$. Then we have $J(u) \geq J(v) + \ang{p, u - v}$ for all $u$, which we can rewrite as $J(u) - \ang{p, u} \geq J(v) - \ang{p, v}$. Plugging in $u = 0$ we obtain $J(v) - \ang{p, v} \leq 0$, but plugging in $u = 2v$ we obtain
+		\[
+		2 \qty(J(v) - \ang{p, v}) = J(2v) - \ang{p, 2v} \geq J(v) - \ang{p, v} \implies J(v) - \ang{p, v} \geq 0, 
+		\]
+		so we conclude $J(v) - \ang{p, v} = 0$ or $J(v) = \ang{p, v}$. 	
+		This also implies that
+		\[
+		J(u) \geq \ang{p, u} \text{ for all $u$} \implies p \in \pt J(0). 		
+		\]
+		
+		Conversely, if $p \in \pt J(0)$ and $J(v) = \ang{p, v}$, then for all $u$ we have
+		\[
+		J(u) \geq \ang{p, u} + (J(v) - \ang{p, v}) \implies p \in \pt J(v).
+		\]
+		This concludes the first claim.
+		
+		From this claim, it follows that $\pt J(u) \subseteq \pt J(0)$ for all $u \in \UU$, and therefore trivially $\pt J(0) = \cup_u \pt J(u)$. 
+		
+		\item Note that we have
+		\[
+		J(u+v) = 2 J\qty(\frac12u + \frac12 v) \leq 2\qty(\frac12 J(u) + \frac12J(v)) = J(u) + J(v), 
+		\]
+		and therefore
+		\[
+		D_J^p(u+v, w) = J(u+v) - \ang{p, u +v} \leq J(u) + J(v) - \ang{p, u} - \ang{p, v} = D_J^p(u, w) + D_J^p(v, w). 
+		\]
+		
+		\item We can reason analogously to 2(a)(i): we have
+		\[
+		J^*(v) = \sup_{u \in U} (\ang{v, u} - J(u)).
+		\]
+		Suppose that $v \notin \pt J(0)$, i.e., $\ang{v, u^*} - J(u) = \xi > 0$ for some $u^*$. Then we have for all $\lambda > 0$ that 
+		\[
+		\ang{v, \lambda u^*} - J(\lambda u^*) = \lambda \xi, 
+		\]
+		and letting $\lambda \to\infty$ shows $J^*(v) = \infty$. 
+		
+		On the other hand, suppose that $v \in \pt J(0)$, i.e., $\ang{v, u} - J(u) \leq 0$ for all $u$. Then the supremum is attained in $u = 0$ and therefore we have $J^*(v) = 0$. 
+		
+		It follows that $J^*(v) = \pt J(0)$, which is indeed also what we saw in 2(a)(i), since the subdifferential of the norm at 0 is exactly $\qty{v \in \UU^* : \norm{v}_{\UU^*} \leq 1}$. 
+	\end{enumerate}
+\end{proof}
 \end{document}
