@@ -29,12 +29,76 @@ We will assume for simplicity that $\mu = 0$ and that $\hat\Sigma = \frac1n \sum
 	\]
 	Then there are universal constants $c, C$ such that $\hat\Sigma$ satisfies 
 	\[
-	\EE\qty[e^{\lambda\norm{\hat\Sigma - \Sigma}_\Rm{op}}] \leq \exp\qty(c \qty[ \frac{\lambda^2\sigma^4}{n} + d]),
+	\EE\qty[e^{\lambda\norm{\hat\Sigma - \Sigma}_\Rm{op}}] \leq \exp\qty(c \qty[ \frac{\lambda^2\sigma^4}{n} + d]) \quad\text{for all $\abs{\lambda} \leq \frac n{16\sigma^2}$},
 	\]
 	and for all $\delta > 0$, we have
 	\[
-	\PP\qty(\frac{\norm{\hat\Sigma - \Sigma}_\Rm{op}}{\sigma^2} \leq C \qty(\frac{d + \delta}{n} \lor \sqrt{\frac{d + \delta}{n}})) \leq 1 - e^{-\delta}. 
+	\PP\qty(\frac{\norm{\hat\Sigma - \Sigma}_\Rm{op}}{\sigma^2} \leq C \qty(\frac{d + \delta}{n} \lor \sqrt{\frac{d + \delta}{n}})) \geq 1 - e^{-\delta}. 
 	\]
 \end{theorem}
 
 This is a non-asymptotic error bound. Note that, as long as $d/n \to 0$, the estimator $\hat\Sigma$ will be consistent. 
+
+\begin{proof}
+	The tail probability bound follows from Chernoff bounding, see lecture 17 for the details. 
+	
+	For the proof of (i), cover $S^{d-1}$ with balls of radius $1/8$ centred at points $v_1, \dotsc, v_N \in S^{d-1}$. It is a known geometric fact that this is possible with $N \leq e^{4d}/2$.  We will prove that for any symmetric $Q$ we have $ \norm{Q}_\Rm{op} \leq 2 \max_i \abs{v_i\T Q v_i}$. For this, let $v \in S^{d-1}$ and choose $i$ such that $\norm{v - v_i} \leq \frac18$, then
+	\begin{align*}
+	\abs{v\T Qv} &= \abs{(v - v_i)\T Q (v - v_i) + 2 v_i\T Q(v - v_i) - v_i\T Q v_i} \\
+	&\leq \abs{(v - v_i)\T Q(v - v_i)} + 2 \abs{v_i\T Q(v - v_i)} + \abs{v_i\T Q v_i} \\
+	&\leq \norm{v - v_i}^2 \norm{Q}_\Rm{op} + 2 \norm{v_i} \norm{Q}_\Rm{op} \norm{v - v_i} + \abs{v_i\T Q v_i} \\
+	&\leq \qty(\frac28 + \frac1{64}) \norm{Q}_\Rm{op} + \abs{v_i\T Q v_i} \leq \frac12 \norm{Q}_\Rm{op} + \abs{v_i\T Q v_i} \\
+	&\leq \frac12\norm{Q}_\Rm{op} + \max_i \abs{v_i\T Q v_i}. 
+	\end{align*}
+	Since the right-hand side is independent of $v$ we can maximise the left-hand side over $v$ and obtain 
+	\[
+	\norm{Q}_\Rm{op} \leq \frac12\norm{Q}_\Rm{op} + \max_i \abs{v_i\T Q v_i} \implies \norm{Q}_\Rm{op} \leq 2 \max_i \abs{v_i\T Q v_i}. 
+	\]
+	
+	Now, we apply this to $Q \ceq \hat\Sigma - \Sigma$. Then we have
+	\begin{equation} \label{eq:crude_moment_bound}
+		\EE[e^{\lambda \norm{Q}_\Rm{op}}] \leq \EE[e^{2\lambda \max_i \abs{v_i\T Qv_i}}] \leq \sum_{i=1}^N \EE[e^{2\lambda v_i\T Q v_i}] + \EE[ e^{-2\lambda v_i\T Q v_i}], 
+		\end{equation}
+	where for the final step we use that $\max_i \abs{v_i\T Q v_i} \in \qty{\pm v_i\T Q v_i \mid i = 1, \dotsc, n}$. 
+	
+	Next, we claim that for fixed $u \in S^{d-1}$, we have $\EE[e^{tu\T Q u}] \leq \exp(64\frac{t^2\sigma^4}{n})$ for $\abs{t} \leq \frac n{8\sigma^2}$.  For this, observe that 
+	\[
+	u\T Q u = \frac1n \sum_{i=1}^n (u\T x_i)^2 - u\T \Sigma u, 
+	\]
+	and note that $u\T \Sigma u = \Var(u\T x_i) = \EE[(u\T x_i)^2]$ since the $x_i$ have mean zero. Using the fact that the $x_i$ are independent we have
+	\[
+	\EE[\exp(t u\T Q u)] = \EE\qty[\exp(\frac tn \qty[(u\T x_1)^2 - u\T \Sigma u])]^n = \EE[\exp(Z^2 - \EE[Z^2])]^n, 
+	\]
+	where $Z \ceq \sqrt{\frac tn} u\T x_1$ is sub-Gaussian with parameter $\sqrt{\abs{t}\sigma^2/n}$. Therefore, $Z^2$ satisfies the Bernstein condition with parmeters $(8\abs{t} \sigma^2/n, 4 \abs{t}\sigma^2/n)$, and recalling that $\abs{t}\leq \frac n{8\sigma^2}$ we obtain 
+	\begin{align*}
+		\EE[\exp(Z^2 - \EE[Z^2])]  &\leq 1 + \sum_{k=2}^\infty \frac{\EE[(Z^2 - \EE Z^2)^k]}{k!} \\
+		&\overset\star\leq 1 + \sum_{k=2}^\infty 2^{2k + 1} \sigma^{2k} \qty(\frac{\abs{t}}{n})^k \\
+		&\overset{\star\star}\leq 1 + \frac{2^5 \sigma^4 t^2}{n} \frac{1}{1 - 4\sigma^2 \abs{t}/n} \\
+		&\leq 1 + \frac{64 \sigma^2 t^2}{n} \leq e^{64 \sigma^4 t^2/n},
+	\end{align*}
+where $\star$ follows from Bernstein's inequality and $\star\star$ from a geometric series, which proves the claim. 
+
+Substituting this back into \cref{eq:crude_moment_bound} using $t =  \pm 2\lambda$ shows that for $\abs{\lambda} < \frac{n}{16\sigma^2}$ we have
+\[
+	\EE[e^{\lambda \norm{Q}_\Rm{op}}] \leq 2N e^{256 \lambda^2 \sigma^4/n} \leq  e^{256\lambda^2\sigma^4/n + 4d} \leq  e^{256(\lambda^2 \sigma^4/n + d)}. 
+\]
+\end{proof}
+
+The upper bound in this theorem is tight when $\Sigma = I$. However, note that our bound in \cref{eq:crude_moment_bound} is quite crude, and we can obtain much better rates if we assume that the $x_i$ are normally distributed (in this case, more is known about the supremum). 
+
+Furthermore, when the spectrum of $\Sigma$ is concentrated on a few directions, the rate can be improved significantly. For this, we need a definition.
+\begin{definition}
+	The \emph{effective rank} $r(\Sigma)$ of a nonzero symmetric positive semi-definite matrix $\Sigma$ with eigenvalues $0 \leq \gamma_d(\Sigma) \leq \dotsb \leq \gamma_1(\Sigma)$ is given by
+	\[
+	r(\Sigma) = \frac{\Tr(\Sigma)}{\norm{\Sigma}_\Rm{op}} = \frac{\sum_{i=1}^d \gamma_i(\Sigma)}{\gamma_1(\Sigma)}. 
+	\]
+\end{definition}
+It is easily seen that $r(\Sigma) \leq \Rm{rank}(\Sigma)$, with equality if and only if all nonzero eigenvalues of $\Sigma$ are equal. The following theorem (which we will not prove) gives a tighter bound if we can assume that the rows of $X$ are normally distributed and that $r(\Sigma)$ is constrained:
+\begin{theorem}
+	Suppose $X$ has i.i.d.\ $N(0, \Sigma)$ rows with $r(\Sigma) \leq cn$ (??). Then there exists $C$ such that for all $\delta > 0$ we have
+	\[
+	\PP\qty(\frac{\norm{\hat\Sigma - \Sigma}_\Rm{op}}{\norm{\Sigma}_\Rm{op}} \leq C \qty(\frac{r(\Sigma) + \delta}{n} \lor \sqrt{\frac{r(\Sigma) + \delta}{n}})) \geq 1 - e^{-\delta}. 
+	\]
+\end{theorem}
+
+In comparison with the previous bound, the dimension of the samples $d$ is replaced by the effective rank $r(\Sigma)$ (in fact, $d$ does not occur at all in this theorem!). This means that $d$ can grow rapidly with $n$, as long as $r(\Sigma)/n \to 0$. This can even be generalised to an infinite-dimensional setting with appropriate definitions. 
