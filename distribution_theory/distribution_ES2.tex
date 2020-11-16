@@ -91,6 +91,7 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator{\supp}{supp}
 \DeclareMathOperator{\ord}{ord}
+%\DeclareMathOperator{\PV}{PV}
 
 \title{Distribution Theory --- Example Sheet 2} % subject
 \author{Lucas Riedstra}
@@ -125,7 +126,7 @@ Let $u, v \in \DD'(\RR^n)$, one of which has compact support. Show that the conv
 	\end{align*}
 	Note that if $\supp\phi \subseteq K'$, then $\supp\refl\phi \subseteq -K'$, and for $x \in -K$ we find $\supp \tau_x \refl{\pt^\alpha \refl\phi} \subseteq -K' -K$. Then by the previous equation we find that there exists $C', M$ with
 	\[
-	\abs{\ang{u * v, \phi}} \leq C' \sum_{\abs{\alpha} \leq N} \sum_{\abs{\beta} \leq M} \sup_{x \in -K' - K} \pt^\beta (\tau_x \refl{\pt^\alpha \refl\phi}) = C' \sum_{\abs{\alpha} \leq N} \sum_{\abs{\beta} \leq M} \sup_x \abs{\pt^{\alpha + \beta} \phi} \leq C'' \sum_{\abs{\alpha} \leq M + N} \sup_x \abs{\pt^\alpha \phi},
+	\abs{\ang{u * v, \phi}} \leq C' \sum_{\abs{\alpha} \leq N} \sum_{\abs{\beta} \leq M} \sup_{x \in -K' - K} \pt^\beta (\tau_x \refl{\pt^\alpha \refl\phi}) \leq C' \sum_{\abs{\alpha} \leq N} \sum_{\abs{\beta} \leq M} \sup_x \abs{\pt^{\alpha + \beta} \phi} \leq C'' \sum_{\abs{\alpha} \leq M + N} \sup_x \abs{\pt^\alpha \phi},
 	\]
 	which shows that $u* v \in \DD'(\RR^n)$. An analogous argument holds if $v$ is compactly supported. 
 \end{proof}
@@ -151,10 +152,7 @@ Let $u, v \in \DD'(\RR^n)$, one of which has compact support. Show that the conv
 \end{question}
 
 \begin{proof}
-	Let $\psi \in \DD(\RR)$, then we want to prove that \[
-	\psi(x) = \frac1{(2\pi)^n} \iint e^{i \lambda (x - y)} \psi(y) \dd{y} \dd{\lambda}. 
-	\]
-	??
+Since $\DD(\RR) \subseteq \SS(\RR)$, we know that the Fourier inversion formula holds. We only need to show that the Fourier tranform of $\phi$ is again an element of $\DD(\RR)$. (??)
 \end{proof}
 
 \begin{question}
@@ -166,5 +164,106 @@ Let $u, v \in \DD'(\RR^n)$, one of which has compact support. Show that the conv
 	\begin{align*}
 		\sum_m \phi(m) = \frac1{(2\pi)^n} \sum_m \int e^{i\lambda m} \hat \phi(\lambda) \dd{\lambda} = \sum_m \int e^{2\pi i \lambda m} \hat \phi(2\pi \lambda) \dd{\lambda}
 	\end{align*}
+(??)
+\end{proof}
+
+\begin{question}
+	If $u \in H^s(\RR^n)$ show that $D^\alpha u\in H^{s - \abs{\alpha}} (\RR^n)$. If $s > t$ show that $H^s(\RR^n) \subseteq H^t(\RR^n)$. 
+\end{question}
+
+\begin{proof}
+	Assuming $u \in H^s(\RR^n)$, we have
+	\begin{align*}
+		\int_{\RR^n} \ang{\lambda}^{2(s - \abs{\alpha})} \abs{\widehat{D^\alpha u}(\lambda)}^2 \dd{\lambda}  &= \int_{\RR^n} \ang{\lambda}^{2(s-\abs{\alpha})} \norm{\lambda}^{2\abs{\alpha}} \abs{\hat u(\lambda)}^2 \dd{\lambda} \\
+		&\les \int_{\RR^n} \ang{\lambda}^{2s} \abs{\hat u(\lambda)}^2 \dd{\lambda} < \infty, 
+	\end{align*}
+which proves $D^\alpha u \in H^{s- \abs{\alpha}}(\RR^n)$.
+
+The second claim follows immediately from the fact that $\ang{\lambda}^{t} \leq \ang{\lambda}^s$ for $s \geq t$ and $\lambda$ sufficiently large. 
+\end{proof}
+
+
+\begin{question}
+	Show that $S(\RR^n)$ is dense in $L^2(\RR^n) = H^0(\RR^n)$ and deduce that $\SS(\RR^n)$ is dense in $H^s(\RR^n)$.
+	
+	\emph{Hint:} Use Parseval's theorem. 
+\end{question}
+
+\begin{proof}
+	We will show that $\DD(\RR^n)$ is dense in $L^2(\RR^n)$: since $\DD(\RR^n) \subseteq \SS(\RR^n)$, this shows that $\SS(\RR^n)$ is dense in $L^2(\RR^n)$ as well. 
+	
+	\TODO Give proof.
+	
+	Now, for $u \in H^s(\RR^n)$, let $(\phi_m) \to u$ in $L^2$. Then we have
+	\begin{align*}
+		\norm{\phi_m - u}_{H^s}^2 = \int \ang{\lambda}^{2s} \abs{(\phi_m - u)(\lambda)}^2 \dd{\lambda}
+	\end{align*}
+\end{proof}
+%-----------------------------------------------------------------------------
+\setcounter{question}{18}
+
+\begin{question}
+	Compute the Fourier transforms of the functions
+	\begin{enumerate}[(a)]
+		\item $\sign(x)$;
+		\item $\arctan(x)$;
+		\item $x\log \abs{x} - x$;
+		\item $\exp(i\omega x^2)$
+	\end{enumerate}
+	in $\SS'(\RR)$, where $\omega \in \RR$. 
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}[(a)]
+		\item We have for $\phi \in \SS(\RR)$ that 
+		\begin{align*}
+			\ang{\widehat{\sign}, \phi} &= \ang{\sign, \hat\phi} = \int_\RR \sign(\lambda) \hat\phi(\lambda)\dd{\lambda} = \int_\RR \sign(\lambda) \int_\RR e^{-i\lambda x} \phi(x) \dd{x} \dd{\lambda}
+			\\
+			&\overset\star= \int_\RR \phi(x) \int_\RR \sign(\lambda) e^{-i\lambda x} \dd{\lambda} \dd{x} 
+			=  \int_\RR \phi(x) \lim_{R\to\infty} \qty(\int_0^R e^{-i\lambda x} \dd{\lambda}  -  \int_{-R}^0 e^{-i\lambda x}  \dd{\lambda})\dd{x} \\
+			&= \lim_{\eps\to0} \lim_{R\to\infty} \int_{\abs{x}>\eps}  \phi(x) \qty(\frac{e^{ix R} + e^{-ix R}}{ix} - \frac2{ix}) \dd{x}  \\
+			&= \lim_{\eps \to 0} \lim_{R\to\infty} \int_\RR \frac{\phi(x) \ind_{\abs{x}> \eps}}{ix} \cdot e^{ixR} \dd{x} + \lim_{\eps \to 0} \lim_{R\to\infty} \int_\RR \frac{\phi(x) \ind_{\abs{x}> \eps}}{ix} \cdot e^{-ixR} \dd{x} + 2i \PV\qty(\frac1x).
+%			&= \lim_{R\to\infty}\qty( \int_\RR \phi(x) \int_0^R e^{-i\lambda x}\dd{x} - \int_\RR \phi(x) \int_{-R}^0 e^{-i\lambda x} \dd{x})
+		\end{align*}
+	We claim the first two terms go to 0: this is because the term in the integral is the Fourier transform of $\frac{\phi(x)\ind_{\abs{x} > \eps}}{ix}$ evaluated at $\pm R$, and since the function is in $L^1$, its Fourier transform decays to 0 as $\abs{R} \to\infty$. 
+	
+	We conclude $\widehat\sign = 2i \PV(\frac1x)$. 
+	
+	\item We know that $\arctan'(x) = \frac{1}{1 + x^2} \eqqcolon f(x)$, then we have $\widehat\arctan(\lambda) = \frac1{i\lambda} \hat f(\lambda)$ (in the distributional sense). 
+	
+	We have, using Fubini and the fact that $\ang{\hat f, \phi}$ is finite, that 
+	\begin{align*}
+		\ang{\hat f, \phi} &= \int_\RR \frac{\hat\phi(\lambda)}{1 + \lambda^2} \dd{\lambda} = \int_\RR \phi(x) \lim_{R\to\infty} \int_{-R}^R \frac{e^{-i\lambda x}}{1 + \lambda^2} \dd{\lambda} \dd{x} \overset\star= \int_\RR \phi(x) \qty(\pi e^{-\abs{x}}) \dd{x}, 
+	\end{align*}
+	from which it follows that the Fourier transform of $\frac{1}{1 + x^2}$ is given by $\pi e^{-\abs{\lambda}}$, and therefore the Fourier transform of $\arctan$ is given by $\frac{\pi}{i\lambda} e^{-\abs{\lambda}}$. 
+	
+	\item The derivative of this function, outside of 0, is $\log\abs{x}$. 
+	
+	\item  Clearly, if $\omega = 0$, the function is 1 and its Fourier transform is $2\pi\delta_0$, so assume $\omega \neq 0$. 
+	We have analogously to (b), with $f(x) = \exp(i\omega x^2)$, that 
+	\[
+	\ang{\widehat{f}, \phi} = \int_\RR \hat\phi(\lambda) e^{i\omega \lambda^2} \dd{\lambda} = \int_\RR \phi(x) \lim_{R\to\infty} \int_{-R}^R e^{i\omega\lambda^2 - i\lambda x} \dd{\lambda} \dd{x}.
+	\]
+	Now, by completing the square we have
+	\[
+	i(\omega\lambda^2 - x\lambda) = i\qty(\sqrt\omega\lambda - \frac{x}{2\sqrt\omega})^2 - \frac{ix^2}{4\omega},
+	\]
+	and therefore
+	\begin{align*}
+	\lim_{R\to\infty} \int_{-R}^R e^{i\omega\lambda^2 - i\lambda x} \dd{\lambda} &= e^{-ix^2/(4\omega)} \lim_{R\to\infty} \int_{-R}^R e^{i(\sqrt\omega\lambda - \frac{x}{2\sqrt\omega})^2}\dd{\lambda} = \frac{e^{-ix^2/(4\omega)}}{\sqrt\omega} \lim_{R\to\infty} \int_{-R}^R e^{i\lambda^2} \dd{\lambda} \\
+	&= \frac{e^{-ix^2/(4\omega)}}{\sqrt\omega} (1+i)\sqrt{\frac\pi2}, 
+	\end{align*}
+	where we use that the \emph{Fresnel integral} $\int_{-\infty}^\infty e^{ix^2} \dd{x}$ is known. 
+	
+	Plugging this back into our original equation yields
+	\[
+	\ang{\hat f, \phi} = \int_\RR \phi(x) \frac{e^{-ix^2/(4\omega)}}{\sqrt\omega} (1+i)\sqrt{\frac\pi2} \dd{x}, 
+	\]
+	which shows that
+	\[
+	\hat f(\lambda) =  (1+i) e^{-i\lambda^2/(4\omega)} \sqrt{\frac{\pi}{2\omega}}. 
+	\]
+	in the distributional sense. 
+	\end{enumerate}
 \end{proof}
 \end{document}
