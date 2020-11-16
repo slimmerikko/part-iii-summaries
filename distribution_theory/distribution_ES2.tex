@@ -57,6 +57,7 @@
 \renewcommand\SS{\Cal S}
 \newcommand\FF{\Cal F}
 \newcommand\vd{\vdot}
+\newcommand\Rr{\Cal R}
 %\newcommand\ZZ{\Bb Z}
 
 
@@ -99,6 +100,10 @@
 
 \begin{document}
 \maketitle
+
+\begin{mdframed}
+	We will write $\Rr$ and $\FF$ for the reflection and Fourier transform operators. 
+\end{mdframed}
 \begin{question}
 Let $u, v \in \DD'(\RR^n)$, one of which has compact support. Show that the convolution $u * v$, defined as in your notes, is uniquely defined and gives rise to an element of $\DD'(\RR^n)$. 
 \end{question}
@@ -112,7 +117,7 @@ Let $u, v \in \DD'(\RR^n)$, one of which has compact support. Show that the conv
 	\[
 	\ang{u * v, \phi} = ((u * v) * \refl\phi)(0) = (u * (v * \refl\phi))(0),
 	\]
-	which shows that the formula \cref{def:convolution} uniquely defines $\ang{u * v, \phi}$ for any $\phi \in \DD(\RR^n)$, and therefore that $u * v$ is well-defined. 
+	which shows that the formula \cref{def:convolution} uniquely defines $\ang{u * v, \phi}$ for any $\phi \in \DD(\RR^n)$, and therefore that $u * v$ is well-defined. For uniqueness, 
 	
 	Now we prove that $u * v \in \DD'(\RR^n)$: by the previous equation we have
 	\[

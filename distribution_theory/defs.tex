@@ -1,0 +1,88 @@
+\setcounter{section}{-1}
+\section{Most important definitions}
+\paragraph{Spaces of test functions} a function $f \in X \to \CC$ is in: 
+\begin{enumerate}
+	\itemsep=0em
+	\item $\DD(X)$ if $f$ is smooth and $\supp f \subseteq X$ is compact;
+	\item $\SS(\RR^n)$ if $f$ is smooth and $\norm{f}_{\alpha, \beta} \ceq \sup_{x \in \RR^n} \abs{x^\alpha (D^\beta f)(x)} < \infty$ for all $\alpha, \beta$;
+	\item $\EE(X)$ if $f$ is smooth. 
+\end{enumerate}
+Note $\DD(\RR^n) \subseteq \SS(\RR^n) \subseteq \EE(\RR^n)$. 
+We have the following modes of convergence in these spaces:
+\begin{enumerate}
+	\itemsep=0em
+	\item $\phi_m \to0$ in $\DD(X)$ if there exists a compact $K \subseteq X$ with $\supp\phi_m \subseteq K$ for all $m$, and $\pt^\alpha \phi_m \to 0$ uniformly for each $\alpha$;
+	\item $\phi_m \to0$ in $\SS(\RR^n)$ if $\norm{\phi_m}_{\alpha, \beta} \to 0$ for all $\alpha, \beta$;
+	\item $\phi_m \to0$ in $\EE(X)$ if $\pt^\alpha \phi_m \to 0$ uniformly on compact subsets of $X$ for all $\alpha$. 
+\end{enumerate}
+
+\paragraph{Spaces of distributions}
+The continuous linear maps from $\DD(X)$, $\SS(X)$, and $\EE(X)$ to $\CC$  are called \emph{distributions}, \emph{tempered distributions}, and \emph{compactly supported distributions} respectively, and these spaces are denoted $\DD'(X)$, $\SS'(\RR^n)$, $\EE'(X)$, employed with weak-$*$ convergence. Note that $\EE'(\RR^n) \subseteq \SS'(\RR^n) \subseteq \DD'(\RR^n)$. We have the following characterisations:
+\begin{enumerate}
+	\item $u \in \DD'(X)$ iff for every compact $K \subseteq X$ there exist non-negative $C, N$ such that for all $\phi \in \DD(X)$ with $\supp(\phi) \subseteq K$ we have 
+	\[
+	\abs{\ang{u, \phi}} \leq C \sum_{\abs{\alpha} \leq N} \sup_x \abs{\pt^\alpha\phi(x)}. 
+	\]
+	
+	\item $u \in \SS'(\RR^n)$ iff there exist constants $C, N$ such that for all $\phi \in \SS(\RR^n)$ we have
+	\[
+	\abs{\ang{u, \phi}} \leq C \sum_{\abs{\alpha}, \abs{\beta} \leq N} \norm{\phi}_{\alpha, \beta}. 
+	\]
+	
+	\item $u \in \EE'(X)$ iff there exists a compact $K\subseteq X$ and non-negative $C, N$ such that 
+	\[
+	\abs{\ang{u, \phi}} \leq C \sum_{\abs{\alpha} \leq N} \sup_{x \in K} \abs{\pt^\alpha \phi(x)}.
+	\]
+\end{enumerate}
+
+\paragraph{Basic operations}
+We define the following basic operations: 
+\begin{enumerate}
+	\itemsep=0em
+	\item if $f$ is smooth, then $\ang{fu, \phi} \ceq \ang{u, f\phi}$ (for Schwarz functions, we must have that $f\phi \in \SS(\RR^n)$ for all $\phi \in \SS(\RR^n)$);
+	\item For a distribution $u$: $\ang{\pt^\alpha u, \phi} \ceq (-1)^{\abs{\alpha}} \ang{u, \pt^\alpha\phi}$;
+	\item For a test function $\phi$ we define $(\tau_h\phi)(x) = \phi(x - h)$, and for a distribution $u$ we then define $\ang{\tau_h u, \phi} \ceq \ang{u, \tau_{-h}\phi}$. 
+	\item For a test function $\phi$ we define $\Rr[\phi](x) = \refl\phi(x) \ceq \phi(-x)$, and for a distribution $u$ we then define $\ang{\Rr[u], \phi} = \ang{\refl u, \phi} \ceq \ang{u, \refl\phi}$.
+\end{enumerate}
+
+\paragraph{Convolution} 
+\begin{enumerate}
+	\item For $u \in C^\infty(X)$, $\phi \in \DD(X)$, we define 
+	\[
+	(u * \phi)(x) \ceq \int_{\RR^n} u(x-y) \phi(y) \dd{y} = \int_{\RR^n} u(y) \phi(x-y) \dd{y} = \ang{u, \tau_x \refl\phi}.
+	\]
+	\item For $u \in \DD'(\RR^n)$, $\phi \in \DD(\RR^n)$, (or $u \in \EE'(\RR^n)$, $\phi \in \EE(\RR^n)$, or $u \in \SS'(\RR^n)$, $\phi \in \SS(\RR^n)$), we define
+	\[
+	(u* \phi)(x) \ceq \ang{u, \tau_x \refl\phi}. 
+	\]
+	It can be shown that $u * \phi$ is smooth, and that $\ang{u, \phi} = (u * \refl\phi)(0)$. 
+	\item For $u \in \DD'(\RR^n), v \in \EE'(\RR^n)$ or $u \in \EE'(\RR^n), v \in \DD'(\RR^n)$, define $u * v \in \DD'(\RR^n)$  by the property
+	\[
+	(u * v) * \phi = u * (v * \phi) \qquad\forall \phi\in \DD(\RR^n). 
+	\]
+\end{enumerate}
+
+\paragraph{Fourier transform}
+\begin{enumerate}
+	\item For $f \in L^1(\RR^n)$, define the Fourier transform by
+	\[
+	\FF[f](\lambda) = \hat f(\lambda) \ceq \int_{\RR^n} e^{-i\lambda\vdot x} f(x) \dd{x}. 
+	\]
+	It is known that $\FF$ is a continuous bijection from $\SS(\RR^n)$ to itself with inverse
+	\[
+	\FF^{-1}[\hat f](x) \ceq \frac1{(2\pi)^n} \int_{\RR^n} e^{i\lambda \vdot x} \hat f(\lambda) \dd{\lambda}. 
+	\]
+	Note that we can write $\FF^{-1} = \frac1{(2\pi)^n} \Rr \FF = \frac1{(2\pi)^n} \FF \Rr$. 
+	
+	\item For $u \in \SS'(\RR^n)$, we define the Fourier transform of $u$ by 
+	$\ang{\FF[u], \phi} = \ang{\hat u, \phi} \ceq \ang{u, \hat\phi}$. It is known that $\FF$ extends to a continuous bijection from $\SS'(\RR^n)$ to itself, with inverse $\FF^{-1} = (2\pi)^{-n} \Rr \FF = (2\pi)^{-n} \FF \Rr$. 
+\end{enumerate}
+
+\paragraph{Sobolev space}
+We define $\ang{\lambda} \ceq \sqrt{1 + \norm{\lambda}^2}$ for $\lambda \in \RR^n$, and note that $\ang{\lambda} \sim \norm{\lambda}$ for large $\lambda$. 
+
+For $s \in \RR$, we define the \emph{Sobolev space} $H^s(\RR^n)$ as the set of tempered distributions $u \in \SS'(\RR^n)$ for which $\hat u$ can be identified with a measurable function $\hat u(\lambda)$ such that 
+\[
+\int_{\RR^n} \ang{\lambda}^s \hat u(\lambda) \dd{\lambda} < \infty. 
+\]
+
