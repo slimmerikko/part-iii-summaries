@@ -116,9 +116,10 @@ Let $u, v \in \DD'(\RR^n)$, one of which has compact support. Show that the conv
 Recall that for all $u \in \DD'(\RR^n) \phi\in \DD(\RR^n)$, we have $\ang{u, \phi} = (u * \refl\phi)(0)$, and therefore $u * v$ should satisfy
 \[
 \ang{u * v, \phi} = ((u * v) * \refl\phi)(0) = (u * (v * \refl\phi))(0) = \ang{u, \Rr(v * \refl\phi)}. 
-\] Therefore 
+\] 
+We can now show existence and uniqueness:
 \begin{enumerate}
-	\item Define $w \colon \DD(\RR) \to \CC$ by 
+	\item Existence: define $w \colon \DD(\RR) \to \CC$ by 
 	\[
 	\ang{w, \phi} = \ang{u, \Rr(v * \refl\phi)}, 
 	\]
@@ -151,92 +152,6 @@ Recall that for all $u \in \DD'(\RR^n) \phi\in \DD(\RR^n)$, we have $\ang{u, \ph
 	which shows that $u* v \in \DD'(\RR^n)$. An analogous argument holds if $v$ is compactly supported. 
 \end{proof}
 
-\begin{question}
-	Show that if $u, v, w \in \DD'(\RR^n)$ and at least two of them have compact support, then the convolution is associative (i.e., $(u * v) * w) = u* (v * w)$). 
-\end{question}
-
-\begin{proof}
-	Note that the convolution between two compactly supported distributions is again compactly supported, which ensures that both expressions `make sense'. Now, let $\phi \in \DD(\RR^n)$, then we have
-	\begin{align*}
-		((u * v) * w) * \phi &= (u* v) * (w * \phi) = u * (v * ( w* \phi)) = u * ((v * w) * \phi) = (u * (v * w)) * \phi,
-	\end{align*}
-	which proves the theorem. 
-\end{proof}
-
-\begin{question}
-	Let $\phi \in \DD(\RR)$ and choose $\eps > 0$ sufficiently small so that $\supp(\phi) \subset I_\eps = (-1/\eps, 1/\eps)$. Given that $\phi$ has a uniformly convergent Fourier series on $I_\eps$ in the form
-	\[
-	\phi(x) = \sum_{n \in \ZZ} c_n e^{i \eps \pi n x}, \quad c_n = \frac\eps2 \int_\RR \phi(x) e^{-i\eps \pi n x} \dd{x},
-	\]
-	prove the Fourier inversion theorem on $\DD(\RR)$ by taking a suitable limit. 
-\end{question}
-
-\begin{proof}
-Since $\DD(\RR) \subseteq \SS(\RR)$, we know that the Fourier inversion formula holds. We only need to show that the Fourier tranform of $\phi$ is again an element of $\DD(\RR)$. (??)
-\end{proof}
-
-\begin{question}
-	For $\phi \in \SS(\RR^n)$ prove that $\sum_m \phi(m) = \sum_n \hat\phi(2\pi n)$. This is the famous Poisson summation formula. 
-\end{question}
-
-\begin{proof}
-	We have
-	\begin{align*}
-		\sum_m \phi(m) = \frac1{(2\pi)^n} \sum_m \int e^{i\lambda m} \hat \phi(\lambda) \dd{\lambda} = \sum_m \int e^{2\pi i \lambda m} \hat \phi(2\pi \lambda) \dd{\lambda}
-	\end{align*}
-(??)
-\end{proof}
-
-\begin{question}
-	If $u \in H^s(\RR^n)$ show that $D^\alpha u\in H^{s - \abs{\alpha}} (\RR^n)$. If $s > t$ show that $H^s(\RR^n) \subseteq H^t(\RR^n)$. 
-\end{question}
-
-\begin{proof}
-	Assuming $u \in H^s(\RR^n)$, we have
-	\begin{align*}
-		\int_{\RR^n} \ang{\lambda}^{2(s - \abs{\alpha})} \abs{\widehat{D^\alpha u}(\lambda)}^2 \dd{\lambda}  &= \int_{\RR^n} \ang{\lambda}^{2(s-\abs{\alpha})} \norm{\lambda}^{2\abs{\alpha}} \abs{\hat u(\lambda)}^2 \dd{\lambda} \\
-		&\les \int_{\RR^n} \ang{\lambda}^{2s} \abs{\hat u(\lambda)}^2 \dd{\lambda} < \infty, 
-	\end{align*}
-which proves $D^\alpha u \in H^{s- \abs{\alpha}}(\RR^n)$.
-
-The second claim follows immediately from the fact that $\ang{\lambda}^{t} \leq \ang{\lambda}^s$ for $s \geq t$ and $\lambda$ sufficiently large. 
-\end{proof}
-
-
-\begin{question}
-	Show that $S(\RR^n)$ is dense in $L^2(\RR^n) = H^0(\RR^n)$ and deduce that $\SS(\RR^n)$ is dense in $H^s(\RR^n)$.
-	
-	\emph{Hint:} Use Parseval's theorem. 
-\end{question}
-
-\begin{proof}
-	We will show that $\DD(\RR^n)$ is dense in $L^2(\RR^n)$: since $\DD(\RR^n) \subseteq \SS(\RR^n)$, this shows that $\SS(\RR^n)$ is dense in $L^2(\RR^n)$ as well. 
-	
-	(??)
-	
-	Now, for $u \in H^s(\RR^n)$, let $(\phi_m) \to u$ in $L^2$. Then we have
-	\begin{align*}
-		\norm{\phi_m - u}_{H^s}^2 = \int \ang{\lambda}^{2s} \abs{(\phi_m - u)(\lambda)}^2 \dd{\lambda}
-	\end{align*}
-
-(??)
-\end{proof}
-
-\begin{question}
-	Prove that multiplication by a Schwarz function gives rise to a continuous map from $H^s(\RR^n)$ to itself, i.e., $\norm{\phi u}_{H^s} \les \norm{u}_{H^s}$ for $\phi \in \SS(\RR^n)$. You may assume Peetre's inequality: for $\lambda, \nu \in \RR^n$ and $s \in \RR$
-	\[
-	\qty(\frac{1 + \norm{\lambda}^2}{1 + \norm{\mu}^2})^s \leq 2^{\abs{s}} \qty(1 + \norm{\lambda - \mu}^2)^{\abs{s}}. 
-	\]
-\end{question}
-
-\begin{proof}
-	We have
-	\begin{align*}
-		\norm{\phi u}_{H^s}^2 &= \int \abs{\FF[\phi u](\lambda)}^2 (1 + \norm{\lambda})^2 \dd{\lambda}
-	\end{align*}
-(??) (how to bound fourier transform of product??)
-\end{proof}
-%-----------------------------------------------------------------------------
 \setcounter{question}{18}
 
 \begin{question}
