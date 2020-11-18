@@ -113,11 +113,26 @@ Let $u, v \in \DD'(\RR^n)$, one of which has compact support. Show that the conv
 	\begin{equation} \label{def:convolution}
 	(u * v) * \phi = u * (v * \phi) \quad\text{for all $\phi \in \DD(\RR^n)$}. 
 	\end{equation}
-	To show that this is uniquely defined, recall that for all $u \in \DD'(\RR^n) \phi\in \DD(\RR^n)$, we have $\ang{u, \phi} = (u * \refl\phi)(0)$. Therefore, we have
+Recall that for all $u \in \DD'(\RR^n) \phi\in \DD(\RR^n)$, we have $\ang{u, \phi} = (u * \refl\phi)(0)$, and therefore $u * v$ should satisfy
+\[
+\ang{u * v, \phi} = ((u * v) * \refl\phi)(0) = (u * (v * \refl\phi))(0) = \ang{u, \Rr(v * \refl\phi)}. 
+\] Therefore 
+\begin{enumerate}
+	\item Define $w \colon \DD(\RR) \to \CC$ by 
 	\[
-	\ang{u * v, \phi} = ((u * v) * \refl\phi)(0) = (u * (v * \refl\phi))(0),
+	\ang{w, \phi} = \ang{u, \Rr(v * \refl\phi)}, 
 	\]
-	which shows that the formula \cref{def:convolution} uniquely defines $\ang{u * v, \phi}$ for any $\phi \in \DD(\RR^n)$, and therefore that $u * v$ is well-defined. For uniqueness, 
+	then we will show that $w$ satisfies $w * \phi = u * (v * \phi)$ for all $\phi \in \DD(\RR)$. 
+	\begin{align*}
+		(w * \phi)(x) &= \ang{w, \tau_x\refl\phi} = \ang{u, \Rr(v * \Rr(\tau_x \refl\phi))} = \ang{u, \Rr(v * \tau_{-x}\phi)} \\
+		&= \ang{u, \Rr \tau_{-x} (v * \phi)} = \ang{u, \tau_x \Rr(v * \phi)} = (u * (v * \phi))(x). 
+	\end{align*}
+\item Uniqueness: we have shown in the lectures that if $w * \phi = w' * \phi$ for all $\phi$, then $w = w'$. This shows that \cref{def:convolution} uniquely defines $u * v$. 
+\end{enumerate}
+%	\[
+%	\ang{u * v, \phi} = ((u * v) * \refl\phi)(0) = (u * (v * \refl\phi))(0),
+%	\]
+%	which shows that the formula \cref{def:convolution} uniquely defines $\ang{u * v, \phi}$ for any $\phi \in \DD(\RR^n)$, and therefore that $u * v$ is well-defined. For uniqueness, 
 	
 	Now we prove that $u * v \in \DD'(\RR^n)$: by the previous equation we have
 	\[
@@ -197,12 +212,29 @@ The second claim follows immediately from the fact that $\ang{\lambda}^{t} \leq 
 \begin{proof}
 	We will show that $\DD(\RR^n)$ is dense in $L^2(\RR^n)$: since $\DD(\RR^n) \subseteq \SS(\RR^n)$, this shows that $\SS(\RR^n)$ is dense in $L^2(\RR^n)$ as well. 
 	
-	\TODO Give proof.
+	(??)
 	
 	Now, for $u \in H^s(\RR^n)$, let $(\phi_m) \to u$ in $L^2$. Then we have
 	\begin{align*}
 		\norm{\phi_m - u}_{H^s}^2 = \int \ang{\lambda}^{2s} \abs{(\phi_m - u)(\lambda)}^2 \dd{\lambda}
 	\end{align*}
+
+(??)
+\end{proof}
+
+\begin{question}
+	Prove that multiplication by a Schwarz function gives rise to a continuous map from $H^s(\RR^n)$ to itself, i.e., $\norm{\phi u}_{H^s} \les \norm{u}_{H^s}$ for $\phi \in \SS(\RR^n)$. You may assume Peetre's inequality: for $\lambda, \nu \in \RR^n$ and $s \in \RR$
+	\[
+	\qty(\frac{1 + \norm{\lambda}^2}{1 + \norm{\mu}^2})^s \leq 2^{\abs{s}} \qty(1 + \norm{\lambda - \mu}^2)^{\abs{s}}. 
+	\]
+\end{question}
+
+\begin{proof}
+	We have
+	\begin{align*}
+		\norm{\phi u}_{H^s}^2 &= \int \abs{\FF[\phi u](\lambda)}^2 (1 + \norm{\lambda})^2 \dd{\lambda}
+	\end{align*}
+(??) (how to bound fourier transform of product??)
 \end{proof}
 %-----------------------------------------------------------------------------
 \setcounter{question}{18}

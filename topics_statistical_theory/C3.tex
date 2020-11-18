@@ -207,8 +207,76 @@ which concludes the case $x < 1- h\Delta$.
 
 Suppose $x \geq 1 - h\Delta$, then we have $u_1 \leq -\Delta$ and $u_n \geq 0$, and we can apply very similar arguments to reach the desired conclusion. 
 \end{proof}
+
+Now that we have bounds on the variance and bias, we can prove our uniform bound: 
+\begin{theorem}
+	Under the conditions of the previous two propositions, if we choose $h = \alpha n^{-1/(2\beta + 1)}$ for some $\alpha > 0$, there exists $n_0 \in \NN, C > 0$, depending only on $\beta, L, \alpha, K, \sigma_\Rm{max}^2$, such that
+	\[
+	\sup_{m \in \HH(\beta, L)} \sup_{x_0 \in [0, 1]} \EE\qty[ \qty{\hat m_n(x_0;p) - m(x_0)}^2] \leq Cn^{-2\beta/(2\beta + 1)}.
+	\]
+\end{theorem}
+
+
 %Suppose that $X\T W X$ is positive definite (this is a very weak condition), then we have
 %\begin{align*}
 %	\hat\beta = \argmin_{\beta \in \RR^{p+1}} (\beta - (X\T W X)^{-1} X\T W Y)\T (X\T W X) (\beta - (X\T W X)^{-1} X\T W Y),
 %\end{align*}
 %which is minimised at $\hat\beta = (X\T W X)^{-1} X\T WY$. 
+
+\subsection{Splines}
+\subsubsection{Cubic splines}
+Let $n \geq 3$ and $a \leq x_1 < \dotsb < x_n \leq b$.  
+\begin{definition}
+	A function $g \colon [a, b] \to \RR$ is called a \emph{cubic spline} with \emph{knots} $x_1, \dotsc, x_n$ if 
+	\begin{enumerate}
+		\item $g$ is a cubic polynomial on each interval $(a, x_1), (x_1, x_2), \dotsc, (x_n, b)$;
+		\item $g \in C^2[a, b]$. 
+	\end{enumerate}
+	Furthermore, $g$ is called \emph{natural} if it is linear on $[a, x_1]$ and $[x_n, b]$, (i.e., $g''(a) = g'''(a) = g''(b) = g'''(b) = 0$). 
+\end{definition}
+
+We often represent a natural cubic spline by the vectors $\vec g \in \RR^n$ with $g_i = g(x_i)$, and $\vec \gamma \in \RR^{n-2}$ with $\gamma_i = g''(x_i)$ (excluding $\gamma_1$ and $\gamma_n$). Writing $h_i \ceq x_{i+1} - x_i$ we have for $x \in [x_i, x_{i+1}]$ that
+\[
+g(x) = \frac{(x - x_i) g_{i+1} - (x_{i+1} - x) g_i}{h_i} - \frac16(x - x_i)(x_{i+1} - x) \qty{\qty(1 + \frac{x - x_i}{h_i})\gamma_{i+1} + \qty(1 + \frac{x_{i+1} - x}{h_i}\gamma_i)}.
+\]
+\begin{proposition}
+	Given $\vec g \in \RR^n$, there exists a unique natural cubic spline $g$ with knots at $x_1, \dotsc, x_n$ satisfying $g(x_i) = g_i$ for all $i$, and there exists $K \succeq 0$ (depending on $x_1, \dotsc, x_n$) such that
+	\[
+	\int_a^b g''(x)^2 \dd{x} = \vec g\T K \vec g. 
+	\]
+\end{proposition}
+We call $g$ the \emph{natural cubic spline interpolant to $\vec g$ at $x_1, \dotsc, x_n$}. 
+
+\begin{definition}
+	We define $\SS_2[a, b]$ as the set of real-valued functions on $[a, b]$ with an absolutely continuous first derivative. For $f \in \SS_2[a, b]$, we define the \emph{roughness} of $f$ by $R(f) \ceq \int_a^b f''(x)^2 \dd{x}$. 
+\end{definition}
+
+\begin{proposition}
+	For any $\vec g \in \RR^n$, the natural cubic spline interpolant to $\vec g$ at $x_1, \dotsc, x_n$ is the unique minimiser of $R$ over all $g \in \SS_2[a, b]$ that satisfy $g(x_i) = g_i$ for all $i$. 
+\end{proposition}
+
+\subsubsection{Natural cubic smoothing splines}
+Consider the nonparametric regression model $Y_i = g(x_i) + \sigma \eps_i$, where $\EE[\eps_i] = 0$ and $\Var[\eps_i] = 1$. A way to estimate a nonparametric regression function is to balance data fidelity against roughness of the curve, which can be done by minimising 
+\[
+S_\lambda(g) \ceq \sum_{i=1}^n (Y_i - g(x_i))^2 + \lambda R(g),
+\]
+where $\lambda > 0$ is a regularisation parameter. For small $\lambda$, this is almost an exact fit to the data. For large $\lambda$, we are basically minimising $\abs{g''}$, which means we will approximate the linear regression fit. 
+
+\begin{theorem}
+For each $\lambda \in (0, \infty)$, there exists a unique minimiser $\hat g_\lambda$ of $S_\lambda$ over $\SS_2[a, b]$. It is the natural cubic spline with knots at $x_1, \dotsc, x_n$ and $\vec g = (I + \lambda K)^{-1} \vec Y$. 
+\end{theorem}
+
+\begin{proof}
+	If $g$ is not a natural cubic spline, we know that the natural cubic spline $g^*$ which interpolates $g(x_1), \dotsc, g(x_n)$ at $x_1, \dotsc, x_n$ has a strictly lower value of $S_\lambda$, so we know the minimiser must be a natural cubic spline. 
+	
+	If $g$ is a natural cubic spline, then there exists $K \succeq 0$ such that
+	\begin{align*}
+		S_\lambda(g) &= (\vec Y - \vec g)\T (\vec Y - \vec g) + \lambda \vec g\T K \vec g \\
+		&= \vec g\T (I + \lambda K)\vec g - 2 \vec Y\T \vec g + \vec Y\T\vec Y,
+	\end{align*}
+and by ``completing the square'' we write, for some $Z$ independent of $\vec g$, 
+\[
+S_\lambda(g) = \qty(\vec g - (I + \lambda K)^{-1} \vec Y)\T (I + \lambda K) \qty(\vec g - (I + \lambda K)^{-1} \vec Y) + Z
+\]
+Since $I + \lambda K$ is positive definite it follows that $\vec g = (I + \lambda K)^{-1} \vec Y$ gives the minimiser. 
+\end{proof}

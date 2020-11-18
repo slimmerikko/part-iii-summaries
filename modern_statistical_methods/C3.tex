@@ -102,3 +102,52 @@ It is easily seen that $r(\Sigma) \leq \Rm{rank}(\Sigma)$, with equality if and 
 \end{theorem}
 
 In comparison with the previous bound, the dimension of the samples $d$ is replaced by the effective rank $r(\Sigma)$ (in fact, $d$ does not occur at all in this theorem!). This means that $d$ can grow rapidly with $n$, as long as $r(\Sigma)/n \to 0$. This can even be generalised to an infinite-dimensional setting with appropriate definitions. 
+
+\subsubsection{The graphical Lasso}
+We saw that if we make the structural assumption that the effective rank of $\Sigma$ is small, the sample covariance matrix $\hat\Sigma$ is a good estimator. However, there are other possible structural assumptions. 
+One is based on the following:
+\begin{proposition}
+	Let $Z \sim N(\mu, \Omega^{-1})$. Then $z_k \perp z_j \mid z_{-jk}$ ($z_k$ is independent of $z_j$ conditional on the other $z_i$) if and only if $\Omega_{jk} =0 $.  
+\end{proposition}
+
+\begin{proof}
+	We have
+	\begin{align*}
+		f(z_j, z_k \mid z_{-jk}) &= \frac{f(z_1, \dotsc, z_n)}{f(z_{-jk})} \propto f(z_1, \dotsc, z_n) \propto \exp(-\frac12 (z-\mu)\T \Omega(z-\mu)) \\
+		&= g(z_j) h(z_k) \exp(- z_j z_k \Omega_{jk}), 
+	\end{align*}
+and this factorises if and only if $\Omega_{jk} = 0$. 
+\end{proof}
+
+Assuming that many variables are independent of each other conditional on the other variables (or in other words, that $z_k$ and $z_j$ depend on each other only ``through the other $z_i$''), is a fairly natural assumption, which means it is sensible to assume that $\Omega$ is sparse. If this is the case, $\hat\Sigma$ may not be the best estimator. 
+
+The \emph{graphical lasso} explicitly penalises estimators of $\Omega$ with many non-zero entries, and is defined as
+\[
+\hat\Omega^\Rm{GL} \ceq \argmin_{\Omega \succ 0} \qty(-\log(\det\Omega) + \Tr(\hat\Sigma\Omega) + \lambda \norm{\Omega}_1), 
+\]
+where the 1-norm of a matrix is defined as the sum of the absolute values of its entries. This is exactly minus the log-likelihood plus a penalty term, and finding $\hat\Omega^\Rm{GL}$ is a convex optimisation problem which generally leads to sparse estimators. 
+
+Note that when we penalise $\norm{\Omega}_1$, we are also penalising the diagonal entries, which have nothing to do with conditional independence. Therefore, sometimes we penalise only $\sum_{j \neq k} \abs{\Omega_{jk}}$. 
+
+\subsection{Principal Component Analysis (PCA)}
+Let $X \in \RR^{n\times d}$ have i.i.d.\ rows with mean 0 and covariance $\Sigma$. Let $\lambda_1 \geq \dotsb \geq \lambda_d \geq 0$ be the eigenvalues of $\Sigma$ with eigenvectors $u_1, \dotsc, u_ d\in S^{d-1}$. For any $s \leq d$ we have
+\[
+\Span(u_1, \dotsc, u_s) = \argmax_{\dim(S) = s} \EE[ \norm{P_S x_1}^2] = \argmin_{\dim(S) = s} \EE[\norm{x_1 - P_S x_1}^2], 
+\]
+i.e., $\Span(u_1, \dotsc, u_s)$ is the $s$-dimensional subspace of $\RR^d$ with maximum variance and minimal residual variance. 
+
+The quantity $q_s = \frac{\sum_{i=1}^s \lambda_i}{\Tr(\Sigma)}$ is the proportion of variance captured by the largest $s$ eigenvalues, and this may be close to 1 for $s \ll d$. The idea of PCA is to approximate the eigenvalues and eigenvectors of $\Sigma$ by those of $\hat\Sigma = \frac1n (X - \bar X \mathbf{1})\T (X - \bar X \mathbf{1}) \ceq \frac1n \tilde X\T \tilde X$. 
+
+The main question is: how robust are eigenvectors and eigenvalues under perturbation of the data? 
+
+\subsubsection{Perturbation of eigenvalues and eigenvectors}
+Let $E = \hat\Sigma - \Sigma$, and suppose $E$ is a deterministic perturbation. We have proven bounds on $\norm{E}_\Rm{op}$. It is easily seen that
+\[
+\hat{\lambda_1} = \max_{v \in S^{d-1}} v\T (\Sigma + E)v \leq\max_{v \in S^{d-1}} v\T \Sigma v + \max_{v \in S^{d-1}} v\T E v  \leq \lambda_1 + \norm{E}_\Rm{op}, 
+\]
+and analogously it can be seen that $\lambda_1 \leq \hat\lambda_1 + \norm{E}_\Rm{op}$, so we obtain $\abs{\lambda_1 - \hat\lambda_1} \leq \norm{E}_\Rm{op}$. This can be generalised:
+\begin{theorem}[Weyl]
+	We have $\max_i \abs*{\hat\lambda_i - \lambda_i} \leq \norm{E}_\Rm{op}$. 
+\end{theorem}
+
+We conclude that eigenvalues are generally robust to small perturbations. However, eigenvectors are genearlly not robust to small perturbations. This is because when $\lambda_i$ and $\lambda_{i+1}$ are close to each other, then $\Span(\hat u_i, \hat u_{i+1})$ may be a good approximation of $\Span(u_i, u_{i+1})$, but it is not possible to identify the individual eigenvectors.  Therefore we must place further assumptions on the eigenvectors. 
