@@ -1,0 +1,63 @@
+\section{Minimax lower bounds}
+We seek lower bounds on the worst-case risk of any procedure, which provide a `benchmark'  against which we can measure the performance of a proposed method. 
+
+\subsection{Reduction to testing}
+We will assume our parameter space $(\Theta, d)$ is a metric space or a semi-metric space (where we don't require that $d(\theta, \theta') = 0 \implies \theta = \theta'$). We denote our collections of distributions depending on our parameters by $\qty{P_\theta \mid \theta \in \Theta}$, which are probability measures on some measurable space $(\XX, \AA)$. 
+
+Now, we let $(\Omega, \FF)$ be any measurable space with a collection of probability measures $\qty{\PP_\theta \mid \theta \in \Theta}$ and a measurable function $X \colon \Omega \to \XX$ so that $X \sim P_\theta$ on $(\Omega, \FF, \PP_\theta)$. Let $\hat\Theta$ denote the set of possible estimators for $\theta$, i.e., all measurable functions $\XX \to\Theta$. 
+
+Now, suppose we wish to estimate $\theta$ with a loss function of the form
+\[ 
+L(\theta', \theta) = g(d(\theta', \theta)) \qquad\text{$g$ increasing, $\theta', \theta \in \Theta$}. 
+\]
+We then define the \emph{minimax risk} as 
+\[
+\Cal M \ceq \inf_{\hat\theta \in \hat\Theta} \sup_{\theta \in \Theta} \EE_\theta L(\hat\theta(X), \theta),
+\]
+i.e., the lowest worst-case estimated loss of any possible estimator $\hat\theta$. 
+
+
+\begin{example}
+Suppose we are trying to estimate the mean of a normally distributed random variable with variance 1, and we have a sample $(X_1, \dotsc, X_n)$. Then $\Theta = \RR$ with the Euclidian distance, $(\XX, \AA) = (\RR^n, \BB\RR^n)$, and $P_\theta(F) = \int_F f_\theta(x_1)\dotsb f_\theta(x_n) \dd{\lambda^n(x)}$, where $f_\theta$ is the density function of a $N(\theta, 1)$ distribution. 
+
+Now, let $X_\theta \colon (\Omega, \FF) \to (\RR^n, \BB\RR^n)$ be a $N_n(\theta \vec 1, I_n)$ distributed random variable. In this case, $\PP_\theta$ is a probability measure on $\Omega$ such that $P_\theta(F) = \PP_\theta(X \in F)$. 
+
+Let $\hat\Theta$ denote the set of all estimators of $\theta$, which are functions $\RR^n \to \RR$. Our loss function could simply be $L(\theta', \theta) = \abs{\theta' - \theta}$ or $L(\theta', \theta) = (\theta' - \theta)^2$. 
+\end{example}
+
+For $M \in \NN$, let $[M] \ceq \qty{1, \dotsc, M}$, and let $\hat \TT$ denote the set of measurable functions $\XX \to [M]$. Given any $\theta_1, \dotsc, \theta_M \in \Theta$ and $\hat\theta \in \hat\Theta$, we can define $T_{\hat\theta} \in \hat\TT$ by
+\[
+T_{\hat\theta}(x) \ceq \argmin_{j \in [M]} d(\hat\theta(x), \theta_j), 
+\]
+where we pick the smallest $j$ in case of a tie. Intuitively, we are simply approximating $\hat\theta$ by the closest $\theta_j$. Now, we will lower-bound the minimax risk by an expression that only depends on estimators in $\hat\TT$. 
+
+Writing $\eta = \frac12 \min_{jk} d(\theta_j, \theta_k)$, we can lower-bound the worst-case loss of any fixed estimator $\hat\theta$ by 
+\begin{align*}
+	\sup_{\theta \in \Theta} \EE_\theta L(\hat\theta(X), \theta) &\geq \max_{j \in [M]} \EE_{\theta_j} g(d(\hat\theta, \theta_j)) \\
+	&= \max_{j \in [M]} \EE_{\theta_j} \qty{g(d(\hat\theta, \theta_j)) \ind_{T_{\hat\theta} \neq j}} \\
+	&\overset\star\geq g(\eta) \max_{j \in [M]} \EE_{\theta_j} \ind_{T_{\hat\theta} \neq j} \\
+	&= g(\eta) \max_{j \in [M]} P_{\theta_j}(T_{\hat\theta} \neq j), 
+\end{align*}
+where $\star$ holds because if $T_{\hat\theta} \neq j$, then $d(\hat\theta(x), \theta_j) \geq \eta$. 
+
+We therefore have
+\begin{align*}
+	\Cal M &\geq g(\eta) \inf_{\hat\theta \in \hat\Theta} \max_{j \in [M]} P_{\theta_j}(T_{\hat\theta} \neq j) \geq g(\eta) \inf_{T \in \hat\TT} \max_{j \in [M]} P_{\theta_j}(T \neq j) \\
+	&= g(\eta) \qty{1 - \sup_{T \in \hat\TT} \min_{j \in [M]} P_{\theta_j}(T = j)} \geq g(\eta) \qty{1 - \sup_{T \in \hat\TT} \frac1M \sum_{j=1}^M P_{\theta_j}(T = j)}. 
+\end{align*}
+Therefore, we have now reduced the problem of lower-bounding $\Cal M$ to the problem of upper-bounding $\sup_{T \in \hat T} \frac1M \sum_{j=1}^M P_{\theta_j}(T = j)$, which is a testing problem. 
+
+\subsection{Divergences}
+\begin{definition}
+	Let $\mu, \nu$ be measures on $(\XX, \AA)$. We say that $\mu$ is \emph{absolutely continuous} w.r.t.\ $\nu$, notation $\mu \ll\nu$, if
+	\[
+	\nu(A) = 0 \implies \mu(A) = 0. 
+	\]
+	
+	We say that $\mu, \nu$ are \emph{mutually singular}, notation $\mu \perp \nu$, if there exists $A \in \AA$ such that $\mu(A) = 0$ and $\nu(A\C) = 0$.
+\end{definition}
+Note that mutual singularity means that $\mu$ ``lives on'' $A\C$, while $\nu$ ``lives on'' $A$. 
+
+\begin{theorem}[Lebesgue]
+	If $\mu, \nu$ are $\sigma$-finite measures on $(\XX, \AA)$, then there exists measures $\mu_\Rm{ac}$ and $\mu_\Rm{sing}$ on $(\XX, \AA)$ such that $\mu$ can be decomposed as $\mu = \mu_\Rm{ac} + \mu_{\Rm{sing}}$, where $\mu_\Rm{ac} \ll \nu$ and $\mu_\Rm{sing} \perp \nu$. Furthermore, this decomposition is unique. 
+\end{theorem}

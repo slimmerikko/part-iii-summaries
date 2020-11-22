@@ -92,7 +92,7 @@ Note that $C \subseteq \XX$ is a convex set if and only if $\chi_C$ is a convex 
 \end{definition}
 
 \begin{lemma}
-	Let $E \colon \XX \to \rext$ be convex, then $E$ is subdifferentiable at all points $u \in \dom(E)$. If $E$ is also proper, then $E$ is not subdifferentiable at any $u \notin \dom(E)$. 
+	Let $E \colon \XX \to \rext$ be convex, then $E$ is subdifferentiable at all points $u \in \dom(E)$ where $E$ is continuous. If $E$ is also proper, then $E$ is not subdifferentiable at any $u \notin \dom(E)$. 
 \end{lemma}
 
 \begin{theorem}
@@ -187,7 +187,7 @@ Since $\inf\sup \geq \sup\inf$ always holds we have
 The problem (D) is called the \emph{dual problem}, and the fact that $(D) \leq (P)$ is called \emph{weak duality}. The value $(P) - (D)$ is called the \emph{duality gap}, and if $(P) = (D)$, we speak of \emph{strong duality}. 
 
 We have the following:
-\begin{theorem}
+\begin{theorem} \label{thm:primal_dual_gap}
 	Suppose the function $E(Au) + F(u)$ is proper, convex, LSC and coercive. Suppose also that there exists $u_0 \in \XX$ s.t.\ $F(u)< \infty$, $E(Au_0) < \infty$, and $E(y)$ is continuous at $y = A u_0$. Then:
 	\begin{enumerate}
 		\item The dual problem (D) has at least one solution $\hat\eta$;

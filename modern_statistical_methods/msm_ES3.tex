@@ -71,6 +71,7 @@
 \newcommand\restr{\mathord\restriction}
 \newcommand\TODO{{\color{red} TODO: }}
 \renewcommand\P{^\perp}
+\newcommand\pt\partial
 
 % Functions that appear frequently
 \DeclareMathOperator{\sign}{sgn}
@@ -121,4 +122,318 @@
 	\frac1n \norm{X(\beta^0 - \hat\beta)}_2^2 \leq \frac{9A^2 \log(p)}{4\phi^2} \frac{\sigma^2 s}{n}. 
 	\]
 \end{question}
+\begin{proof}
+	We have 
+	\begin{align*}
+		\frac{1}{\lambda n} \norm{X(\beta^0 - \hat\beta)}_2^2 &\leq \frac{1}{2 \lambda n} \ang*{\frac{2X\T\eps}{n}, (\hat\beta - \beta^0)} + \norm{\beta^0}_1 - \norm{\hat\beta}_1 \\
+		&\leq \frac12 \norm{\hat\beta - \beta^0}_1 + \norm{\beta^0}_1 - \norm{\hat\beta}_1 \\
+		&= \frac12 \qty(\norm{\hat \beta_S - \beta^0_S}_1 + \norm{\hat\beta_N}_1) + \norm{\beta^0_S}_1 - \norm{\hat\beta_S}_1 - \norm{\hat\beta_N}_1 \\
+		&= \frac12 \norm{\hat \beta_S - \beta^0_S}_1  + \norm{\beta^0_S}_1 - \norm{\hat\beta_S}_1 - \frac12 \norm{\hat\beta_N}_1 \\
+		&\overset\star\leq \frac32 \norm{\hat\beta_S - \beta^0_S} - \frac12 \norm{\hat\beta_N}_1 \\
+		&\leq \frac32 \norm{\hat\beta_S - \beta^0_S}_1,	\end{align*}
+and note that from $\star$ we conclude $\norm{\hat\beta_N}_1 \leq 3 \norm{\hat\beta_S - \beta^0_S}_1$, and therefore $\hat\beta - \beta^0$ can be plugged into the compatibility constant. 
+We find
+\[
+\frac1n \norm{X(\beta^0 -\hat\beta)}_2^2 \leq \frac{3\lambda \sqrt s}{2\phi \sqrt n} \norm{X(\beta^0 - \hat\beta)}_2 \implies \frac1{\sqrt n} \norm{X(\beta^0 - \hat\beta)}_2 \leq \frac{3\lambda \sqrt s}{2\phi },
+\]
+and squaring both sides gives
+\[
+\frac1n \norm{X(\beta^0 -\hat\beta)}_2^2 \leq \frac{9\lambda^2 s}{4\phi^2}
+\]
+\end{proof}
+
+\begin{question}
+Let $Y = X\beta^0 + \eps - \eps \vec 1$ and let $S = \qty{k \mid \beta^0 \neq 0}$, $N \ceq \qty{1, \dotsc, p} \setminus S$. Without loss of generality assume $S = \qty{1, \dotsc, \abs{S}}$. Assume that $X$ has full column rank and let $\Omega = \qty{\norm{X\T\eps}_\infty/n \leq \lambda_0}$. Show that, when $\lambda > \lambda_0$, if the following two conditions hold
+\begin{align*}
+	\sup_{\norm{\tau}_\infty \leq 1} \norm{X_N\T X_S (X_S\T X_S)^{-1} \tau}_\infty &< \frac{\lambda - \lambda_0}{\lambda + \lambda_0} \\
+	(\lambda + \lambda_0) \norm{\qty{(\frac1n X_S\T X_S)^{-1}}_k}_1 &< \abs{\beta^0_k} &\text{for $k \in S$}, 
+\end{align*}
+then on $\Omega$ the (unique) Lasso solution satisfies $\sign(\hat\beta_\lambda^L) = \sign(\beta^0)$. 
+\end{question}
+
+\begin{proof}
+	Following the proof of theorem 22 in the lecture notes, the KKT conditions become 
+	\[
+	\frac1n \mqty(X_S\T X_S & X_S\T X_N \\ X_N\T X_S & X_N\T X_N) \mqty( \beta^0_S - \hat\beta_S \\ - \hat\beta_N) + \frac1n \mqty(X_S\T \\ X_N\T) \eps  = \lambda \mqty(\hat\nu_S \\ \hat\nu_N). 
+	\]
+	We first prove there exists a Lasso solution $(\hat\beta_S, 0)$ which satisfies the KKT conditions. 
+	Solving the top equation block for $\hat\beta_S$ gives
+	\begin{equation} \label{eq:condition_beta}
+	\hat\beta_S = \beta^0_S - \qty(\frac1n X_S\T X_S)^{-1} \qty(\lambda \sign(\beta^0_S) - \frac1n X_S\T \eps).
+	\end{equation}
+	To prove that $\sign(\beta^0_S) = \sign(\hat\beta_S)$ holds, note that for $k \in S$ we have
+	\begin{align*}
+		\abs{\qty{\qty(\frac1n X_S\T X_S)^{-1} \qty(\lambda \sign(\beta^0_S) - \frac1n X_S\T \eps)}_k} &= \abs{\qty(\frac1n X_S\T X_S)^{-1}_k \qty(\lambda \sign(\beta^0_S) - \frac1n X_S\T \eps)} \\
+		&\leq \norm{\qty(\frac1n X_S\T X_S)^{-1}_k}_1 \norm{\lambda \sign(\beta^0_S) - \frac1n X_S\T \eps}_\infty \\
+		&< \frac{\abs{\beta^0_k}}{\lambda + \lambda_0} \cdot (\lambda + \lambda_0) = \abs{\beta^0_k}, 
+	\end{align*}
+since $\norm{\frac1nX_S\T\eps}_\infty \leq \norm{\frac1n X\T\eps}_\infty \leq \lambda_0$.  Plugging this result into \cref{eq:condition_beta} shows that $\sign(\hat\beta_S) = \sign(\beta^0_S)$. 
+
+We must show that with this choice of $\hat\beta$, the bottom block is satisfied, i.e., 
+\begin{align*}
+\lambda \geq \norm{\frac1n X_N\T X_S(\beta^0_S - \hat\beta_S) + \frac1n X_N\T\eps}_\infty &= \norm{X_N\T X_S (X_S\T X_S)^{-1} \qty(\lambda \sign(\beta^0_S) - \frac1n X_S\T\eps) + \frac1n X_N\T \eps}_\infty = (*). 
+\end{align*}
+Note that
+\[
+\norm{\lambda \sign(\beta^0_S) - \frac1nX_S\T\eps}_\infty \leq \lambda + \lambda_0, 
+\]
+and plugging that into the previous equation yields
+\[
+(*)  \leq (\lambda + \lambda_0) \cdot \sup_{\norm{\tau}_\infty \leq 1} \norm{X_N\T X_S (X_S\T X_S)^{-1} \tau}_\infty + \lambda_0 \leq \lambda- \lambda_0 + \lambda_0 = \lambda, 
+\]
+which concludes the proof. 
+
+\TODO Uniqueness?????
+\end{proof}
+
+\begin{question}
+	Find the KKT conditions for the group Lasso.
+\end{question}
+
+\begin{proof}
+	Recall the objective function in group Lasso is the convex function
+	\[
+	\frac1{2n} \norm{Y- X\beta}_2^2 + \lambda \sum_{j=1}^q m_j \norm{\beta_{G_j}}_2. 
+	\]
+	Note that the subdifferential of the 2-norm is given by
+	\[
+	\partial \norm{x}_2 = \begin{cases}
+		\qty{x/\norm{x}_2}, &x \neq 0, \\
+		\qty{v : \norm{v}_2 \leq 1}, &x = 0. 
+	\end{cases}
+	\]
+	
+	Furthermore, note that the subdifferential of $\frac1{2n} \norm{Y - X\beta}_2^2$ is $\qty{-\frac1n X\T (Y - X\beta)}$. We therefore find that 0 lies in the subdifferential if and only if, for $j = 1, \dotsc, q$, we have
+	\[
+	\begin{cases}
+		(\frac1n X\T (Y - X\beta))_{G_j} = \lambda m_j  \beta_{G_j} / \norm{\beta_{G_j}}_2, &\text{if $\beta_{G_j} \neq 0$}, \\
+		\norm{(\frac1n X\T (Y - X\beta))_{G_j}}_2 \leq \lambda m_j, &\text{if $\beta_{G_j} = 0$}. 
+	\end{cases}
+	\]
+\end{proof}
+
+\begin{question}
+	\begin{enumerate}[(a)]
+		\item 	Show that
+		\[
+		\max_{\theta : \norm{X\T\theta}_\infty \leq \lambda} G(\theta) = \frac1{2n} \norm{Y - X\hat\beta_\lambda^L}_2^2 + \lambda \norm{\hat\beta_\lambda^L}_1, 
+		\]
+		where 
+		\[
+		G(\theta) = \frac1{2n} \norm{Y}_2^2 - \frac1{2n} \norm{Y - n\theta}_2^2. 
+		\]
+		Show that the unique $\theta$ maximising $G$ is $\theta^* = (Y - X\hat\beta_\lambda^L)/n$. 
+		
+		\emph{Hint:} Treat the Lasso optimisation problem as minimising $\norm{Y - z}^2_2/(2n) + \lambda\norm{\beta}_1$ subject to $z - X\beta = 0$ over $(\beta, z) \in \RR^p \times \RR^n$ and consider the Lagrangian. 
+		
+		\item Let $\tilde\theta$ be such that $\norm{X\T \tilde\theta}_\infty \leq \lambda$. Explain why if
+		\[
+		\max_{\theta: G(\theta) \geq G(\tilde\theta)} \abs{X_k\T\theta} < \lambda,
+		\]
+		then we know that $\hat\beta_{\lambda, k}^L = 0$. By considering $\tilde\theta = Y\lambda/(n\lambda_\Rm{max})$, show that $\hat\beta_{\lambda, k}^L = 0$ if
+		\[
+		\frac1n\abs{X_k\T Y} < \lambda - \frac{\norm{Y}_2}{\sqrt n} \frac{\lambda_\Rm{max} - \lambda}{\lambda_\Rm{max}}. 
+		\]
+	\end{enumerate}
+
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}[(a)]
+		\item 	As in the hint, we write the Lasso objective problem as
+	\[
+	\min_{\substack{(\beta, z) \in \RR^p \times \RR^n, \\ z - X\beta = 0}} \frac1{2n} \norm{Y- z}_2^2 + \lambda\norm{\beta}_1. 
+	\]
+	The Lagrangian is now
+	\[
+	L(z, \beta, \theta) = \frac1{2n} \norm{Y - z}_2^2 + \lambda\norm{\beta}_1 + \theta\T (z - X\beta),
+	\]
+	and the dual function is given by
+	\[
+	\tilde f(\theta) = \inf_{(\beta, z) \in \RR^p \times \RR^n} L(z, \beta, \theta) =  \inf_{\beta \in \RR^p} \qty(\lambda\norm{\beta}_1 - \theta\T X\beta) + \inf_{z \in \RR^n} \qty(\frac1{2n}\norm{Y- z}_2^2 + \theta\T z). 
+	\]
+	
+		For the first term: note that $\theta\T X \beta \leq \norm{X\T\theta }_\infty \norm{\beta}_1$, with equality for $\beta$ suitably chosen. Therefore, the first term has infimum $-\infty$ if $\norm{X\T\theta}_\infty > \lambda$, and otherwise has infimum 0 when setting $\beta = 0$. 
+		
+		
+	The second term has $z$-gradient $-\frac1n(Y - z) + \theta$, and equating that to 0 gives $z = Y - n\theta$. Plugging this into the second term gives
+	\begin{align*}
+	\frac1{2n} \norm{n\theta}_2^2 + \theta\T Y - n \theta\T\theta &= \theta\T Y - \frac n2 \theta\T \theta \\0
+	&= \theta\T Y - \frac n2 \theta\T \theta + \frac1{2n} Y\T Y - \frac1{2n} Y\T Y \\
+	&= \frac1{2n} Y\T Y - \frac1{2n} (Y - n\theta)\T (Y - n\theta) \\
+	&= \frac1{2n} \norm{Y}_2^2 - \frac1{2n} \norm{Y - n\theta}_2^2 = G(\theta). 
+	\end{align*}
+
+Therefore, the dual function is given by
+\[
+\tilde f(\theta) = \begin{cases}
+	-\infty &\text{if $\norm{X\T\theta} > \lambda$}, \\
+	G(\theta) &\text{if $\norm{X\T\theta} \leq \lambda$}. 
+\end{cases}
+\]
+The optimal value of the dual problem is therefore 
+\[
+d^* = \max_{\theta \in \RR^n} \tilde f(\theta) = \max_{\theta : \norm{X\T\theta}_\infty \leq \lambda} G(\theta), 
+\]
+which equals the optimal value of the primal problem. This proves the first claim. 
+
+%For the maximum: it is clear that the global maximum of $G$ is given by $\theta= Y/n$. We then have
+%\[
+%\norm{X\T\theta}_\infty \leq \lambda \iff \frac1n \norm{X\T Y}_\infty \leq \lambda, 
+%\]
+%and in the latter case we have $\hat\beta = 0$ by question 11 of the previous example sheet, so indeed the unique maximiser is then $(Y - X \hat\beta_\lambda^L) /n $. 
+%
+%Suppose however that $\lambda < \frac1n \norm{X\T Y}_\infty$, then we have
+%\[
+%\theta^* = \argmin_{\norm{X\T\theta}_\infty =\lambda} \norm{Y - n\theta}_2^2
+%\]
+
+By the KKT conditions we have $\norm{X\T\theta}_\infty = \frac1n\norm{X\T(Y - X\hat\beta)}_\infty \leq \lambda$, and plugging in $\theta^*$ in $G$ gives
+\begin{align*}
+	G(\theta^*) &= \frac1{2n} \qty(\norm{Y}_2^2 - \norm{X\hat\beta}_2^2) = \frac1{2n} \qty(\norm{Y - X\hat\beta}_2^2 + 2 Y\T X \hat\beta - 2 \norm{X\hat\beta}_2^2) \\
+	&= \frac1{2n}\norm{Y - X\hat\beta}_2^2 + \hat\beta\T \qty{\frac1n X\T(Y - X\hat\beta)} \\
+	&\overset\star= \frac1{2n} \norm{Y - X\hat\beta}_2^2 + \lambda \norm{\beta}_1,
+\end{align*}
+where $\star$ follows from the KKT conditions. This shows that $\theta^*$ maximises $G$ over the objective set.  \TODO Uniqueness of $\theta^*$? 
+
+\item Clearly
+\[
+\max_{\theta : G(\theta) \geq G(\tilde\theta)} \abs{X_k\T \theta} < \lambda \implies \abs{X_k\T \theta^*} < \lambda. 
+\]
+We compute
+\[
+X_k\T \theta^* = (X\T \theta^*)_k = \qty(\frac 1n X\T (Y - X\hat\beta))_k = \lambda \hat\nu_k, 
+\]
+where $\hat\nu$ is from the KKT conditions, and we know that $\hat\beta_{\lambda, k}^L \neq 0 \implies \abs{\hat \nu_k} = 1$.
+However, we have
+\[
+\lambda > \abs{X_k\T \theta^*} = \lambda \abs{\hat\nu_k} \implies \abs{\hat\nu_k} < 1 \implies \hat\beta_{\lambda, k}^L = 0. 
+\]
+
+Now let $\tilde\theta = Y\lambda/ (n\lambda_\Rm{max})$. It is easily checked that $\norm{X\T\theta}_\infty = \lambda$. Now, clearly we have 
+\[
+G(\theta) \geq G(\tilde\theta) \implies  \norm{Y- n\theta}_2^2 \leq \norm{Y - n \tilde\theta}_2^2 = \qty(1 - \frac\lambda{\lambda_\Rm{max}})^2 \norm{Y}_2^2 = \qty(\frac{\lambda_\Rm{max} - \lambda}{\lambda_\Rm{max}})^2 \norm{Y}_2^2.
+\]
+We find that for $G(\theta) \geq G(\tilde\theta)$ we have
+\begin{align*}
+	\abs{X_k\T\theta} &= \frac1n\abs{X_k\T (n\theta)} = \frac1n \abs{X_k\T (n\theta - Y + Y)} \\
+	&\leq \frac1n \abs{X_k\T (Y - n\theta)} + \frac1n \abs{X_k\T Y} \\
+	&< \frac1n \norm{X_k}_2 \norm{Y - n\theta}_2 + \lambda - \frac{\norm{Y}_2}{\sqrt n} \frac{\lambda_\Rm{max} - \lambda}{\lambda_\Rm{max}} \\
+	&\leq \frac{1}{\sqrt n} \frac{\lambda_\Rm{max} - \lambda}{\lambda_\Rm{max}} \norm{Y}_2 + \lambda - \frac{\norm{Y}_2}{\sqrt n} \frac{\lambda_\Rm{max} - \lambda}{\lambda_\Rm{max}} = \lambda,
+\end{align*}
+and from the previous observation we conclude $\hat\beta^L_{\lambda, k} = 0$ (note that we used $\norm{X_k}_2 = \sqrt n$). 
+\end{enumerate}
+\end{proof}
+
+\begin{question}
+	Consider the Lasso and let $\hat E_\lambda \ceq \qty{k : \frac1n \abs{X_k\T (Y - X\hat\beta_\lambda^L)} = \lambda}$ be the equicorrelation set at $\lambda$. Suppose that $\rank(X_{\hat E_\lambda}) = \abs{\hat E_\lambda}$ for all $\lambda > 0$, so the Lasso solution is unique for all $\lambda > 0$. Let $\hat\beta_{\lambda_1}^L$ and $\hat\beta_{\lambda_2}^L$ be two Lasso solutions at different values of the regularisation parameter. Suppose that $\sign(\hat\beta_{\lambda_1}^L) = \sign(\hat\beta_{\lambda_2}^L)$. Show that then for all $t \in [0, 1]$,
+	\[
+	t \hat \beta_{\lambda_1}^L + (1-t) \hat\beta_{\lambda_2}^L = \hat\beta_{t \lambda_1 + (1-t)\lambda_2}^L.
+	\]
+	
+	Conclude that the solution path $\lambda \mapsto \hat\beta_\lambda^L$ is piecewise linear with a finite number of knots (points $\lambda$ where the solution path is not linear at $\lambda$) and these occur when the sign of the Lasso solution changes. 
+\end{question}
+
+\begin{proof}
+	Write $\hat\beta_i = \hat\beta^L_{\lambda_i}$ $\gamma = t \hat\beta_{1} + (1-t) \hat\beta^{2}$, then we have
+	\begin{align*}
+	\frac1n X\T(Y - X\gamma) &= t \frac1n X\T(Y - X\hat\beta_1) + (1-t) \frac1n X\T (Y - X\hat\beta_2) \\
+	&= t \lambda_1 \hat \nu_1 + (1-t)\lambda_2 \hat\nu_2. 
+	\end{align*}
+	Note that $\hat\nu_1$ and $\hat\nu_2$ agree on $\hat E_\lambda$, and on the other points we clearly have $\norm{\hat\nu}_\infty \leq 1$, so we conclude
+	\[
+	\frac1n X\T (Y - X\gamma) = (t\lambda_1 + (1-t)\lambda_2) \hat\nu, 
+	\]
+	where $(\hat\nu)_S = \sign(\gamma)_S$ and $\norm{\hat\nu}_\infty \leq 1$. This shows that $\gamma$ is a Lasso solution.
+	
+	It follows that the solution path is piecewise linear with knots whenever the sign of the Lasso solution changes. Since the Lasso solution is 0 for $\lambda$ large enough, there can only be finitely many sign changes, which concludes the proof. (\TODO elaborate on last step)
+\end{proof}
+
+\begin{question}
+	The elastic net estimator in the linear model minimises
+	\[
+	\frac1{2n} \norm{Y - X\beta}_2^2 + \lambda \qty(\alpha \norm{\beta}_1 + (1-\alpha) \norm{\beta}_2^2/2)
+	\]
+	over $\beta \in \RR^p$, where $\alpha \in [0, 1]$ is fixed. 
+	\begin{enumerate}
+		\item 	Suppose $X$ has two columns $X_j$ and $X_k$ that are identical and $\alpha < 1$. Explain why the minimising $\beta^*$ above is unique and has $\beta_k^* = \beta_j^*$. 
+		\item Let $\hat\beta^{(0)}, \hat\beta^{(1)}, \dotsc$ be the solutions from iterations of a coordinate descent procedure to minimise the elastic net objective. For a fixed variable index $k$, let $A = \qty{1, \dotsc, k-1}, B = \qty{k+1,\dotsc, p}$. Show that for $m \geq 1$,
+		\[
+		\hat\beta_k^{(m)} = \frac{S_{\lambda\alpha} \qty(n^{-1} X_k\T (Y - X_A \hat\beta_A^{(m)} - X_B \hat\beta_B^{(m-1)}))}{1 + \lambda(1-\alpha)},
+		\] 
+		where $S_t(u) = \sign(u) (\abs{u} - t)_+$ is the soft-thresholding operator.
+	\end{enumerate}
+
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}
+		\item The minimiser $\beta^*$ is unique because the objective function is strictly convex: since $\alpha < 1$, the term $(1-\alpha) \norm{\beta}_2^2 / 2$ is strictly convex, and therefore the sum with another convex function is also convex. 
+		
+		If $\beta_k^* \neq \beta_j^*$, then it is easily seen that replacing both $\beta_k^*$ and $\beta_j^*$ by $\frac12(\beta_k^* + \beta_j^*)$ gives a smaller objective value (the term $\norm{Y - X\beta}_2^2$ stays the same and the other two terms will be less by convexity) which contradicts the fact that $\beta^*$ is a minimiser. 
+		
+		\item For simplicity, let $\beta_A \ceq \hat\beta_A^{(m)}$ and $\beta_B \ceq \hat\beta_B^{(m-1)}$, so our goal is to find
+		\[
+		\argmin_{\beta_k \in \RR} g(\beta_k) \quad\text{where } g(\beta_k) = f(\beta_A, \beta_k, \beta_B). 
+		\]
+		Note that for some $h(\beta_A, \beta_B)$ we can write
+		\begin{align*}
+			g(\beta_k) &= \frac1{2n} \norm{Y - (X_A \beta_A + X_B \beta_B + X_k \beta_k)}_2^2 + \lambda \alpha \abs{\beta_k} + \frac{\lambda(1-\alpha)}{2} \beta_k^2 + h(\beta_A, \beta_B),
+		\end{align*}
+		and therefore the subdifferential of $g$ in $\beta_k$ becomes, using $X_k\T X_k = \norm{X_k}_2^2= n$, 
+		\begin{align*}
+		\pt g(\beta_k) &= - \frac1n X\T (Y - X_A\beta_A - X_B\beta_B - X_k\beta_k) + \lambda \alpha \hat \nu + \lambda(1-\alpha)\beta_k \\
+		&= -\frac1n X\T(Y - X_A\beta_A - X_B\beta_B) + \lambda \alpha \hat\nu + (1 + \lambda(1-\alpha))\beta_k, 
+		\end{align*}
+	where $\hat\nu = \sign(\beta_k)$ if $\beta_k \neq 0$ and else $\hat\nu \in [-1, 1]$. 
+	Rewriting gives
+	\begin{equation} \label{eq:elastic_net}
+	0 \in \pt g(\beta_k) \iff \beta_k = \frac{\frac1n X\T(Y - X_A\beta_A - X_B\beta_B) - \lambda\alpha\hat\nu}{1 + \lambda(1-\alpha)}.
+	\end{equation}
+	We can distinguish three cases: 
+	\begin{enumerate}
+		\item If $\frac1n X\T (Y - X_A\beta_A - X_B\beta_B) > \lambda\alpha$, we can set $\hat\nu = 1$ in \cref{eq:elastic_net} (and indeed $\beta_k$ will be strictly positive).
+		\item If $\frac1n X\T(Y - X_A\beta_A - X_B\beta_B) < -\lambda\alpha$, we can set $\hat\nu = -1$ in \cref{eq:elastic_net} (and indeed $\beta_k$ will be strictly negative). 
+		\item If $\abs{\frac1nX\T (Y - X_A\beta_A - X_B\beta_B)} \leq \lambda\alpha$, we can choose $\hat\nu \in [-1, 1]$ such that the expression in \cref{eq:elastic_net} becomes 0, and therefore we can choose $\beta_k = 0$. 
+	\end{enumerate}
+	It is easily checked that these three cases can be combined into the formula
+	\[
+	\beta_k = \frac{S_{\lambda \alpha}(\frac1n X\T (Y - X_A \beta_A - X_B\beta_B))}{1 + \lambda(1-\alpha)}. 
+	\]
+	\end{enumerate}
+\end{proof}
+
+\begin{question}
+	Assume $X$ is an $n \times d$ matrix with i.i.d.\ rows with $N(\mu, \Sigma)$ distribution and $\norm{\Sigma}_\Rm{op} = \sigma^2$. Prove a deviation bound similar to theorem 28 for the maximum likelihood estimator $\hat\Sigma = \frac1n \sum_{i=1}^n (x_i - \bar X)(x_i - \bar X)\T$. The bound should hold for $\delta > d$. 
+\end{question}
+
+\begin{proof}
+	???
+\end{proof}
+
+\begin{question}
+	Let $X \in \RR^{n \times p}$ ($n > p$) be a centred data matrix with (thin) SVD $X = UDV\T$. Let the first \emph{principal component} be $u^{(1)} = D_{11} U_1$, and the first \emph{loading vector} be $v^{(1)} = V_1$. We may define the $k$th principal component $u^{(k)}$ and loading vector $v^{(k)}$ for $k > 1$ inductively as follows:
+	\begin{align*}
+		v^{(k)} \ceq \argmax_{\substack{\norm{v}_2 = 1, \\ Xv \perp \qty{u^{(1)}, \dotsc, u^{(k-1)}}}} \norm{Xv}_2,  \qquad u^{(k)} \ceq Xv^{(k)}. 
+	\end{align*}
+Suppose that $D_{11}, \dotsc, D_{pp}$ are all distinct. Show that $v^{(k)} = V_k$ and $u^{(k)} = D_{kk} U_k$ (up to an arbitrary sign). 
+\end{question}
+
+\begin{proof}
+	We can write $X = UDV\T = \sum_{i=1}^p D_{ii} U_i V_i\T$. Now, expand any $v \in S^{p-1}$ in the basis defined by the columns of $V$, so $v = \sum_{i=1}^p \alpha_p V_p$ (we have $\sum_i \alpha_i^2 =1$). Then we have
+	\[
+	Xv = \sum_{i=1}^p \sum_{j=1}^p D_{ii} \alpha_j U_i V_i\T V_j = \sum_{i=1}^p \alpha_i D_{ii} U_i, \quad \norm{Xv}_2^2 = \sum_{i=1}^p \alpha_i^2 D_{ii}^2. 
+	\]
+	Now, it is clear that \[Xv \perp \qty{u^{(1)}, \dotsc, u^{(k-1)}} \overset{\Rm{IH}}{\iff} Xv \perp \qty{U_1, \dotsc, U_{k-1}} \iff \alpha_1, \dotsc, \alpha_{k-1} = 0. 
+	\]
+	Subject to the constraint $\alpha_1, \dotsc, \alpha_{k-1} = 0$ and $\sum_i \alpha_i^2 = 1$, it is clear that we can maximise $\norm{Xv}_2^2$ by choosing $\alpha_k = \pm 1$ and $\alpha_{k+1},\dotsc, \alpha_p = 0$, and then we obtain $v^{(k)} = \pm V_k$ and $u^{(k)} = XV_k = \pm D_{kk} U_k$. 
+\end{proof}
+
+\begin{question}
+	Suppose we wish to obtain the principal components of the (not necessarily centred) matrix $\Phi \in \RR^{n\times d}$. Explain how we can recover the principal components given only $K = \Phi\Phi\T$. 
+\end{question}
+
+\begin{proof}
+	If $\Phi$ were centred, we could simply compute the eigenvectors $U_1, \dotsc, U_p$ of $K$ with nonzero eigenvalues $\lambda_1,\dotsc, \lambda_p$, and the principal components would be $\sqrt{\lambda_1} U_1, \dotsc, \sqrt{\lambda_p} U_p$. 
+\end{proof}
 \end{document}

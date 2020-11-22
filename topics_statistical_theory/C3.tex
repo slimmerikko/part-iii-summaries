@@ -61,15 +61,7 @@ For $p = 0$ and $p = 1$, there exist explicit formulas for the local polynomial 
 \end{proposition}
 
 \begin{proof}
-	We have 
-	\begin{align*}
-		\frac1n \sum_{i=1}^n w_p(x, x_i) R(x_i) &= \hat\beta_0, 
-	\end{align*}
-where
-\begin{align*}
-	\hat\beta &= \argmin_{\beta \in \RR^{p + 1}} \sum_{i=1}^n \qty(R(x_i) - \beta\T Q_h(x_i - x))^2 K_h(x_i - x).
-\end{align*}
-By choosing $\hat\beta$ such that $\hat\beta\T Q_h(\cdot - x) = R$, we obtain 0, and therefore  this is indeed the minimiser. Since $Q_h(0) = e_1$, it follows that $R(x) = \hat\beta\T Q_h(x - x) = \hat\beta_0$, which concludes the proof. 
+See example sheet 2 question 3.
 \end{proof}
 
 Before we can study the bias and variance of local polynomial estimators, we require the following lemma:
@@ -280,3 +272,34 @@ S_\lambda(g) = \qty(\vec g - (I + \lambda K)^{-1} \vec Y)\T (I + \lambda K) \qty
 \]
 Since $I + \lambda K$ is positive definite it follows that $\vec g = (I + \lambda K)^{-1} \vec Y$ gives the minimiser. 
 \end{proof}
+
+The function $\hat g_\lambda$ is called the \emph{natural cubic smoothing spline} for data $(x_1, Y_1), \dotsc, (x_n, Y_n)$ and smoothing parameter $\lambda$. 
+
+\subsubsection{Choice of smoothing parameter}
+We are left with the question of how to choose the smoothing parameter $\lambda$. A standard method is to minimise the cross-validation score
+\[
+\CV(\lambda) \ceq \frac1n \sum_{i=1}^n \qty(Y_i - \hat g_{-i, \lambda}(x_i))^2, 
+\]
+where $\hat g_{-i, \lambda}$ is the natural cubic smoothing spline for all data points except $(x_i, Y_i)$. It seems like computing $\CV(\lambda)$ requires the computation of $n$ natural cubic smoothing splines, but it turns out that this is not the case:
+\begin{proposition}
+	Write $A(\lambda) = (I + \lambda K)^{-1}$, then we have
+	\[
+	\CV(\lambda) = \frac1n \sum_{i=1}^n \qty(\frac{Y_i - \hat g_\lambda(x_i)}{1 - A_{ii}(\lambda)})^2. 
+	\]
+\end{proposition}
+
+\begin{proof}
+	Example sheet 3. 
+\end{proof}
+
+In the above formula, we can consider the quantity $A_{ii}(\lambda)$ as the ``leverage'' of the $i$-th observation. In the \emph{generalised cross-valudation} score, we give every observation equal leverage: it is defined as
+\[
+\Rm{GCV}(\lambda) \ceq \frac1n \sum_{i=1}^n \qty(\frac{Y_i - \hat g_\lambda(x_i)}{1 - n^{-1} \tr A(\lambda)})^2. 
+\]
+
+\paragraph{Regression splines}
+There are many different types of splines and different directions to go in. For example, one disadvantage of natural cubic smoothing splines is that we have a ``parameter'' of dimension $n$ to estimate (namely, the vector $\vec g$). We can also reduce the number of knots to $\xi_1, \dotsc, \xi_K$ and locate $\xi_k$ at the $\qty(\frac{k+1}{K+2})$-th sample quantile of $x_1, \dotsc, x_n$. Splines of order $p$ can then be expanded in the \emph{truncated power series basis}
+\[
+1, x, x^2, \dotsc, x^p, (x - \xi_1)_+^p, \dotsc, (x - \xi_K)_+^p. 
+\]
+Therefore we can minimise the residual error over all polynomials in the span of this basis, which gives a parameter in $\RR^{p+1+K}$ to estimate using least squares. The solution is called a \emph{regression spline}. Here, $K$ playes the rolw of the smoothing parameter. 

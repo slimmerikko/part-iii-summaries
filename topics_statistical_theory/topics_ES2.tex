@@ -1,0 +1,379 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage[shortlabels]{enumitem}
+\usepackage{mathtools, amsmath, amssymb, amsthm, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\boldsymbol}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+\newcommand\HH{\Cal H}
+\newcommand\FF{\Cal F}
+\newcommand\Nn{\Cal N}
+\renewcommand\SS{\Cal S}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+\newcommand\toprob{\overset{\Rm{p}}{\to}}
+\newcommand\todist{\overset{\Rm{d}}{\to}}
+\newcommand\toas{\overset{\Rm{a.s.}}{\to}}
+\newcommand\deq{\overset{\Rm{d}}=}
+\newcommand\iid{\overset{\Rm{iid}}{\sim}}
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator\Exp{Exp}
+\DeclareMathOperator\MSE{MSE}
+\DeclareMathOperator\MISE{MISE}
+\DeclareMathOperator\Bias{Bias}
+\DeclareMathOperator\diag{diag}
+\DeclareMathOperator\CV{CV}
+
+\newcommand\XX{\Cal X}
+\renewcommand\AA{\Cal A}
+\newcommand\BB{\Cal B}
+\newcommand\TT{\Cal T}
+
+\title{Topics  --- Example Sheet  2} % subject
+\author{Lucas Riedstra}
+\date{...} % date
+
+\begin{document}
+\maketitle
+
+\begin{question}
+	Recall that the Epanechnikov kernel is a second-order kernel defined by
+	\[
+	K_E(x) = \frac3{4\sqrt5} \qty(1 - \frac{x^2}{5}) \ind_{\abs{x} \leq\sqrt5},
+	\]
+	and that $\mu_2(K_E) = 1$. Let $K_0$ be another non-negative second-order kernel with $\mu_2(K_0) = 1$. By considering $e(x) \ceq K_0(x) - K_E(x)$, or otherwise, show that $R(K_0) \geq R(K_E)$. 
+\end{question}
+
+\begin{proof}
+	We recall the definitions
+	\[
+	R(K) = \int_\RR K^2(u) \dd{u}, \quad \mu_2(K) = \int_\RR u^2 \abs{K(u)} \dd{u}, \quad 
+	\]
+	and we recall that $K$ has order 2 if and only if
+	\[
+	\int_\RR u K(u) \dd{u} = 0. 
+	\]
+	
+	??
+\end{proof}
+
+\begin{question}
+	For $\beta \in (0, 1]$ and $L > 0$, let $\FF_2(\beta, L)$ denote the class of densities on $\RR^2$ that satisfy
+	\[
+	\abs{f(x, y) - f(x_0, y_0)} \leq L(\abs{x - x_0}^\beta + \abs{y - y_0}^\beta)
+	\]
+	for all $(x, y), (x_0, y_0) \in \RR^2$. Let $K$ be a non-negative kernel on $\RR$ with $\mu_\beta(K)$ and $R(K)$ finite. Given i.i.d.\ pairs $(X_1, Y_1), \dotsc, (X_n, Y_n)$, consider the kernel density estimator $\hat f_n$ obtained using a product kernel, i.e., 
+	\[
+	\hat f_n(x_0, y_0) \ceq \frac1{nh^2} \sum_{i=1}^n K\qty(\frac{x_0 - X_i}{h}) K\qty(\frac{y_0 - Y_i}{h}). 
+	\]
+	Find a bound on $\MSE\qty{\hat f_n(x_0, y_0)}$ that holds uniformly for all $f \in \FF_2(\beta, L)$ and $(x_0, y_0) \in \RR^2$. 
+\end{question}
+
+\begin{proof}
+	First we compute a variance bound following the proof of proposition 19: noting that $\hat f_n(x, y) = \frac1n \sum_{i=1}^n K_h(x - X_i) K_h(y - Y_i)$, we have
+	\begin{align*}
+		\Var \hat f_n(x, y) &= \frac1n \Var(K_h(x - X_i) K_h(y - Y_i)) \leq \frac1n \EE[K_h^2(x - X_i) K_h^2(y - Y_i)] \\
+		&= \frac1{nh^4}  \iint_{\RR^2} K^2(\frac{x-w}{h}) K^2(\frac{y - z}{h}) f(w, z) \dd{w} \dd{z} \\
+		&\leq  \frac{\norm{f}_\infty}{nh^2} \iint_{\RR^2} K^2(s) K^2(t) \dd{s} \dd{t} = \frac{\norm{f}_\infty R(K)^2}{nh^2}.
+	\end{align*}
+
+	Next, we compute a bias bound following the proof of proposition 22. Note that we have
+	\begin{align*}
+		\Bias \hat f_n(x, y) &= \frac1{h^2} \iint_{\RR^2} K(\frac{x-w}{h}) K(\frac{y-z}{h}) f(w, z) \dd{w}\dd{z} - f(x, y) \\
+		&= \iint_{\RR^2} K(s) K(t)\qty{f(x - sh, y - th) - f(x, y)} \dd{s} \dd{t}, 
+	\end{align*}
+	and taking absolute values gives
+	\begin{align*}
+		\abs{\Bias\hat f_n(x, y)} &\leq \iint_{\RR^2} {K(s)} {K(t)} \abs{f(x - sh, y - th) - f(x, y)} \dd{s} \dd{t} \\
+		&\leq L \iint_{\RR^2} {K(s)} {K(t)} \qty(\abs{sh}^\beta + \abs{th}^\beta) \dd{s} \dd{t} \\
+		&= 2Lh^\beta \int_\RR {K(s)} \int_\RR \abs{t} {K(t)} \dd{t} \dd{s} \\
+		&= 2Lh^\beta \mu_\beta(K) \int_\RR {K(s)} \dd{s} = 2Lh^\beta \mu_\beta(K). 
+	\end{align*}
+	
+	We therefore have
+	\[
+	\MSE \hat f_n(x, y) \leq \frac1{nh^2} \norm{f}_\infty R(K)^2 + 4L^2\mu_\beta(K)^2 h^{2\beta}. 
+	\]
+	Completely analogous to the proof of theorem 23, we can show that $\norm{f}_\infty$ is bounded uniformly over $\FF_2(\beta, L)$, and the minimiser of $\MSE$ is of order $n^{-1/(2\beta + 2)}$. Plugging this into the expression gives 
+	\[
+	\sup_{(x, y)} \sup_{f \in \FF} \MSE \hat f_n(x, y) \leq C n^{-2\beta/(2\beta + 2)},
+	\]
+	for some $C$ depending only on $\beta, L, K$. 
+\end{proof}
+
+\begin{question}
+	Let $\qty{w_i(x) \mid = 1, \dotsc, n}$ denote the effective kernel of the local polynomial estimator of order $p$ based on $(x_1, Y_1), \dotsc, (x_n, Y_n)$, and let $R$ denote a polynomial of degree at most $p$. Prove that if $X\T W X$ is positive definite, then
+	\[
+	\frac1n \sum_{i=1}^n w_p(x, x_i) R(x_i) = R(x)
+	\]
+	for every $x \in \RR$. 
+\end{question}
+
+\begin{proof}
+	Note that $\frac1n \sum w(x, x_i) R(x_i)$ is exactly the local polynomial estimator for data $(x_i, R(x_i))_{i=1}^n$ in the point $x$. Therefore, write $Y = (R(x_1), \dotsc, R(x_n))\T \in \RR^n$. 
+	We know that if $X\T W X$ is positive definite, then
+	\[
+	\hat m_n(x) = \hat\beta_0, \quad\hat\beta = (X\T W X)^{-1} X\T W Y. 
+	\]
+	Now, since $R$ is a polynomial of degree $p$, there exists a vector $\vec v$ such that
+	\[
+	Q_h(\cdot - x)\T \vec v = R(\cdot),
+	\]
+	and we now have
+	\[
+	Y = \mqty(R(x_1) \\ \vdots  \\ R(x_n)) = \mqty(Q_h(x_1 - x)\T \vec v \\ \vdots \\ Q_h(x_n - x)\T \vec v) = X\vec v, 
+	\]
+	and therefore
+	\[
+	\hat\beta = (X\T W X)^{-1} X\T W X \vec v = \vec v. 
+	\]
+	It is immediate that
+	\[
+	R(x) = Q_h(x - x)\T \vec v = Q_h(0)\T \vec v = v_1 = \hat m_n(x), 
+	\]
+	which proves the claim. 
+\end{proof}
+
+\begin{question}
+	Fix $\beta, L > 0$ and let $m \ceq \ceil{\beta} - 1$. Recalling the definition of the H\"older class of densities $\FF(\beta, L)$, prove that there exists $A = A(\beta, L) > 0$ such that
+	\[
+	\sup_{f \in \FF(\beta, L)} \max_{j = 0, \dotsc, m} \norm{f^{(j)}}_\infty \leq A. 
+	\]
+\end{question}
+
+\begin{proof}
+	???
+\end{proof}
+
+\begin{question}
+	Verify that the local constant and local linear kernel regression estimators have the forms given in the lectures. 
+\end{question}
+
+\begin{proof}
+	In the local constant case, we have $Q_h(u) = 1$ and therefore $X = \vec e$ (with $\vec e$ the all-ones vector).
+	It follows that 
+	\[
+	\hat m_n(x) = \hat\beta = (\vec e\T W \vec e)^{-1} \vec e\T WY = \frac1{\sum_{i=1}^n W_{ii}} \cdot \sum_{i=1}^n W_{ii} Y_i = \frac{\sum_{i=1}^n K_h(x_i - x)Y_i}{\sum_{i=1}^n K_h(x_i - x)},
+	\]
+	which corresponds with the expression from the lecture notes. 
+		
+	In the local linear case, we have $Q_h(u) = (1, u/h)\T$. Define $z_i = (x_i - x) / h$ and $W_i = K_h(x_i - x)$, we have
+	\[
+	X = \mqty[ 1 & z_1 \\ \vdots & \vdots \\ 1 & z_n], \quad X\T W = \mqty[ W_1 & \dotsb & W_n \\ z_1 W_1 & \dotsb & z_n W_n]. 
+	\]
+	
+	We can therefore compute, using $\sum_i z_i^r W_i = n h^{-r} s_r(x)$, that 
+	\[
+	X\T W X = \mqty[ \sum_i W_i & \sum_i z_i W_i \\ \sum_i z_i W_i & \sum_i z_i^2 W_i] = n\mqty[ s_0(x) & h^{-1} s_1(x) \\
+	h^{-1} s_1(x) & h^{-2} s_2(x)],
+	\]
+	which gives
+	\[
+	(X\T W X)^{-1} = \frac{h^2}{n}\cdot \frac1{s_0(x) s_2(x) - s_1(x)^2} \mqty[h^{-2} s_2(x) & - h^{-1} s_1(x) \\ -h^{-1} s_1(x) & s_0(x)].
+	\]
+	
+	Therefore we have
+	\[
+	X\T W Y = \mqty[ \sum_i W_i Y_i \\ \sum_i z_i W_i Y_i],
+	\]
+	and so
+	\begin{align*}
+	\hat\beta_0 &= 
+	\frac{h^2}{n}\cdot \frac1{s_0(x) s_2(x) - s_1(x)^2} \qty(h^{-2} s_2(x) \sum_i W_i Y_i - h^{-1} s_1(x) \sum_i z_i W_i Y_i)\\
+	&= \frac1n \sum_{i=1}^n \frac{s_2(x) - s_1(x) (x_i - x)}{s_0(x) s_2(x) - s_1(x)^2} W_i Y_i, 
+	\end{align*}
+	which corresponds with the expression from the lecture notes. 
+\end{proof}
+
+\begin{question}
+	In the random design nonparametric regression model for i.i.d.\ pairs $(X_1, Y_1), \dotsc, (X_n, Y_n)$, each having joint density $f_{X, Y}$, observe that the regression function $m$ may be expressed as
+	\[
+	m(x) = \int_{-\infty}^\infty y \frac{f_{X, Y}(x, y)}{f_X(x)} \dd{y}, 
+	\]
+	where $f_X$ is the marginal density of $X_1$. Find the estimator $m(x)$ that results from estimating $f_X$ and $f_{X, Y}$ using kernel density estimators with symmetric kernel $K$ (and the corresponding product kernel in the latter case) and a common bandwidth.
+\end{question}
+
+\begin{proof}
+	We plug in 
+	\begin{align*}
+	\hat m(x) &= \int_{-\infty}^\infty y \frac{\frac1n \sum_{i=1}^n K_h(x - X_i) K_h( y - Y_i)}{\frac1n \sum_{i=1}^n K_h(x - X_i)} \dd{y} \\
+	&= \frac{ \sum_{i=1}^n K_h(X_i - x) Z_i(y)}{\sum_{i=1}^n K_h(X_i - x)},
+	\end{align*}
+where $Z_i(y) = \int_{-\infty}^\infty y K_h(y - Y_i) \dd{y}$. Assuming that $K$ is a second-order kernel, we have
+\begin{align*}
+Z_i(y) &= \int_{-\infty}^\infty y K_h(y - Y_i) \dd{y} = \int_{-\infty}^\infty (y + Y_i) K_h(y) \dd{y} \\
+&= \int_{-\infty}^\infty y K_h(y) \dd{y} + Y_i \int_{-\infty}^\infty K_h(y)\dd{y} = Y_i, 
+\end{align*}
+and so $\hat m(x)$ is simply the Nadaraya-Watson estimator (the local polynomial estimator with $p = 0$). 
+\end{proof}
+
+\begin{question}
+	Let $a \leq x_1 < \dotsb < x_n \leq b$, and let $h_i = x_{i+1} - x_i$ for $i = 1, \dotsc, n-1$. Given $\vec g \in \RR^n$ and $\vec \gamma = (\gamma_2, \dotsc, \gamma_{n-1})\T \in \RR^{n-2}$, show that if there is a natural cubic spline $g$ with $g(x_i) = g_i$ for $i =1 , \dotsc, n$ and $g''(x_i) = \gamma_i$ for $i = 2, \dotsc, n-1$ then
+	\[
+	g(x) = \frac{(x - x_i) g_{i+1} + (x_{i+1} - x)g_i}{h_i} - \frac16(x-x_i)(x_{i+1}-x)\qty{\qty(1 + \frac{x - x_i}{h_i}) \gamma_{i+1} + \qty(1 + \frac{x_{i+1} - x}{h_i})\gamma_i}
+	\]
+	for $x \in [x_i, x_{i+1}]$ and $i = 1, \dotsc, n-1$. Find the corresponding expressions for $g$ on $[a, x_1]$ and $[x_n, b]$. 
+\end{question}
+
+\begin{proof}
+	On the interval $[x_i, x_{i+1}]$, $g$ must be a cubic polynomial $p$ such that $p(x_i) = g_i$, $p(x_{i+1}) = g_{i+1}$, $p''(x_i) = \gamma_i$, $p''(x_{i+1}) = \gamma_{i+1}$ (where $\gamma_1 = \gamma_n = 0$). Therefore, $p$ must have an expansion in the basis
+	\begin{gather*}
+	\qty{q_1(x), q_2(x), q_3(x), q_4(x)} \\\ceq \qty{x - x_i, x_{i+1} - x, (x - x_i)(x_{i+1} - x)(1 + \frac{x - x_i}{h_i}), (x - x_i)(x_{i+1} - x) (1 + \frac{x_{i+1} - x}{h_i})}.
+	\end{gather*}
+Therefore, write $p(x) = a q_1(x) + b q_2(x) + c q_3(x) + d q_4(x)$. Note that 
+\[
+q_3''(x_i) = 0, \quad q_3''(x_{i+1}) = -6, \quad q_4''(x_i) = -6, \quad q_4''(x_{i+1}) = 0. 
+\]
+We compute $a, b, c, d$: 
+\begin{enumerate}
+	\item Since $q_2, q_3, q_4$ all give 0 when evaluated in $x_{i+1}$, we must have $g_{i+1} = p(x_{i+1}) = a q_1(x_{i+1}) = ah_i$ or $a = g_{i+1}/h_i$;
+	\item Analogously, we must have $b = g_i / h_i$;
+	\item Since $q_1'', q_2'', q_4''$ all give 0 when evaluated in $x_{i+1}$, we must have $\gamma_{i+1} = p''(x_{i+1}) = c q_3''(x_{i+1}) = -6c$ or $c = - \gamma_{i+1}/6$;
+	\item Analogously, we must have $d = -\gamma_i / 6$. 
+\end{enumerate}
+Combining the above proves the claim. 
+
+On $[a, x_1]$, $g$ simply needs to be a linear function with $g(x_1) = g_1$, which means it has the form $g(x) = c(x - x_1) + g_1$ for some $c$. We must then choose $c$ such that the first derivative is continuous. An analogous argument holds for $g$ on $[x_n, b]$. 
+\end{proof}
+
+\begin{question}
+	Define tri-diagonal matrices $Q = (q_{ij})_{i=1, j=2}^{n,n-1} \in \RR^{n \times (n-2)}$ and $R = (r_{ij})_{i=2, j=2}^{n-1,n-1} \in \RR^{(n-2)\times(n-2)}$ by
+	\[
+	q_{ij} \ceq \begin{cases}
+		1/h_i, & j = i +1, \\ -1/h_{i-1} - 1/h_i, & j = i, \\ 1/h_{i-1}, & j = i- 1, 
+	\end{cases}
+\qquad r_{ij} = \begin{cases}
+	h_i/6, &j = i+1, \\
+	(h_{i-1} + h_i)/3, &j=i, \\
+	h_{i-1}/6, &j=i-1. 
+\end{cases}
+	\]
+	Prove that $\vec g, \vec \gamma$ represent a natural cubic spline if and only if $Q\T \vec g = R\vec\gamma$. 
+\end{question}
+
+\begin{proof}
+	In the previous question, we saw that there was at most one candidate $g$ for the natural cubic spline which satisfies $g(x_i) = g_i$ ($i =1, \dotsc, n$) and $g''(x_i) = \gamma_i$ ($i = 2, \dotsc, n-1$). For this $g$, we know that $g$ and $g''$ are continuous, however, we do not know if $g'$ is continuous. We find that $g$ represents a natural cubic spline if and only if $g'$ is continuous at the points $x_2, \dotsc, x_{n-1}$. 
+
+	Fix $j \in \qty{2, \dotsc, n-1}$.  On the interval $[x_{j-1}, x_j]$, we have 
+	\[
+	g'(x_j) = \frac{g_j - g_{j-1}}{h_{j-1}} + \frac16 h_{j-1}  \qty{2 \gamma_j + \gamma_{j-1}},
+	\]
+	while on the interval $[x_j, x_{j+1}]$, we have
+	\[
+	g'(x_j) = \frac{g_{j+1} - g_j}{h_j} - \frac16 h_j \qty{\gamma_{j+1} + 2 \gamma_j}. 
+	\]
+	Equating the two and rearranging terms, we obtain
+	\[
+	\frac{1}{h_j} g_{j+1} - \qty(\frac{1}{h_j} + \frac1{h_{j-1}}) g_j + \frac1{h_{j-1}} g_{j-1} = \frac{h_j}{6} \gamma_{j+1} + \frac{h_{i-1} + h_i}{3} \gamma_j + \frac{h_{j-1}}{6} \gamma_{j-1}.
+	\]
+	It is easily seen that these equations can be rewritten as $Q\T \vec g = R\vec \gamma$, which proves the claim. 
+\end{proof}
+
+\begin{question}[Continuation]
+	Prove that $R$ is positive definite. Deduce that, given $\vec g \in \RR^n$, there exists a unique natural cubic spline $g$ with knots at $x_1, \dotsc, x_n$ satisfying $g(x_i) = g_i$ for $i = 1, \dotsc, n$. Show further that there exists a non-negative definite matrix $K \in \RR^{n \times n}$ such that 
+	\[
+	\int_a^b g''(x)^2 \dd{x} = \vec g\T K\vec g. 
+	\]
+\end{question}
+
+\begin{proof}
+	It is immediate that the columns of $R$ are linearly independent, so $R$ is invertible and therefore positve definite. By question 8, there is exactly one $\vec \gamma$ such that there exists a natural cubic spline represented by $\vec g, \vec \gamma$, namely $\vec \gamma = R^{-1} Q\T \vec g$. 
+	Note that, on $[x_i, x_{i+1}]$, the polynomial $g$ has leading coefficient $c_i = \frac16 \qty(\frac{\gamma_{i+1} - \gamma_i}{h_i})$. Therefore, by partial integration we find (analogous to the next question)
+	\begin{align*}
+		\int_a^b g''(x)^2 \dd{x} &= \sum_{i=1}^{n-1}\int_{x_i}^{x_{i+1}} g''(x)^2 \dd{x} = -\sum_{i=1}^{n-1} \int_{x_i}^{x_{i+1}} g'''(x) g'(x) \dd{x} \\
+		&= - \sum_{i=1}^{n-1} c_i \qty(g_{i+1} - g_i) = - \sum_{i=1}^n \frac16 \qty(\frac{\gamma_{i+1} - \gamma_i}{h_i}) (g_{i+1} - g_i). 
+	\end{align*}
+Since every $\gamma_i$ can be written as a linear combination of the $g_i$ via $\vec \gamma = R^{-1}Q\T \vec g$, it follows that there exists a matrix $K$ such that $0 \leq \int_a^b g''(x)^2 \dd{x} = \sum_{i, j} K_{ij} g_i g_j$ for all $\vec g$, and therefore $\int_a^b g''(x)^2 \dd{x} = \vec g\T K\vec g$ and $K$ is positive semi-definite. 
+\end{proof}
+\begin{question}
+Let $n \geq 3$, let $a \leq x_1 < \dotsb < x_n \leq b$, and let $\vec g \in \RR^n$. Prove that the natural cubic spline interpolant to $\vec g$ at $x_1, \dotsc, x_n$ is the unique minimiser of $R(\tilde g) = \int_a^b \tilde g''(x)^2 \dd{x}$ over all $\tilde g \in \SS_2[a, b]$ that interpolate $\vec g$ at $x_1, \dotsc, x_n$. 
+
+\emph{Hint:} Let $g$ be the natural cubic spline interpolant, $h \ceq \tilde g - g$, and consider $\int_a^b g''(x) h''(x) \dd{x}$. 
+\end{question}
+
+\begin{solution}
+As in the hint we let $g$ be the natural cubic spline interpolant, $\tilde g\in \SS_2[a, b]$, and $h \ceq \tilde g - g$. We know that $g$ is a cubic polynomial $p_i$ on each interval $[x_i, x_{i+1}]$ (denote its leading coefficient by $c_i$), that $g''$ is continuous, and that $g'' = 0$ on $[a, x_1]$ and on $[x_n, b]$. Furthermore, we know that $h(x_i) = 0$ for all $i$. 
+Using this, we can write
+\begin{align*}
+	\int_a^b g''(x) h''(x) \dd{x} &= \sum_{i=1}^{n-1} \int_{x_i}^{x_{i+1}} p_i''(x) h''(x) \dd{x} \\
+	&= \sum_{i=1}^{n-1} \qty(\qty[p_i''(x) h'(x)]_{x = x_i}^{ x_{i+1}} - \int_{x_i}^{x_{i+1}} p_i'''(x) h'(x) \dd{x}) \\
+	&= - \sum_{i=1}^{n-1} c_i \int_{x_i}^{x_{i+1}} h'(x) \dd{x} \\
+	&= - \sum_{i=1}^{n-1} c_i \qty(h(x_{i+1}) - h(x_i)) = 0. 
+\end{align*} 
+Now we find
+\begin{align*}
+	R(g) &= \int_a^b g''(x)^2 \dd{x} = \int_a^b g''(x) \qty(\tilde g''(x) - h''(x)) \dd{x} = \int_a^b g''(x) \tilde g''(x) \overset{\Rm{CS}}{\leq} \sqrt{R(g)} \sqrt{R(\tilde g)},
+\end{align*}
+with equality if and only if $g'' = \tilde g''$ (by Cauchy-Schwarz).
+Rearranging gives $\sqrt{R(g)} \leq \sqrt{R(\tilde g)} \implies R(g) \leq R(\tilde g)$. Since $\tilde g \in \SS_2[a, b]$ was arbitrary, we deduce that $g$ is a minimiser of $R$ over all function in $\SS_2$. 
+
+For uniqueness: we already know that any other minimiser $h \in \SS_2$ must satisfy $g'' = h''$ a.e., so $g - h$ is a polynomial of degree 1 a.e., and by continuity we know that $g - h$ is a polynomial of degree 1. However, since $g$ and $h$ must agree on $n \geq 3$ points it follows that $g = h$. 
+\end{solution}
+\end{document}
