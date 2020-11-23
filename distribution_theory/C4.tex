@@ -214,7 +214,7 @@ In this section, we will prove that every $u \in \EE'(X)$ can be written as a fi
 
 We start with a lemma:
 \begin{lemma}
-	For $u \in \EE'(\RR^n)$, the Fourier transform $\hat u \in \SS'(\RR^n)$ can be identified with the smooth (analytic) function $\lambda \mapsto \ang{u(x), e^{-i\lambda\vdot x}}$, which we will denote $\hat u(\lambda)$. 
+	For $u \in \EE'(\RR^n)$, the Fourier transform $\hat u \in \SS'(\RR^n)$ can be identified with the smooth (real-analytic) function $\lambda \mapsto \ang{u(x), e^{-i\lambda\vdot x}}$, which we will denote $\hat u(\lambda)$. 
 \end{lemma}
 
 \begin{proof}
@@ -300,3 +300,115 @@ so $u = \sum_\alpha \pt^\alpha(\rho_\alpha f) = \sum_\alpha \pt^\alpha f_\alpha 
 \end{proof}
 
 There also exist nonconstructive proofs for the previous theorem using Hahn-Banach. 
+
+\subsection{Paley-Wiener-Schwartz theorem}
+We have seen that if $u \in \EE'(\RR^n)$, then $\hat u$ is equivalent to the real-analytic function $\lambda \mapsto \ang{u(x), e^{-i\lambda \vdot x}}$ and $\abs{\hat u(\lambda)} \les \ang{\lambda}^N$ for some $N \geq 0$. 
+We consider the complex extension of $\hat u$, and we call $\hat u(z)$ the \emph{Fourier-Laplace transform} of $u$. 
+Note that
+\[
+\pdv{\hat u}{\bar z_i} = \ang{u, \pdv{\bar z_i} e^{-iz\vdot x}} = 0 \quad(i = 1, \dotsc, n), 
+\]
+so $\hat u(z)$ is complex-analytic in each component $z_i$. 
+
+We can also estimate the size of $\hat u(z)$:
+\begin{lemma}
+	If $u \in \EE'(\RR^n)$ and $\supp(u) \subseteq \clos{B_\delta}$, then there exist nonnegative constant $C, N$ such that
+	\[
+	\norm{\hat u(z)} \leq C (1 + \norm{z})^N e^{\delta \abs{\Im z}} \qquad \forall z \in \CC^n. 
+	\]
+\end{lemma}
+
+\begin{proof}
+	Let $\psi \in C^\infty(\RR)$ be such that $\psi(\tau) = 1$ for $\tau \geq -\frac12$ and $\psi(\tau) = 0$ for $\tau \leq -1$.  Introduce for $\eps > 0$
+	\[
+	\phi_\eps(x) \ceq \psi(\eps(\delta - \norm{x})),
+	\]
+	then we have $\phi_\eps \in \DD(\RR^n)$ with $\phi_\eps(x) = 0$ for $\norm{x}\geq \delta + \eps^{-1}$, and $\phi_\eps(x) = 1$ for $\norm{x} \leq \delta + \frac12\eps^{-1}$. In particular, every $\phi_\eps$ is 1 on a neighbourhood of $\supp(u) \subseteq \clos{B_\delta}$. 
+	
+	Therefore, we have
+	\[
+	\hat u(z) = \ang{u(x), e^{-iz\vdot x}} = \ang{u(x), \phi_\eps(x) e^{-iz\vdot x}},
+	\]
+	and since $u \in \EE'(\RR^n)$, by the seminorm condition we have nonnegative $C, N$ such that
+	\[
+	\hat u(z) \leq C \sum_{\abs{\alpha} \leq N} \sup \abs{\pt^\alpha_x \qty(\phi_\eps(x) e^{-iz \vdot x})}.
+	\]
+	By definition we have $\abs{\pt_x^\beta \phi_\eps} \les \eps^{\abs{\beta}}$ while $\abs{\pt_x^\gamma e^{-iz \vdot x}} \les \norm{z}^{\abs{\gamma}} e^{(\delta + \eps^{-1}) \abs{\Im z}}$ on $\supp\phi_\eps$. 
+	
+	Applying Leibniz, we obtain
+	\[
+	\abs{\hat u(z)} \leq C \sum_{\abs{\beta} + \abs{\gamma} \leq N} \norm{z}^{\abs{\beta}} e^{\abs{\gamma}} e^{(\delta + \eps^{-1}) \Im z}, 
+	\]
+	and this holds for all $\eps > 0$, so we can plug in $\eps = \norm{z}$ and obtain the result (since $\Im z / \norm{z}$ is bounded). 
+\end{proof}
+
+So if $u \in \EE'(\RR^n)$ with $\supp(u) \subseteq \clos{B_\delta}$, then $\hat u(z)$ is complex analytic and obeys $\abs{\hat u(z)} \leq (1 + \norm{z})^N e^{\delta \abs{\Im z}}$. The PWS theorem addresses the converse: if a complex analytic function obeys the estimate we just saw, is it the fourier transform of some distribution? 
+
+\begin{theorem}
+	\begin{enumerate}[(a)]
+		\item If $u \in \EE'(\RR^n)$ with $\ord(u) = N$ and $\supp u \subseteq \clos{B_\delta}$, then $\hat u(z)$ is entire and
+		\begin{equation} \label{eq:fourier_transform_estimate}
+			\abs{\hat u(z)} \les (1 + \norm{z})^N e^{\delta \abs{\Im z}}. 
+		\end{equation}
+	
+	Conversely, if $U(z)$ is entire and satisfies \cref{eq:fourier_transform_estimate} for some $N$, then $U = \hat u$ for some $u \in \EE'(\RR^n)$ with $\supp(u) \subseteq \clos{B_\delta}$. 
+	
+	\item If $u \in \DD(\RR^n)$ and $\supp(u) \subseteq \clos{B_\delta}$, then for $M = 0, 1, 2, \dotsc$ we have 
+	\begin{equation}\label{eq:fourier_transform_estimate_2}
+		\abs{\hat u(z)} \les_M (1 + \norm{z})^{-M} e^{\delta \abs{\Im z}}.
+	\end{equation}
+	Conversely, if $U(z)$ is entire and satisfies \cref{eq:fourier_transform_estimate_2}, then $U = \hat u$ for some $u \in \DD(\RR^n)$ with $\supp(u) \subseteq \clos{B_\delta}$. 
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	\TODO write this out (lecture 12)
+\end{proof}
+
+\subsection{Oscillatory integrals}
+We will study integrals of the form $\int_{\RR^n} e^{i\Phi(x, \theta)} a(x, \theta) \dd{\theta}$, where $\Phi$ is called the \emph{phase function} and $a$ the \emph{amplitude} of the signal. We wil use oscillations from the $e^{i\Phi}$-term to control the growth, while $a(\cdot, \theta)$ is allowed to grow modestly with $\theta$. 
+
+\begin{lemma}[Riemann-Lebesgue]
+	If $f \in L^1(\RR)$, then $\abs{\hat f(\lambda)} \to 0$ when $\abs{\lambda} \to\infty$. 
+\end{lemma}
+\begin{proof}
+	Assume $f \in L^1$ is continuous, then setting $x' = x + \pi/\lambda$, we have
+	\begin{align*}
+		\hat f(\lambda) &= \int e^{-i\lambda \cdot x} f(x) \dd{x} = \frac12\int \qty( e^{-i\lambda \vd x}f(x) \dd{x} + e^{-i\lambda \vd (x + \pi/\lambda)} f(x + \pi/\lambda))\dd{x} \\
+		&= \frac12 \int e^{-i\lambda \vd x} \qty[ f(x) - f(x + \pi/\lambda)] \dd{x}
+	\end{align*}
+	Now let $\eps > 0$ and choose $R = R(\eps)$ such that $\int_{\norm{x}> R} \abs{f(x) - f(x + \pi/\lambda)} \dd{x} < \frac\eps2$.
+	By the dominated convergence theorem, we can also choose $\lambda = \lambda(\eps, R)$ large enough such that
+	\[
+	\int_{\norm{x}< R} \abs{e^{-i\lambda x} \qty[f(x) - f(x + \pi/\lambda)]} \dd{x} < \frac\eps2. 
+	\]  
+	So for $f$ we have $\abs{\hat f(\lambda)} < \frac\eps2$ for $\abs{\lambda}$ large enough, which proves the result for continuous functions.
+	
+	Now we use that continuous functions are dense in $L^1$, so for any $f \in L^1$, pick $g \in C(\RR) \cap L^1$ such that $\norm{f - g}_{L^1} < \frac\eps2$, then it is easily checked that $\abs{\hat f(\lambda)} \leq \norm{f - g}_{L^1} + \abs{\hat g(\lambda)} < \eps $ for $\lambda$ sufficiently large, which proves the claim. 
+	
+\end{proof}
+
+Now suppose $\phi \in \DD(\RR)$ and $\Phi \in C^\infty(\RR)$ with $\Phi'$ nowhere 0. Consider
+\[
+I(\lambda) \ceq \int e^{i\lambda \Phi(\theta)} \phi(\theta) \dd{\theta}. 
+\]
+Note that $\abs{\Phi'(\theta)} \ges 1$ for $\theta \in \supp\phi$ (since $\supp\phi$ is compact), and we can write
+\[
+I(\lambda) = \int \frac1{i\lambda} \frac{\phi(\theta)}{\Phi'(\theta)} \dv{\theta}\qty(e^{i\lambda \Phi(\theta)}) \dd{\theta},
+\]
+and with repeated integration by parts we find that
+\[
+\abs{I(\lambda)} \leq \ang{\lambda}^{-N} \quad\text{for any $N \geq 0$}. 
+\]
+A natural question is what happens if $\Phi'(\theta) = 0$ somewhere. 
+
+\begin{lemma}[Stationary phase]
+	Suppose $\Phi \in C^\infty(\RR)$ with $\Phi' \neq 0$ on $\RR \setminus \qty{0}$ and $\Phi(0) = \Phi'(0) = 0$, $\Phi''(0) \neq 0$. Then, for $\chi \in \DD(\RR)$, we have
+	\[
+	\int e^{i\lambda \Phi(\theta)} \chi(\theta) \dd{\theta} \les \ang{\lambda}^{-1/2}. 
+	\]
+\end{lemma}
+
+\begin{proof}
+	\TODO write this (lecture 13, a terrible proof with lots of differentiation and garbage). 
+\end{proof}

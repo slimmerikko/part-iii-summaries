@@ -151,3 +151,119 @@ and analogously it can be seen that $\lambda_1 \leq \hat\lambda_1 + \norm{E}_\Rm
 \end{theorem}
 
 We conclude that eigenvalues are generally robust to small perturbations. However, eigenvectors are genearlly not robust to small perturbations. This is because when $\lambda_i$ and $\lambda_{i+1}$ are close to each other, then $\Span(\hat u_i, \hat u_{i+1})$ may be a good approximation of $\Span(u_i, u_{i+1})$, but it is not possible to identify the individual eigenvectors.  Therefore we must place further assumptions on the eigenvectors. 
+
+\begin{definition}
+	Let $S, U \in \RR^{n \times d}$ be matrices with orthogonal columns. We define the \emph{$\sint$ distance} between the column space of $S$ and $U$ as
+	\[
+	\sint(S,U) \ceq \norm{\Pi_S(I - \Pi_U)}_F = \norm{\Pi_U(I - \Pi_S)}_F
+	\]
+\end{definition}
+To see that the last equality holds, note that
+\begin{align*}
+	\norm{\Pi_S(I - \Pi_U)}_F^2 &= \Tr\qty((I - \Pi_U) \Pi_S^2 (I - \Pi_U)) = \Tr\qty(\Pi_S(I - \Pi_U)) = \Tr(\Pi_S) - \Tr(\Pi_S\Pi_U) \\
+	&= \rank(S) - \Tr(\Pi_S\Pi_U) = \rank(U) - \Tr(\Pi_U\Pi_S) = \norm{\Pi_U(I - \Pi_S)}_F^2. 
+\end{align*}
+
+In the fourth example sheet we prove the following:
+\begin{proposition} \label{prop:sint_distance}
+	Let $S, U$ be matrices with orthogonal columns and equal rank. Then
+	\[
+	\min_{O \in \RR^{d \times d} \text{ }\Rm{orthogonal}} \norm{S - UO}_F \leq \sqrt2 \sint(S, U). 
+	\]
+\end{proposition}
+
+\begin{theorem}[Davis-Kahan]
+	Let $\Sigma$ be a covariance matrix with eigenvector decomposition $\Sigma = U\Lambda U\T$ (where $\lambda_1 \geq \dotsb \geq \lambda_d$). Write $\Sigma = U_0 \Lambda_0 U_0\T + U_1 \Lambda_1 U_1\T$ where $U_0 = [u_1, \dotsc, u_r]$. 
+	
+	For a perturbed matrix $\hat\Sigma = \Sigma + E$ with $E$ symmetric, define an analogous decomposition $\hat\Sigma = \hat U_0 \hat\Lambda_0 \hat U_0\T + \hat U_1 \hat\Lambda_1 \hat U_1\T$. If $\lambda_r - \hat\lambda_{r+1} > 0$, then
+	\[
+	\sint (U_0, \hat U_0)  \leq \frac{\norm{E}_F}{\lambda_r - \hat\lambda_{r+1}}. 
+	\]
+\end{theorem}
+
+\begin{proof}
+	We write
+	\[
+	\norm{\Pi_{U_0}(I - \Pi_{\hat U_0})}_F = \norm{U_0 U_0\T \hat U_1 \hat U_1\T}_F = \norm{U_0\T \hat U_1}_F, 
+	\]
+	and note that 
+	\[
+	\Sigma U_0 = U_0\Lambda U_0\T U_0 + U_1 \Lambda_1 U_1\T U_0 =  U_0\Lambda_0, \quad \hat\Sigma \hat U_1 = \hat U_1 \hat\Lambda_1. 
+	\]
+	We therefore find 
+	\begin{align*}
+	E U_0 &= (E + \Sigma) U_0 - \Sigma U_0 = \hat\Sigma U_0 - U_0 \Lambda_0 \\
+	\hat U_1\T EU_0 &= \hat U_1\T \hat\Sigma U_0 - \hat U_1\T U_0 \Lambda_0 = \hat\Lambda_1 \hat U_1\T U_0 - \hat U_1\T U_0 \Lambda_0. 
+	\end{align*}
+By the triangle inequality we have
+\begin{align*}
+\norm{\hat U_1\T E U_0}_F &\geq \norm{\hat U_1\T U_0 \Lambda_0}_F - \norm{\hat\Lambda_1 \hat U_1\T U_0}_F \\
+&\overset\star\geq \lambda_r \norm{\hat U_1\T U_0} - \hat\lambda_{r+1} \norm{\hat U_1\T U_0}_F = (\lambda_r - \hat\lambda_{r+1}) \norm{U_1\T U_0}_F = (\lambda_r - \hat\lambda_{r+1}) \sint(U_0, \hat U_0). 
+\end{align*}
+Noting that $\norm{\hat U_1\T E U_0}_F \leq \norm{E}_F$,
+since
+\[
+\norm{E}_F = \norm{\hat U\T E U} = \norm{\mqty[\hat U_0\T \\ \hat U_1\T ] E \mqty[U_0 & U_1]}_F \geq \norm{\hat U_1\T E U_0}_F. 
+\] yields the result. 
+\end{proof}
+
+The Davis-Kahan theorem is not directly useful since the result depends on the gap $\lambda_r - \hat\lambda_{r+1}$. However, the following variant was proved in 2014, whose result depends only on the eigenvalues of $\Sigma$:
+\begin{theorem}
+	If $\lambda_r - \lambda_{r+1} > 0$, then
+	\[
+	\sint (U_0, \hat U_0) \leq \frac{2\min \qty{\sqrt r \norm{E}_\Rm{op}, \norm{E}_F}}{\abs{\lambda_r - \lambda_{r+1}}}. 
+	\]
+\end{theorem}
+
+\subsubsection{The spiked covariance model}
+As an application of the Davis-Kahan theorem, consider the model where
+\[
+\Sigma = I + \theta v v\T, \qquad  v\in S^{d-1}. 
+\]
+Any random vector with covariance $\Sigma$ can be represented as $\eta \sqrt\theta v + \eps$, where $\eta, \eps_1, \dotsc, \eps_d$ are independent, mean 0, variance 1 random variables. The samples are a random ``spike'' with scale $\sqrt\theta$ in a fixed direction $v$, with independent noise added to each entry. 
+
+The eigenvalues of $\Sigma$ are $1+\theta, 1, \dotsc, 1$, and $v$ is the top eigenvector. Using the variant of the Davis-Kahan theorem and \cref{prop:sint_distance} we find 
+\[
+\min_{z = \pm 1} \norm{v - z\hat v} \leq \sqrt2 \sint(v, \hat v) \leq \frac{\norm{\hat \Sigma - \Sigma}_\Rm{op}}{(1 + \theta) - 1}
+\]
+If we assume that the rows of $X$ are vector sub-Gaussian, we can bound $\norm{\hat\Sigma - \Sigma}_\Rm{op}$ in probability, and we find that 
+\[
+\PP\qty(\min_{z = \pm 1} \norm{v - z\hat v} \geq C \frac{1 + \theta}{\theta} \qty(\frac{d + \delta}{n} \lor \sqrt{\frac{d + \delta}{n}})) \leq e^{-\delta}. 
+\]
+We conclude that if $\frac{1+\theta}{\theta} \sqrt{\frac dn} \to 0$, then $\hat v$ estimates $v$ consistently. 
+
+\subsubsection{High-dimensional asymptotics}
+{\color{red} Non-examinable}. 
+
+\subsection{Sparse PCA}
+We have seen that in the spiked covariance model, PCA is consistent when $d/n \to 0$, but PCA can fail if $d/n$ is bounded away from zero. Considering the case $d/n \to \gamma > 0$, we can ask if there exists a better estimator. Minimax lower bounds show that in general, the answer is negative, and therefore we must place some assumptions on $\Sigma$.
+
+Again, we assume $\Sigma = \theta vv\T + I$. Define
+\[
+\norm{v}_0 \ceq \abs{\qty{k \mid v_k \neq 0}} \quad\text{(the amount of nonzero components of $v$)}
+\]
+We will assume that $v$ is spare, i.e., $\norm{v}_0 = k \ll d$. This means that the extra variance in the data along the ``spike'' only involved a few variables. 
+We can now define an estimator similar to best subset selection
+\[
+\hat v^{(0, k')} \ceq \argmax_{w \in S^{d-1}, \norm{w}_0 \leq k'} w\T \hat\Sigma w. 
+\]
+
+\begin{proposition}
+	Let $\hat\Sigma$ be the sample covariance of $n$ i.i.d.\ $N(0, \Sigma)$ random variables. Suppose $k \leq d/2$ and $k \leq k'$, then 
+	\[
+	\PP\qty(\min_{z = \pm 1} \norm{v - z\hat v^{(0, k')}}_2 \geq  C\frac{1+\theta}{\theta} \qty[ \sqrt{\eta_n \lor \eta_n}]) \leq e^{-\delta} \quad\forall \delta > 0
+	\]
+	where 
+	\[
+	\eta_n = \frac{(k + k') \log(de^2/(k+ k')) + \delta}{n}.
+	\]
+\end{proposition}
+Note that the dependence on $d$ is now logarithmic, so morally, we only need $\frac{\max(k, k')}{n} \to 0$ for consistency. 
+
+The problem with this estimator is that it is hard to compute. The SCoTLASS estimator relaxes the estimator with 
+\[
+\hat v^{(1, \lambda)} \ceq \argmax_{w \in S^{d-1}, \norm{w}_1 \leq \lambda} w\T \hat\Sigma w.
+\]
+The optimisation problem is not convex (since we are maximising a convex function instead of minimising), but is easier to compute and has similar convergence rates as the estimator $\hat v^{(0, k)}$. We can relax the problem even further (see example sheet) which gives an easily computable solution. 
+
+It has been shown that sparce PCA has no estimators computable in polynomial time which achieve minimax rates for certain distribution classes, which means that sparce PCA has some inherent computational difficulty. 

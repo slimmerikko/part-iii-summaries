@@ -24,6 +24,14 @@ Note that we do not explicitly state the topology used when writing $\BB\Omega$,
 \end{definition}
 
 \begin{definition}
+	Let $(\Omega, \FF, \mu)$ be a measure space and let $g \colon (\Omega, \FF) \to (\RR, \BB \RR)$ be measurable and non-negative. Then the map 
+	\[
+	\nu \colon \FF \to [0, \infty] \colon F \mapsto \int_F g \dd{\mu}
+	\]
+	defines a measure on $(\Omega, \FF)$, called the \emph{measure with ($\mu$-)density $g$}. If $\nu$ is a probability measure, $g$ is called a \emph{($\mu$-)probability density}. 
+\end{definition}
+
+\begin{definition}
 	Let $(\Omega, \FF)$ be a measurable space and $\mu, \nu$ two measures on $\Omega$. Then $\nu$ is called \emph{absolutely continuous} with respect to $\mu$, denoted $\nu \ll \mu$, if \[\mu(F) = 0 \implies \nu(F) =0 \qquad\text{for all $F \in \FF$}. 
 \]
 \end{definition}
@@ -58,7 +66,7 @@ for any $\phi \in L^1(\Omega)$.
 \begin{definition}
 	For $y \in \YY$, we call $h(y)$ (from the previous theorem) the \uline{conditional expectation of $U$ given $Y = y$}, denoted $h(y) \eqqcolon \EE[U \mid Y = y]$ (which is well-defined up to $\PP(Y \in \cdot)$ null sets). 
 	
-	For an event $F \in \FF$, we define the \emph{probability of $F$ given $Y = y$} as $\EE[\ind_F \mid Y = y]$.
+	%For an event $F \in \FF$, we define the \emph{probability of $F$ given $Y = y$} as $\EE[\ind_F \mid Y = y]$.
 \end{definition}
 
 \begin{definition}
@@ -69,7 +77,7 @@ for any $\phi \in L^1(\Omega)$.
 	\end{enumerate}
 \end{definition}
 
-It can be shown that $(y, F) \mapsto \EE[\ind_F \mid Y= y]$ is a Markov kernel. This is clarified in the following theorem:
+It can be shown that $(y, F) \mapsto \EE[\ind_F \mid Y= y]$ (which represents the probability of $F$ given $Y = y$) is a Markov kernel. This is clarified in the following theorem:
 
 \begin{theorem}
 Let $U \colon (\Omega, \FF) \to (\XX, \BB\XX)$ and $Y \colon (\Omega, \FF) \to (\YY, \BB\YY)$ be random variables. Then there exists a Markov kernel from $(\YY, \BB\YY)$ to $(\XX, \BB\XX)$ with
@@ -101,10 +109,44 @@ We now consider the marginal density function of jointly distributed random vari
 \end{lemma}
 
 We can use the above theorem to consider the density function of $U$ conditional on $Y$:
-\begin{theorem}
+\begin{theorem}\label{thm:conditional_density}
+	% TODO niet helemaal hetzelfde als thm 6.3.10 maar whatever
 	Under the assumptions of the previous lemma, we have $\PP(U \in \cdot \mid Y = y) \ll \nu_U$, and its $\nu_U$ density is
 	\[
 	g_{U \mid Y = y}(u) = \ind_{g_Y(y) > 0}  \frac{g_{U, Y}(u, y)}{g_Y(y)},
 	\]
 	which is uniquely defined up to null sets. 
+\end{theorem}
+
+\begin{definition}
+	Let $g_U, g_Y, g_{U, Y}, g_{U\mid Y= y}, g_{Y \mid U = u}$ be the probability densities from the previous theorem. Then $g_U$ is called the \emph{marginal probability density} of $U$, $g_{U, Y}$ is called the \emph{joint probability density} of $U$ and $Y$, and $g_{U \mid Y = y}$ is called the \emph{conditional density} of $U$ given $Y = y$.  
+\end{definition}
+
+\subsection{Bayesian statistics}
+\subsubsection{Statistical models}
+\begin{definition}
+	Let $\XX, \YY$ be separable Banach spaces. We call $\XX$ the \emph{parameter space} and $\YY$ the \emph{data space}. Let $\Pp \ceq \qty{M(\cdot \mid u) : u \in \XX}$, where $M$ is a Markov kernel from $(\XX, \BB\XX)$ to $(\YY, \BB\YY)$. The tuple $(\YY, \Pp)$ is called the \emph{statistical model}. 
+\end{definition}
+
+Usually, we distinguish between \emph{parametric models} (where $\XX$ is finite-dimensional) and \emph{nonparametric models}. However, in Bayesian statistics, this distinction rarely matters.
+
+Given a ``true'' parameter $u^* \in \XX$, a distribution $Y \sim M(\cdot \mid u^*)$ and a realisation $y$ of $Y$, we aim to find $u^*$ based on $y$. The probability measure $M(\cdot \mid u^*)$ is called the \emph{data-generating distribution}. 
+
+\begin{definition}
+	Let $(\YY, \Pp)$ be a statistical model and $L \colon (\XX \times \YY, \BB\XX \otimes \BB\YY) \to (\RR, \BB\RR)$ such that
+	\[
+	\Pp = \qty{F \mapsto \int_F L(y \mid u) \dd\mu(y) : u \in \XX}
+	\]
+	for some measure $\mu$ on $(\YY, \BB\YY)$. Then $L$ is called the \emph{(data) likelihood}. 
+\end{definition}
+The likelihood is a conditional density $g_{Y\mid U = u}$ for some random variable $U$. 
+
+\subsubsection{Bayes' formula}
+Assume we are given a likelihood $L = f_{Y \mid U = u}$ for some $U$. We are interested in finding $f_{U \mid Y = y}$, the posterior density function of $U$. For this we use Bayes's formula:
+\begin{theorem}[Bayes]
+	Let $U, Y$ be random variables as in \cref{thm:conditional_density}. Then we have
+	\[
+	g_{U \mid Y =y}(u) = \frac{g_{Y \mid U = u}(y) g_{U}(u)}{g_Y(y)}
+	\]
+	for $u \in \XX$, $\nu_U$-a.e., and $y \in \YY$, $\PP(Y \in \cdot)$-a.e.\ with $g_Y(y) > 0$. 
 \end{theorem}
