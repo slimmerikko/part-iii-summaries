@@ -1,0 +1,314 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage[normalem]{ulem}
+\usepackage{hyperref}
+\usepackage[shortlabels]{enumitem}
+\usepackage{mathtools, amsmath, amssymb, amsthm, mdframed, bbm, graphicx, float, physics, xcolor, cleveref}
+
+\hypersetup{
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = blue, %Colour for external hyperlinks
+    linkcolor    = blue, %Colour of internal links
+    citecolor   = red %Colour of citations
+}
+
+% Definition of numbered environments.
+% Usage: \begin{theorem} ... \end{theorem}
+% Remark has no numbering.
+\theoremstyle{plain}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Question with box around it
+\newenvironment{qbox}{\begin{mdframed}\begin{question}}{\end{question}\end{mdframed}}
+
+% A proof with "solution" instead of "proof" and no QED symbol
+\newenvironment{solution}{\begin{proof}[Solution]\renewcommand\qedsymbol{}}{\end{proof}}
+
+% Some renewed commands
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+
+% Frequently used math alphabets
+\newcommand{\Bb}{\mathbb}
+\newcommand{\Cal}{\mathcal}
+\newcommand{\Bf}{\mathbf}
+\newcommand{\Rm}{\mathrm}
+
+% Frequently used letters in the blackboard alphabet
+\newcommand{\CC}{\Bb C}
+\newcommand{\NN}{\Bb N}
+\newcommand{\PP}{\Bb P}
+\newcommand{\QQ}{\Bb Q}
+\newcommand{\RR}{\Bb R}
+\newcommand{\EE}{\Bb E}
+
+% Usage: \ang{...} is equivalent to \langle ... \rangle, while \ang*{...} is equivalent to \left\langle ... \right\rangle
+% For other delimiters: use \qty from the physics package (i.e., \qty(...))
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Frequently used commands
+\newcommand{\T}{^\top} % Matrix transpose A\T
+\newcommand{\C}{^\complement} % Set complement A\C
+\renewcommand{\P}{^\perp}
+\newcommand{\D}{^\dagger}
+\newcommand\ceq\coloneqq % Definitions :=
+\newcommand\pow{\Cal P} % Power sets
+\newcommand\eps\epsilon
+\newcommand\ind{\mathbbm 1} % Blackboard 1 for indicator functions
+\newcommand\restr{\mathord\restriction}
+\newcommand\TODO{{\color{red} TODO: }}
+\newcommand\clos\overline
+
+% Functions that appear frequently
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\newcommand\XX{\Cal X}
+\newcommand\YY{\Cal Y}
+\newcommand\UU{\Cal U}
+\newcommand\VV{\Cal V}
+\newcommand\LL{\Cal L}
+\newcommand\KK{\Cal K}
+\newcommand\BB{\Cal B}
+\newcommand\JJ{\Cal J}
+\newcommand\LLL{\Bb L}
+\newcommand\DD{\Cal D}
+\newcommand\FF{\Cal F}
+\newcommand\Pp{\Cal P}
+\DeclareMathOperator\Dom{\Cal D}
+\DeclareMathOperator\Nul{\Cal N}
+\DeclareMathOperator\Ran{\Cal R}
+\DeclareMathOperator\TV{TV}
+\DeclareMathOperator\BV{BV}
+\DeclareMathOperator\Prob{Prob}
+\newcommand\pro{_\Rm{prod}}
+
+\newcommand\cw\rightharpoonup
+\newcommand\cws{\overset{*}{\rightharpoonup}}
+\newcommand\rext{\overline\RR}
+\newcommand\pt\partial
+\DeclareMathOperator\dom{dom}
+
+\title{Inverse Problems --- Example Sheet 3}
+\author{Lucas Riedstra}
+\begin{document}
+\maketitle
+
+\setcounter{question}{2}
+
+\begin{question}
+	Let $a \in \RR\setminus \qty{0}$. We consider the inverse problem $au + n = f_n$, where $u \in \RR$ is the unknown parameter, $n \in \RR$ is measurement noise, and $f_n \in \RR$ is observed data. We assume that the noise and prior are Gaussian, $N \sim \Rm N(0, \gamma^2)$ and $U \sim \Rm N(m_0, \sigma_0^2)$, where $\gamma^2 > 0, \sigma_0^2 > 0$. Assume that the likelihood is given by
+	\[
+	L(f_n \mid u) \ceq \frac1{\sqrt{2\pi\gamma^2}} \exp(- \frac{(au - f_n)^2}{2\gamma}).
+	\]
+	\begin{enumerate}
+		\item[(i)] Compute the posterior measure $\PP(U \in \cdot \mid aU + N = f_n)$. 
+	\end{enumerate}
+Next, we assume that we take $N$ independent observations of the data, i.e., we consider the likelihood
+\[
+L\qty(f_n^{(1:M)} \mid u) \ceq \prod_{i=1}^M \frac{1}{\sqrt{2\pi \gamma^2}} \exp(- \frac{(au - f_n^{(i)})^2}{2\gamma^2}), 
+\]
+where $f_n^{(i)} \in \RR$. 
+\begin{enumerate}
+	\item[(ii)] Compute the posterior measure $N(m_M, \sigma_M^2) \ceq \PP(U \in \cdot \mid aU + N = f_n^{(i)} (i = 1, \dotsc, M))$. 
+	\item[(iii)] Replace the data $f_n^{(1:M)}$ in the posterior by the random vector
+	\[
+	F \ceq \mqty(a u\D \\ \vdots \\ a u\D) + \eta,
+	\]
+	where $\eta \sim \Rm N(0, \gamma^2 I)$ for some $u\D \in \RR$ and study the asymptotic behaviour of $\EE[m_M], m_M, \sigma_M^2$ as $M \to\infty$. How do you explain your findings?
+\end{enumerate}
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}[(i)]
+		\item 
+		%		We will assume the conditions for Bayes' theorem hold, and now we must compute 
+		%		\[
+		%		\frac{L(f_n \mid U)}{\int_{-\infty}^\infty L(f_n \mid v) \dd{v}}.
+		%		\] 
+		We have, with $C = (2\pi\gamma^2)^{-1/2}$, 
+		\begin{align*}
+			\int_{-\infty}^\infty L(f_n \mid v) \dd{v} &=  C \int_{-\infty}^\infty \exp\qty(- \frac{(av - f_n)^2}{2\gamma^2}) \dd{v} = \frac Ca \int_{-\infty}^\infty \exp(- \frac{(v - f_n)^2}{2\gamma^2}) \dd{v} = \frac1a. 
+		\end{align*} 
+		Thus we have
+		\[
+		\dv{\mu_\Rm{post}}{\mu_0} \qty(u)= \frac aC \exp(- \frac{(au - f_n)^2}{2\gamma^2}) = \frac aC \exp(- \frac{(u - f_n/a)^2}{2(\gamma / a)^2}),
+		\]
+		which is the density of an $N(f_n/a, \gamma^2/a^2)$ distribution. 
+		
+		By question 1c, we have
+		\begin{align*}
+			\dv{\mu_\Rm{post}}{\lambda} \qty(u)&= \dv{\mu_\Rm{post}}{\mu_0} \qty(u)\dv{\mu_0}{\lambda}\qty(u),
+		\end{align*}
+		which is (up to a constant) the product of an $N(f_n/a, \gamma^2/a^2)$ density with an $N(m_0, \sigma_0^2)$ density. 
+		
+		For this, we can use the following lemma:
+		\begin{mdframed}
+		\begin{lemma}
+			Let $f_{\mu_1, \sigma_1}, f_{\mu_2, \sigma_2}$ be the density functions of $\Rm N(\mu_1, \sigma_1^2), \Rm N(\mu_2, \sigma_2^2)$ distributions respectively. Then the product $f_{\mu_1, \sigma_1} f_{\mu_2, \sigma_2}$ is proportional to an $f_{\mu\pro, \sigma\pro}$ density, where
+			\[
+			\mu\pro \ceq \frac{\mu_1\sigma_2^2 + \mu_2\sigma_1^2}{\sigma_1^2 + \sigma_2^2}, \quad \sigma\pro^2 \ceq \frac{\sigma_1^2\sigma_2^2}{\sigma_1^2 + \sigma_2^2}. 
+			\]
+		\end{lemma}
+	
+	\begin{proof}
+		Since we are discussing proportionality, we only care about the exponents. We have
+		\begin{align*}
+			\frac{(x - \mu_1)^2}{\sigma_1^2} + \frac{(x - \mu_2)^2}{\sigma_2^2} &= \frac{(\sigma_1^2 + \sigma_2^2) x^2 - 2 (\mu_1\sigma_2^2 + \mu_2 \sigma_1^2)x  +  \mu_1^2\sigma_2^2 + \mu_2^2\sigma_1^2}{\sigma_1^2\sigma_2^2} \\
+			&= \frac{x^2 - 2 \frac{\mu_1\sigma_2^2 + \mu_2\sigma_1^2}{\sigma_1^2 + \sigma_2^2} x + \frac{\mu_1^2\sigma_2^2 + \mu_2^2\sigma_1^2}{\sigma_1^2 + \sigma_2^2}}{\frac{\sigma_1^2\sigma_2^2}{\sigma_1^2 + \sigma_2^2}} \\
+			&= \frac{\qty(x - \frac{\mu_1\sigma_2^2 + \mu_2\sigma_1^2}{\sigma_1^2 + \sigma_2^2})^2}{\frac{\sigma_1^2\sigma_2^2}{\sigma_1^2 + \sigma_2^2}} + C,
+		\end{align*}
+	where $C$ is some constant independent of $x$. The claim follows. 
+	\end{proof}
+\end{mdframed}
+Plugging in our values we can compute the posterior density: it is an $\Rm N(\mu\pro, \sigma\pro^2)$ density where
+\begin{align*}
+	\mu\pro &= \frac{\frac{f_n\sigma_0^2}{a} + \frac{m_0\gamma^2}{a^2}}{\frac{\gamma^2}{a^2} + \sigma_0^2}  = \frac{a f_n \sigma_0^2 + m_0\gamma^2}{\gamma^2 + a^2\sigma_0^2}, \\
+	\sigma\pro^2 &= \frac{\frac{\sigma_0^2\gamma^2}{a^2}}{\frac{\gamma^2}{a^2} + \sigma_0^2} = \frac{\sigma_0^2 \gamma^2}{\gamma^2 + a^2\sigma_0^2}. 
+\end{align*}%		We can compute the product density, and it is proportional to a Gaussian density with parameters
+%		\[
+%		\mu_c \ceq \frac{1}{\frac{a^2}{\gamma^2} + \frac{1}{\sigma_0^2}} \qty(\frac{a f_n}{\gamma^2} + \frac{m_0}{\sigma_0^2}), \quad \sigma_c^2 \ceq  \frac{1}{\frac{a^2}{\gamma^2} + \frac{1}{\sigma_0^2}} . 
+%		\]
+%		Therefore, the product density is an $N(\mu_c, \sigma_c^2)$ density, from which the posterior measure follows. 
+
+\item We get similar computations as in the previous part, except that we have to compute the product of $N + 1$ densities, namely $\Rm N(f_n^{(1)}/a, \gamma^2/a^2), \dotsc, \Rm N(f_n^{(N)}/a, \gamma^2/a^2), \Rm N(m_0, \sigma_0^2)$. 
+Note that in the previous lemma, if $\sigma_1^2 = \sigma_2^2  = \sigma^2$, the formula gives
+\[
+\mu\pro = \frac12(\mu_1 + \mu_2), \quad \sigma\pro = \frac{\sigma^2}{2}, 
+\]
+and this generalises: for $N$ observations we get 
+\[
+\mu\pro^{(n)} = \frac1n (\mu_1 + \dotsb + \mu_n) \eqqcolon \bar\mu, \quad\sigma\pro^{(n)} = \frac{\sigma^2}{n}. 
+\]
+This shows that the product of the $\Rm N(f_n^{(1)}/a, \gamma^2/a^2), \dotsc, \Rm N(f_n^{(N)}/a, \gamma^2/a^2)$ densities is proportional to a $\Rm N(\bar{f_n}/a, \gamma^2/(na^2))$ distribution, where $\bar f_n$ is the average of $f_n^{(1)}, \dotsc, f_n^{(n)}$. 
+
+When we multiply this with prior density $\Rm N(m_0, \sigma_0^2)$, we get
+\begin{align*}
+	\mu_M &= \frac{\frac{\bar f_n \sigma_0^2}{a} + \frac{m_0\gamma^2}{na^2}}{\frac{\gamma^2}{na^2} + \sigma_0^2} = \frac{n a \bar f_n\sigma_0^2 + m_0\gamma^2}{\gamma^2 + na^2\sigma_0^2}, \\
+	\sigma_M^2 &= \frac{\frac{\sigma_0^2\gamma^2}{na^2}}{\frac{\gamma^2}{na^2} + \sigma_0^2} = \frac{\sigma_0^2\gamma^2}{\gamma^2 + na^2\sigma_0^2}. 
+\end{align*}
+
+\item Note that $\bar F = a u\D + \bar\eta$, and we know from elementary probability theory that if $\eta \sim N(0, \gamma^2I)$, then for the average $\bar\eta$ we have $\bar \eta \sim N(0, \gamma^2/n)$. 
+We get
+\begin{align*}
+	\EE[m_M]  &= \EE\qty[ \frac{n a (au\D + \bar\eta) \sigma_0^2 + m_0\gamma^2}{\gamma^2 + na^2\sigma_0^2}] = \frac{na^2 u\D \sigma_0^2 + m_0\gamma^2}{\gamma^2 + na^2\sigma_0^2} \overset{n\to\infty}\to  u\D,
+\end{align*}
+so in the limit $n \to\infty$, we have $\EE[m_M] \to u\D$, which seems reasonable: the more observations we get, the less our prior assumptions are taken into account. 
+
+By the law of large numbers, we have
+\[
+m_M = \frac{na^2\sigma_0^2 u\D + m_0\gamma^2}{n a^2 \sigma_0^2 + \gamma^2} + \frac{na\sigma_0^2 \bar\eta + m_0\gamma^2}{na^2\sigma_0^2\gamma^2} \to u\D, 
+\]
+since $\bar\eta \to 0$ as $n\to\infty$ by the law of large numbers. 
+
+Finally, since $\sigma_M^2$ is independent of the data (it depends only on the likelihood and the prior), we can simply let $n\to\infty$ in our expression for $\sigma_M^2$ and see $\sigma_M^2 \to 0$, which also makes sense: the more observations we get, the less variance we have. 
+	\end{enumerate}
+\end{proof}
+
+\begin{question}
+	Let $(\Omega, \FF)$ and let $\Prob(\Omega, \FF)$ be the space of probability measures on $(\Omega, \FF)$. 
+	\begin{enumerate}[(i)]
+		\item Show that $d_{\TV} \colon \Prob(\Omega, \FF)^2 \to [0, \infty) \colon (\mu, \nu) \mapsto \sup_{F \in \FF} \abs{\mu(F) - \nu(F)}$ is a metric on $\Prob(\Omega, \FF)$. 
+		
+		\item Let $\mu, \nu \in \Prob(\Omega, \FF)$ and $\rho$ be a $\sigma$-finite measure with $\mu, \nu \ll\rho$. Show that
+		\[
+		d_{\TV} (\mu, \nu) = \frac12\int_\Omega \abs{\dv{\mu}{\rho} - \dv{\nu}{\rho}} \dd{\rho}. 
+		\]
+		
+		\item Let $\KK \ceq \qty{h \colon (\Omega, \FF) \to (\RR, \BB\RR) \colon \sup_{\omega \in \Omega} \abs{h(\omega)} \leq 1}$ and $\mu, \nu \in \Prob(\Omega, \FF)$. Show that
+		\[
+		d_\Rm{TV}(\mu, \nu) = \sup_{h \in \KK} \frac12 \abs{\int_\Omega h \dd{\mu} - h\dd{\nu}}. 
+		\]
+		
+		\item Let $\Omega$ be a topological space and $(\Omega, \FF) \ceq (\Omega, \BB\Omega)$. Let $(\mu_n)_{n\in\NN} \in \Prob(\Omega, \FF)^\NN$ and $\mu \in \Prob(\Omega, \FF)$. Show that 
+		\[
+		\lim_{n\to\infty} d_\Rm{TV}(\mu_n, \mu) = 0 \implies \mu_n \to \mu \text{ weakly, as } n \to\infty. 
+		\]
+		
+		\item Show that the converse of (iv) is in general not true. 
+	\end{enumerate}
+\end{question}
+
+\begin{proof}
+	\begin{enumerate}[(i)]
+		\item We check the metric definition. It is clear that $d_\Rm{TV}$ is nonnegative and symmetric. Furthermore, we have
+		\[
+		d_\Rm{TV}(\mu, \nu) = 0 \implies \sup_{F\in \FF} \abs{\mu(F) - \nu(F)} = 0 \implies \mu(F) = \nu(F) \text{ for all } F \in \FF \implies \mu = \nu.
+		\]
+		Finally, if $\mu, \nu, \rho \in \Prob(\Omega, \FF)$, then by the ``normal'' triangle inequality we have
+		\begin{align*}
+			d_\Rm{TV}(\mu, \rho) &= \sup_{F \in \FF} \abs{\mu(F) - \rho(F)} = \sup_{F \in \FF} \abs{\mu(F) - \nu(F) + \nu(F) - \rho(F)} \\
+			&\leq \sup_{F \in \FF} \qty(\abs{\mu(F) - \nu(F)} + \abs{\nu(F) - \rho(F)}) \\
+			&\leq \sup_{F \in \FF} \abs{\mu(F) - \nu(F)} + \sup_{F\in \FF} \abs{\nu(F) - \rho(F)} \\
+			&= d_\Rm{TV}(\mu, \nu) + d_\Rm{TV}(\nu, \rho). 
+		\end{align*}
+	
+	\item Write $A = \qty{x \in \Omega \mid \dv{\mu}{\rho}\qty(x) > \dv{\nu}{\rho}\qty(x)}$ and $B = \qty{x \in \Omega \mid \dv{\mu}{\rho}\qty(x) < \dv{\nu}{\rho}\qty(x)}$. 
+	Note that for any $X \subseteq A$ we have $\mu(X) \geq \nu(X)$ while for any $X \subseteq B$ we have $\mu(X) \leq \nu(X)$.  
+	
+	Also note that $\mu(A) - \nu(A) = \nu(B) - \mu(B)$. 
+	Therefore, we have
+	\begin{align*}
+	d_\Rm{TV}(\mu, \nu) &= \sup_{F \in \FF} \abs{\mu(F) - \nu(F)} \\
+	&= \sup_{F \in \FF} \abs{\mu(F \cap A) - \nu(F \cap A) + \mu(F \cap B) - \nu(F \cap B)} \\
+	&\leq \sup_{F \in \FF} \max\qty{\mu(F \cap A) - \nu(F \cap A), \nu(F \cap B) - \mu(F \cap B)} \\
+	&\leq \sup_{F \in \FF} \max\qty{\mu(A) - \nu(A), \nu(B) - \mu(B)} \\
+	&= \mu(A) - \nu(A). 
+	\end{align*}
+
+	Looking at the integral in the question, we see
+	\begin{align*}
+		\frac12\int_\Omega \abs{\dv{\mu}{\rho} - \dv{\nu}{\rho}} \dd{\rho} &=  \frac12 \qty(\int_A \qty(\dv{\mu}{\rho} - \dv{\nu}{\rho}) \dd{\rho} - \int_B \qty(\dv{\mu}{\rho} - \dv{\nu}{\rho}) \dd{\rho}) \\
+		&= \frac12\qty(\mu(A) - \nu(A) - \mu(B) + \nu(B)) \\
+		&= \mu(A) - \nu(A). 
+	\end{align*}
+We conclude
+\[
+d_\Rm{TV}(\mu, \nu) = \mu(A) - \nu(A) = \frac12\int_\Omega \abs{\dv{\mu}{\rho} - \dv{\nu}{\rho}} \dd{\rho}.
+\]
+
+\item Let $\rho = \mu + \nu$, then we have $\mu \ll\rho$ and $\nu \ll \rho$, and $\rho$ is $(\sigma$-)finite. Define $A$ and $B$ as in the solution to the previous exercise, then we have for $h \in \KK$ that
+\begin{align*}
+	\frac12 \abs{\int_\Omega h \dd{\mu} - \int_\Omega h \dd{\nu}} &= \frac12 \abs{\int_\Omega h\qty(\dv{\mu}{\rho} - \dv{\nu}{\rho}) \dd{\rho}} \\
+	&\leq \frac12 \int_\Omega \abs{\dv{\mu}{\rho} - \dv{\nu}{\rho}}\dd{\rho} \\
+	&= \frac12 \int_A \qty(\dv{\mu}{\rho} - \dv{\nu}{\rho}) \dd{\rho} + \frac12 \int_B \qty(\dv{\nu}{\rho} - \dv{\mu}{\rho}) \dd{\rho} \\
+	&= \mu(A) - \nu(A) = d_\Rm{TV}(\mu, \nu). 
+\end{align*}
+Furthermore, equality can be obtained by letting $h = \ind_A - \ind_B \in \KK$, which concludes the proof. 
+
+\item Suppose that $d_\Rm{TV}(\mu_n, \mu) \to 0$, and let $g \colon (\Omega, \FF) \to (\RR, \BB\RR)$ be continuous and bounded. Since $g$ is bounded, without loss of generality we can assume $\sup_{\omega \in \Omega} \abs{g(\omega)} \leq 1$ (otherwise we divide by a constant). Now, by the previous exercise we have
+\[
+d_\Rm{TV}(\mu_n, \mu) \geq \frac12 \abs{\int_\Omega g \dd{\mu} - \int_\Omega g \dd{\mu_n}}, 
+\] 
+and since $d_\Rm{TV}(\mu_n, \mu) \to 0$, we conclude that $\abs{\int_\Omega g \dd{\mu} - \int_\Omega g \dd{\mu_n}} \to 0$, or equivalently that $\int_\Omega g \dd{\mu_n} \to \int_\Omega g \dd{\mu}$. Since $g$ was arbitrarily chosen, we conclude that $\mu_n \to \mu$ weakly. 
+
+\item Let $\mu_n$ be the measure on $(\RR, \BB\RR)$ corresponding to the uniform distribution on $[-\frac1n, \frac1n]$ with density function $f(x) = \frac n2 \cdot  \ind_{[-\frac1n, \frac1n]}$, and let $\mu \ceq \delta_0$. We claim $\mu_n \to \mu$ weakly. 
+
+To prove this claim, let $g \colon (\RR, \BB\RR) \to (\RR, \BB\RR)$ be continuous and bounded, and let $\eps > 0$. Choose $n$ large enough such that, on $[-1/n, 1/n]$, $g$ takes values in $[g(0) - \eps, g(0) + \eps]$. Then we have 
+\[
+\int_\RR g \dd{\mu_n} = \frac n2 \int_{-1/n}^{1/n} g(x) \dd{x} \in [g(0) - \eps, g(0) + \eps], 
+\]
+and since $\eps$ was randomly chosen, we conclude $\int_\RR g \dd{\mu_n} \to g(0) = \int_\RR g \dd{\delta_0}$. 
+
+However, it is immediate that $d_\Rm{TV}(\mu_n, \mu)$ does not converge to 0, since $\mu_n(\qty{0}) = 0$ for all $n$ while $\mu(\qty{0}) = 1$. 
+	\end{enumerate}
+\end{proof}
+
+
+\end{document}

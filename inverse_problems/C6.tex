@@ -1,0 +1,82 @@
+\section{Bayesian inverse problems}
+\subsection{Bayesian inverse problems}
+\begin{definition}
+	Let $(\Omega', \FF')$ be some measurable space. We denote the space of probability measures on $(\Omega', \FF')$ by $\Prob(\Omega', \FF')$. Furthermore, if $\nu$ is a $\sigma$-finite measure on $(\Omega', \FF')$, we let $\Prob(\Omega', \FF', \nu)$ denote the space of probability measures $\mu \in \Prob(\Omega', \FF')$ with $\mu \ll\nu$. 
+\end{definition}
+
+\begin{definition}
+	Let $\mu_0 \in \Prob(\XX, \BB\XX)$ and $L \colon (\XX \times \YY, \BB\XX \otimes \BB\YY) \to (\RR, \BB\RR)$ be a measurable function. Then we define the \emph{Bayesian inverse problem with prior $\mu_0$ and likelihood $L$} to be the problem of finding $\mu\post \in \Prob(\XX, \BB\XX)$ with 
+	\[
+	\dv{\mu\post}{\mu_0}\qty(u) = \frac{L(f_n \mid u)}{\int_\XX L(f_n \mid u) \dd{\mu_0(u)}} \qquad(u \in \XX ; \mu_0\text{-a.s.}), 
+	\]
+	for any data set $f_n \in \YY$. 
+\end{definition}
+
+\begin{definition}
+	Consider the BIP as in the previous definition, let $P \subseteq \Prob(\XX, \BB\XX)$ be a space of probability measures and $d$ a metric on $P$. Then the problem is $\emph{$(P, d)$-well-posed}$ if
+	\begin{enumerate}
+		\item For all $f_n \in \YY$, there exists a solution $\mu\post \in P$ (existence);
+		\item For all $f_n \in \YY$, the solution $\mu\post \in P$ is unique (uniqueness);
+		\item The map $f_n \mapsto \mu\post$ is continuous from $(\YY, \BB\YY)$ to $(P, d)$ (stability). 
+	\end{enumerate}
+\end{definition}
+
+If $\int_\XX L(f_n \mid u) \dd\mu_0(u) \in (0, \infty)$, then existence and uniqueness is clear. This is immediate if $L > 0$ and $L(f_n \mid \cdot) \in L^1$ for all $f_n$. 
+
+\subsection{Metrics on spaces of probability measures}
+We consider two metrics on spaces of probability measures:
+\begin{definition}
+	Let $(\Omega', \FF')$ be a measurable space.
+	\begin{enumerate}
+		\item We define the \emph{total variation distance} on $\Prob(\Omega', \FF')$ by
+		\[
+		d_\Rm{TV}(\mu, \nu)  \ceq \sup_{F' \in \FF'} \abs{\mu(F') - \nu(F')}. 
+		\]
+		\item Suppose that $\Omega'$ is a topological space and $\FF'=\BB\Omega'$. Let $(\mu_n) \subseteq \Prob(\Omega', \FF')$  and $\mu \in \Prob(\Omega', \FF')$. We say that $\mu_n$ converges \emph{weakly} to $\mu$ as $n\to\infty$, denoted $\mu_n \cw \mu$, if
+		\[
+		\int_{\Omega'} g \dd{\mu_n} \to \int_{\Omega'} g \dd{\mu} \quad\text{for all continuous bounded functions } g \colon (\Omega', \BB\Omega') \to (\RR, \BB\RR). 
+		\]
+	\end{enumerate}
+\end{definition}
+
+It is known that the weak convergence topology is metrisable, however, the metric itself is hardly used. We will denote this metric $d_\Rm{LP}$.  
+
+\begin{lemma}
+	Convergence in TV-distance is stronger than weak convergence. 
+\end{lemma}
+
+\begin{lemma} \label{lem:tv_distance_formulation}
+	Let $\mu, \nu \in \Prob(\Omega, \FF)$, and let $\rho$ be a $\sigma$-finite measure with $\mu, \nu \ll\rho$. Then we have
+	\[
+	d_\Rm{TV}(\mu, \nu) = \frac12 \int_\Omega \abs{\dv{\mu}{\rho} - \dv{\nu}{\rho}}\dd{\rho}. 
+	\]
+\end{lemma}
+One can always choose $\rho = \mu + \nu$ in the previous lemma. 
+
+\subsection{Stability}
+We will assume the following, given a Bayesian inverse problem with prior $\mu_0$ and likelihood $L$:
+\begin{enumerate} [{A}1]
+	\item $L(\cdot \mid u)$ is strictly positive;
+	\item $L(f_n \mid \cdot) \in L^1(\mu_0)$;
+	\item There exists $h \in L^1(\mu_0)$ such that $L(f_n'\mid \cdot) \leq h(\cdot)$ for all $f_n' \in \YY$;
+	\item $L(\cdot \mid u)$ is continuous.
+\end{enumerate}
+Note that A1 and A2 were already required for existence and uniqueness. A4 asks for continuity only in the data, not in the parameter space. 
+
+\begin{theorem}
+	Given a BIP with prior $\mu_0$ and likelihood $L$ which satisfies assumptions (A1)-(A4) and let $P = \Prob(\XX, \BB\XX, \mu_0)$. Then the problem is $(P, d_\Rm{TV})$-well-posed, and therefore also $(P, D_\Rm{LP})$-well-posed. 
+\end{theorem}
+
+\begin{proof}
+	We have already proved existence and uniqueness. By \cref{lem:tv_distance_formulation}, to prove that $f_n \mapsto \mu\post$ is continuous, it suffices to prove for any $f_n^{(m)} \to f_n$ that
+	\[
+	\int_\XX \abs{\frac{L(f_n \mid u)}{Z(f_n)} - \frac{L(f_n^{(m)} \mid u)}{Z(f_n^{(m)})}} \dd{\mu_0(u)} \to 0.
+	\]
+	For this, we first show that the map $f_n \mapsto L(f_n \mid \cdot)$ is continuous as a map from $\YY$ to $L^1(\mu_0)$. Note that
+	\[
+	\lim_{m\to\infty} \int_\XX \abs{L(f_n^{(m)} \mid u) - L(f_n \mid u)} \dd{\mu_0(u)} = 0
+	\]
+	since we can exchange limit and integral by the dominated convergence theorem (since $L \in L^1$, the integrand is bounded by $2\abs{L}$), and then apply assumption A4 which guarantees continuity of $L(\cdot \mid u)$. 
+	
+	Analogously, we can show that the map $f_n \mapsto Z(f_n)$ is continuous, and therefore, the map $f_n \mapsto L(f_n \mid \cdot) / Z(f_n)$ is continuous, from which the claim follows. 
+\end{proof}

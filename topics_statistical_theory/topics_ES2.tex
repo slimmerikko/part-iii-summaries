@@ -209,7 +209,7 @@
 \end{question}
 
 \begin{proof}
-	???
+	?? (problem: $f$ being a density does not mean that $f', f'', \dotsc$ are densities). 
 \end{proof}
 
 \begin{question}
@@ -266,11 +266,12 @@
 	\hat m(x) &= \int_{-\infty}^\infty y \frac{\frac1n \sum_{i=1}^n K_h(x - X_i) K_h( y - Y_i)}{\frac1n \sum_{i=1}^n K_h(x - X_i)} \dd{y} \\
 	&= \frac{ \sum_{i=1}^n K_h(X_i - x) Z_i(y)}{\sum_{i=1}^n K_h(X_i - x)},
 	\end{align*}
-where $Z_i(y) = \int_{-\infty}^\infty y K_h(y - Y_i) \dd{y}$. Assuming that $K$ is a second-order kernel, we have
+where $Z_i(y) = \int_{-\infty}^\infty y K_h(y - Y_i) \dd{y}$. We have
 \begin{align*}
 Z_i(y) &= \int_{-\infty}^\infty y K_h(y - Y_i) \dd{y} = \int_{-\infty}^\infty (y + Y_i) K_h(y) \dd{y} \\
 &= \int_{-\infty}^\infty y K_h(y) \dd{y} + Y_i \int_{-\infty}^\infty K_h(y)\dd{y} = Y_i, 
 \end{align*}
+(where we use that $K_h$ is symmetric to get rid of $\int y K_h(y) \dd{y}$),
 and so $\hat m(x)$ is simply the Nadaraya-Watson estimator (the local polynomial estimator with $p = 0$). 
 \end{proof}
 

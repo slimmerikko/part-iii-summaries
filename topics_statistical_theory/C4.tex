@@ -45,8 +45,11 @@ We therefore have
 	\Cal M &\geq g(\eta) \inf_{\hat\theta \in \hat\Theta} \max_{j \in [M]} P_{\theta_j}(T_{\hat\theta} \neq j) \geq g(\eta) \inf_{T \in \hat\TT} \max_{j \in [M]} P_{\theta_j}(T \neq j) \\
 	&= g(\eta) \qty{1 - \sup_{T \in \hat\TT} \min_{j \in [M]} P_{\theta_j}(T = j)} \geq g(\eta) \qty{1 - \sup_{T \in \hat\TT} \frac1M \sum_{j=1}^M P_{\theta_j}(T = j)}. 
 \end{align*}
-Therefore, we have now reduced the problem of lower-bounding $\Cal M$ to the problem of upper-bounding $\sup_{T \in \hat T} \frac1M \sum_{j=1}^M P_{\theta_j}(T = j)$, which is a testing problem. 
-
+Therefore, we have now reduced the problem of lower-bounding $\Cal M$ to the problem of upper-bounding $\sup_{T \in \hat T} \frac1M \sum_{j=1}^M P_{\theta_j}(T = j)$, which is a testing problem. We repeat the main result:
+\begin{equation} \label{eq:red_to_testing}
+	\Cal M \geq g(\eta) \qty{1 - \sup_{T \in \hat\TT} \frac1M\sum_{j=1}^M P_{\theta_j} (T = j)}, 
+\end{equation}
+where $\eta = \frac12 \min_{jk} d(\theta_j, \theta_k)$. 
 \subsection{Divergences}
 \begin{definition}
 	Let $\mu, \nu$ be measures on $(\XX, \AA)$. We say that $\mu$ is \emph{absolutely continuous} w.r.t.\ $\nu$, notation $\mu \ll\nu$, if
@@ -61,3 +64,199 @@ Note that mutual singularity means that $\mu$ ``lives on'' $A\C$, while $\nu$ ``
 \begin{theorem}[Lebesgue]
 	If $\mu, \nu$ are $\sigma$-finite measures on $(\XX, \AA)$, then there exists measures $\mu_\Rm{ac}$ and $\mu_\Rm{sing}$ on $(\XX, \AA)$ such that $\mu$ can be decomposed as $\mu = \mu_\Rm{ac} + \mu_{\Rm{sing}}$, where $\mu_\Rm{ac} \ll \nu$ and $\mu_\Rm{sing} \perp \nu$. Furthermore, this decomposition is unique. 
 \end{theorem}
+
+Let $f \colon (0, \infty) \to \RR$ be convex. Then for any $y > 0$, the function $x \mapsto \frac{f(x) - f(y)}{x - y}$ is increasing on $(y, \infty)$ (this is easy to check). Furthermore, we have
+\[
+\lim_{x \to \infty} \frac{f(x) - f(y)}{x - y} = \lim_{x \to \infty} \frac{f(x)}{x - y} - \lim_{x \to \infty} \frac{f(y)}{x - y} = \lim_{x \to \infty} \frac{f(x)}{x}, 
+\]
+so in particular the limit is independent of $y$ and we can define the \emph{maximal slope} of $f$ by
+\[
+M_f \ceq \lim_{x\to\infty} \frac{f(x)}{x} \in (-\infty, \infty].
+\]
+We define $f(0) \ceq \lim_{x \downarrow 0} f(x) \in (-\infty, \infty]$ (a convex function is continuous on an open interval, so this limit exists). In this case, we have
+\[
+f(x + y) = f(x) + y \frac{f(x+y) - f(x)}{y} \leq f(x) + y M_f \qquad\forall x, y \geq 0. 
+\]
+
+\begin{definition}
+	Given a convex function $f \colon (0, \infty) \to \RR$ with $f(1) = 0$, and probability measures $P, Q$ on a measurable space $(\XX, \AA)$, we define the $f$-divergence 
+	\[
+	\Div_f(P, Q) \ceq \int_\XX f\qty(\dv{P_\Rm{ac}}{Q}) \dd{Q} + P_\Rm{sing}(\XX) \cdot M_f. 
+	\]
+\end{definition}
+
+By Jensen's inequality we have
+\begin{align*}
+	\Div_f(P, Q) &=  \int_\XX f\qty(\dv{P_\Rm{ac}}{Q}) \dd{Q} + P_\Rm{sing}(\XX) \cdot M_f \geq f\qty(\int_\XX \dv{P_\Rm{ac}}{Q} \dd{Q}) + P_\Rm{sing}(\XX) \cdot M_f \\
+	&= f(P_\Rm{ac}(\XX)) + P_\Rm{sing}(\XX) \cdot M_f = f(P_\Rm{ac}(\XX) + P_\Rm{sing}(\XX)) = f(P(\XX)) = f(1) = 0, 
+\end{align*}
+so $f$-divergences are nonnegative. 
+
+\begin{example}
+	\begin{enumerate}
+		\item If $f(x) = x\log x$, then $M_f = \infty$. If $P \ll Q$ (i.e., $P_\Rm{sing} = 0$), then we have
+		\[
+		\Div_f(P, Q) = \int_\XX  \dv{P}{Q} \log(\dv{P}{Q}) \dd{Q} = \int_\XX \log(\dv{P}{Q}) \dd{P},
+		\]
+		and otherwise $\Div_f(P, Q) = 0$.
+		
+		This divergence is known as the \emph{Kullbach-Leibler} divergence from $Q$ to $P$, denoted $\KL(P, Q)$. 
+		
+		If $P \ll Q$ and $P$ and $Q$ have densities $p$ and $q$ w.r.t.\ a  measure $\mu$, we have $\KL(P, Q) = \int_\XX p \log(\frac pq) \dd{\mu}$. 
+		
+		\item If $f(x) = x^2 - 1$, then $M_f = \infty$. If $P \ll Q$ we have
+		\[
+		\Div_f(P, Q) = \int_\XX \qty(\dv{P}{Q})^2 \dd{Q} - \int_\XX \dd{Q} = \int_\XX \qty(\dv{P}{Q})^2 \dd{Q} - 1, 
+		\]
+		and otherwise $\Div_f(P, Q) = \infty$. 
+		
+		This divergence is known as the $\chi^2$ divergence from $Q$ to $P$, denoted $\chi^2(P, Q)$. 
+		
+		If $P \ll Q$ and  $P$ and $Q$ have densities $p$ and $q$ w.r.t.\ a measure $\mu$, we have $\chi^2(P, Q) = \int_\XX \frac{p^2}{q} \dd{\mu} - 1$.
+		
+		\item If $f(x) = (\sqrt x - 1)^2 = x + 1 - 2\sqrt x$ (note that this is convex since $\sqrt x$ is concave), then $M_f = 1$ and therefore
+		\[
+		\Div_f(P, Q) = \int_\XX \qty(\sqrt{\dv{P_\Rm{ac}}{Q}} - 1)^2 \dd{Q} + P_\Rm{sing}(\XX) \eqqcolon \Hh^2(P, Q),
+		\]
+		the \emph{squared Hellinger distance} between $P$ and $Q$. 
+		
+		If $P$ and $Q$ have densities $p$ and $q$ w.r.t.\ a $\sigma$-finite measure $\mu$, then $H^2(P, Q) = \int_\XX (\sqrt p - \sqrt q)^2 \dd{\mu}$ (example sheet). 
+		
+		\item If $f(x) = \frac{\abs{x-1}}{2}$, then $M_f = \frac12$ and we have
+		\begin{align*}
+			\Div_f(P, Q) \overset{\text{\TODO}}{=} \sup_{A \in \AA} \abs{P(A) - Q(A)} \eqqcolon \TV(P, Q),
+		\end{align*}
+	the \emph{total variation} divergence between $P$ and $Q$. 
+	\end{enumerate}
+\end{example}
+
+All $f$-divergences are \emph{jointly convex}: for all $\lambda \in [0, 1]$ we have (see Example Sheet)
+\[
+\Div_f\qty((1 - \lambda) P_1 + \lambda P_2, (1 - \lambda) Q_1 + \lambda Q_2) \leq (1-\lambda) \Div_f(P_1, Q_1) + \lambda \Div_f(Q_1, Q_2)
+\]
+
+\subsection{Le Cam's two point lemma}
+Plugging $M = 1$ into \cref{eq:red_to_testing} yields the trivial result $\Cal M \geq 0$. Surprisingly, when we plug in $M = 2$, we obtain Le Cam's two point lemma, which can often provide optimal rates for estimating real-valued parameters (though not optimal constants). 
+\begin{lemma}
+	In the set-up of section 4.1, we have for any $\theta_1, \theta_2 \in \Theta$ that 
+	\[
+	\Cal M \geq \frac{g(\eta)}{2} \qty{1 - \TV(P_{\theta_1}, P_{\theta_2})}. 
+	\]
+\end{lemma}
+
+\begin{proof}
+	For $T \in \hat\TT_2$, let $A \ceq T^{-1}(\qty{1})$, then we have by \cref{eq:red_to_testing}
+	\begin{align*}
+		\Cal M &\geq g(\eta) \qty{1 - \sup_{T \in \hat T_2} \frac{P_{\theta_1}(T = 1) + P_{\theta_2}(T = 2)}{2}} = \frac{g(\eta)}{2} \qty{1 - \sup_{T \in \hat\TT_2} \qty(P_{\theta_1}(T = 1) - P_{\theta_2}(T = 1))} \\
+		&\geq \frac{g(\eta)}{2} \qty{ 1 - \TV(P_{\theta_1}, P_{\theta_2})}. 
+	\end{align*}
+\end{proof}
+
+\begin{example}
+	Let $X_1, \dotsc, X_n \iid N(\theta, 1)$ for some $\theta \in \RR$. Let $\theta_1 = 0$ and $\theta_2 = c n^{-1/2}$ for some $c > 0$, and let $P_{\theta_j} \ceq N(\theta_j, 1)$ for $j = 1, 2$. Then we have (where $\star$ denotes equalities that will be proved on the example sheet):
+	\[
+	\TV(P_{\theta_1}^{\times n}, P_{\theta_2}^{\times n}) \overset\star\leq \sqrt{\frac{\KL(P_0^{\times n}, P_{cn^{-1/2}}^{\times n})}{2}} \overset\star= \sqrt{\frac n2 \KL(P_0, P_{cn^{-1/2}})} \overset\star= \frac c2. 
+	\]
+	Plugging this into Le Cam's two point lemma yields (using the squared error loss $L(x, y) = (x-y)^2$ that
+	\[
+	\Cal M = \inf_{\hat\theta \in \hat\Theta} \sup_{\theta \in \RR} \EE_\theta \qty[(\hat\theta(X_1, \dotsc, X_n) - \theta)^2] \geq \sup_{c > 0} \frac{c^2}{8n} \qty(1 - \frac c2) = \frac2{27n}.
+		\]
+		
+	In this problem, it can be shown that $\Cal M = 1/n$, so Le Cam's two point lemma does give the optimal rate, but it does not give the optimal constant. 
+\end{example}
+
+\begin{example}
+	\TODO Understand remark 45 in lecture notes
+\end{example}
+
+\subsection{Assouad's lemma}
+\begin{lemma}
+	Let $m \in \NN$, $\Phi \ceq \qty{0, 1}^m$ and $\qty{P_\phi \mid \phi \in \Phi}$ a family of probability measures on $(\XX, \AA)$. Write $\phi \sim \phi'$ when $\phi$ and $\phi'$ differ in precisely one coordinate and $\phi \sim_j \phi'$ when this coordinate is the $j$-th. 
+	
+	Suppose the loss function is of the form 
+	\[
+	L(\phi', \phi) = \sum_{j=1}^m L_j(\phi', \phi) = \sum_{j=1}^m g(d_j(\phi', \phi)), 
+	\]
+	where $d_1, \dotsc, d_m$ are semimetrics satisfying $d_j(\phi', \phi) \geq\alpha_j$ whenever $\phi \sim_j \phi'$, and where $g$ is increasing and  satisfies $g(x+y) \leq A\qty{g(x) + g(y)}$ for all $x, y \geq 0$ and some $A > 0$. Then
+	\[
+	\inf_{\hat\phi \in \hat\Phi} \max_{\phi\in\Phi} \EE_\phi L(\hat\phi,\phi) \geq \frac1{2A} \qty{1 - \max_{\phi \sim \phi'} \TV(P_\phi, P_{\phi'})} \sum_{j=1}^m g(\alpha_j). 
+	\]
+	
+\end{lemma}
+
+\begin{proof}
+	For any $\phi \in \Phi, j \in [m]$, let $\phi^{[j]}$ be the unique element of $\Phi$ with $\phi \sim_j \phi^{[j]}$. Letting $\hat\Phi$ denote the set of measurable functions from $\XX$ to $\Phi$, we have
+\begin{equation} \label{eq:minimax}
+		 \max_{\phi \in \Phi} \EE_\phi L(\hat\phi, \phi) \geq \frac1{2^m} \sum_{\phi \in \Phi} \sum_{j=1}^m \EE_\phi L_j(\hat\phi, \phi) = \frac1{2^{m+1}} \sum_{j=1}^m \sum_{\phi \in \Phi} \qty{\EE_\phi L_j(\hat\phi,\phi) + \EE_{\phi^{[j]}} L_j(\hat\phi, \phi^{[j]})},
+	 	\end{equation}
+ 	where the last equality follows from the fact that in the sum we count every element of $\phi$ twice (so we must divide by 2). By the definition of $L_j$ and the triangle inequality,
+ 	\[
+ 	L_j(\hat\phi, \phi) + L_j(\hat \phi, \phi^{[j]}) \geq \frac1A g(d_j(\hat\phi, \phi) + d_j(\hat\phi, \phi^{[j]})) \geq \frac1A g(d_j(\phi, \phi^{[j]})) \geq \frac{g(\alpha_j)}{A}.
+ 	\]
+ 	If we multiply and divide \cref{eq:minimax} by $\sum_{j=1}^m L_j(\hat\phi, \phi) + L_j(\hat\phi, \phi^{[j]})$, we obtain, writing $\FF$ for the set of measurable functions from $\XX\to [0, 1]$, 
+ 	\begin{align*}
+ 	\max_{\phi \in \Phi} \EE_\phi L(\hat\phi, \phi) &\geq \qty(\sum_{j=1}^m L_j(\hat\phi,\phi) + L_j(\hat\phi, \phi^{[j]}))\frac1{2^{m+1}}  \frac{ \sum_{j=1}^m \sum_{\phi \in \Phi} \qty{\EE_\phi L_j(\hat\phi,\phi) + \EE_{\phi^{[j]}} L_j(\hat\phi, \phi^{[j]})}}{\sum_{j=1}^m L_j(\hat\phi, \phi) + L_j(\hat\phi, \phi^{[j]})} \\
+ 	&\overset{??}\geq \frac{\sum_{j=1}^m g(\alpha_j)}{2^{m+1}A} \sum_{\phi \in \Phi} \inf_{f_1, f_2 \in \FF: f_1 + f_2 =1 } \qty{\EE_\phi(f_1) + \EE_{\phi^{[j]}} (f_2)} \\ 
+ 	&= \frac{\sum_{j=1}^m g(\alpha_j)}{2^{m+1}A}  \sum_{\phi \in \Phi}\qty(1 - \sup_{f \in \FF}\qty{ \EE_\phi f - \EE_{\phi^{[j]}} f}) \\ 
+ 	&\overset\star\geq \frac1{2A} \qty{1 - \max_{\phi \sim \phi'} \TV(P_\phi, P_{\phi'})} \sum_{j=1}^m g(\alpha_j), 
+  	\end{align*}
+  \TODO explain $\star$ (related to the alternative expression for $\TV$ as the divergence of $\abs{x-1}/2$).
+  % where $\star$ follows from the fact that $\TV(P_\phi, P_{\phi'})
+\end{proof}
+
+\begin{example}
+	Let $X_1, \dotsc, X_n \iid N_d(\theta, \Sigma) \eqqcolon P_\theta$ for some $\theta \in \RR^d$, where $\Sigma = \Rm{diag}(\sigma_1^2, \dotsc, \sigma_d^2)$. Fix $c > 0$, and for $\phi \in \qty{0, 1}^d$ define $\theta^\phi \in \RR^d$ by $\theta_j^\phi = c\sigma_j n^{-1/2} \ind_{\phi_j = 1}$ for $j \in [d]$. 
+	
+	If we used the squared error loss $L(\theta, \theta') = \norm{\theta - \theta'}_2^2$, then we have $d_j(\theta, \theta') = \abs{\theta_j - \theta'_j}$, so $\alpha_j = c \sigma_j n^{-1/2}$ and $g(x) = x^2$, and  $(x+y)^2 \leq 2(x^2 + y^2)$ implies $A = 2$. 
+	
+	Write $\hat\Theta$ for the set of measurable functions from $(\RR^d)^{\times n}$ to $\RR^d$, then Assouad's lemma tells us that, for any $\hat\theta(X_1, \dotsc, X_n) = \hat\theta \in \Theta$, 
+	\begin{align*}
+		\sup_{\theta \in \RR^d} \EE_\theta \qty(\norm{\hat\theta - \theta}^2) &\geq \max_{\phi \in \Phi} \EE_{\theta^\phi} \qty(\norm{\hat\theta - \theta^\phi}^2) \\
+		&\geq \frac14 \qty{1 - \max_{\phi \sim \phi'} \TV(P_{\theta^\phi}, P_{\theta^{\phi'}})} \sum_{j=1}^d \frac{c^2\sigma_j^2}{n} \\
+		&\overset\star\geq \frac{c^2}{4n} \qty{1 - \max_{\phi \sim \phi'} \sqrt{\frac{\KL(P_{\theta^\phi}^{\times n}, P_{\theta^{\phi'}}^{\times n})}{2}}} \sum_{j=1}^d \sigma^2 \\
+		&= \frac{c^2}{4n} \qty(1 - \frac c2) \sum_{j=1}^d \sigma_j^2, 
+	\end{align*}
+and taking the supremum over all $c > 0$ on the right-hand side gives $\frac4{27n} \sum_{j=1}^d \sigma_j^2$.  Here, $\star$ follows from Pinsker's inequality (example sheet). 
+
+It can be shown that this is the optimal rate in terms of $n$ and the $\sigma_j$, but again, $4/27$ is not the optimal constant. 
+
+\subsection{The data processing inequality}
+If $(\XX, \AA, \mu)$ is a measure space and $(\YY, \BB)$ a measurable space, and $g \colon \XX \to \YY$ is measurable, we denote the pushforward measure by $\mu^g \ceq \mu \circ g^{-1}$. 
+\begin{lemma}[Data processing inequality]
+	Let $(\XX, \AA)$ and $(\YY, \BB)$ be measurable spaces, $P, Q$ probability measures on $\XX$, and $g \colon \XX \to \YY$ measurable. Then for any $f$-divergence $\Div_f$ we have
+	\[
+	\Div_f (P^g, Q^g) \leq \Div_f(P, Q). 
+	\]
+\end{lemma}
+
+\begin{proof}
+	We decompose $P = P\ac + P\sing$ w.r.t.\ $Q$. We will show that $(P\ac)^g \ll Q^g$ with Radon-Nikodym derivative $\gamma$, where
+	\[
+	\gamma(y) \ceq \EE_Q \qty( \dv{P\ac}{Q}(X) \mid g(X) = y). 
+	\]
+	To see this, let $B \in \BB$, then
+	\begin{align*}
+		(P\ac)^g(B) &= P\ac(g^{-1}(B)) = \int_\XX \ind_{g^{-1}(B)} \dv{P\ac}{Q} \dd{Q} = \EE_Q\qty[ \EE_Q \qty[ \ind_{g^{-1}(B)}(X) \dv{P\ac}{Q}\qty(X) \mid g(X)]] \\
+		&\overset\star= \EE_Q \qty[ \ind_{g^{-1}(B)}(X) \EE_Q\qty[\dv{P\ac}{Q}\qty(X) \mid g(X)]] \\
+		&= \int_\XX \ind_{g^{-1}(B)} \cdot (\gamma \circ g) \dd{Q} 
+		\overset\star= \int_\YY \ind_B \cdot \gamma \dd{Q^g} = \int_B \gamma \dd{Q^g}, 
+	\end{align*}
+where $\star$ follows from the transformation theorem. This establishes the claim. 
+
+Now, writing $(P\sing)^g = ((P\sing)^g)\ac + ((P\sing)^g)\sing$ (the Lebesgue decomposition w.r.t.\ $Q^g$), we have
+\[
+P^g = (P\ac)^g + (P\sing)^g = (P\ac)^g + ((P\sing)^g)\ac + ((P\sing)^g)\sing, 
+\]
+and since $(P\ac)^g \ll Q^g$, this gives the Lebesgue decomposition of $P^g$ w.r.t.\ $Q^g$, namely $(P^g)\ac = (P\ac)^g$ and $(P^g)\sing = ((P\sing)^g)\sing$. We now obtain, using $f(x+y) \leq f(x) + M_f$, that
+\begin{align*}
+	\Div_f(P^g, Q^g) &= \int_\YY f\qty(\dv{(P\ac)^g}{Q^g} + \dv{((P\sing)^g)\ac}{Q^g}) \dd{Q^g} + ((P\sing)^g)\sing(\YY) \cdot M_f \\
+	&\leq \int_\YY f\qty(\dv{(P\ac)^g}{Q^g}) \dd{Q^g} + (P\sing)^g(\YY) \cdot M_f \\
+	&= \int_\YY f \circ \gamma \dd{Q^g} + (P\sing)^g(\YY) \cdot M_f \\
+	&= \int_\XX f\circ\gamma\circ g \dd{Q} + P\sing(\XX) \cdot M_f \\
+	&= \EE_Q\qty[ f\qty(\EE_Q\qty[ \dv{P\ac}{Q}\qty(X) \mid g(X)])] + P\sing(\XX) \cdot M_f \\
+	&\leq \EE_Q \qty[ \EE_Q \qty{ f\qty(\dv{P\ac}{Q} \qty(X) \mid g(X))}] + P\sing(\XX) \cdot M_f \\
+	&= \int_\XX f\qty(\dv{P\ac}{Q}) \dd{Q} + P\sing(\XX) \cdot M_f = \Div_f(P, Q), 
+\end{align*}
+where the last inequality follows from the conditional version of Jensen. 
+\end{proof}
+\end{example}

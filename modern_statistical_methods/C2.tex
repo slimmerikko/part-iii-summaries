@@ -239,7 +239,7 @@ and for $x \in \RR^d$ we define $\sign(x) \ceq (\sign(x_1), \dotsc, \sign(x_n))$
 
 \subsubsection{Lasso solutions}
 
-With the previous proposition, we can write characterise solutions to the Lasso: namely we have
+Using the KKT conditions, we can write characterise solutions to the Lasso: namely we have
 \[
 \hat\beta_\lambda^L = \argmin_\beta \frac1{2n} \norm{Y- X\beta}_2^2 + \lambda \norm{\beta}_1 = \argmin_\beta Q(\lambda)
 \]
@@ -270,6 +270,7 @@ Note that $\hat\beta^L_\lambda$ need not be unique, however, the fitted values a
 so all inequalities must be equalities. In particular, by $\star$ we find $Q_1(tX\hat\beta + (1-t)X\hat\gamma) = t Q_1(X\hat\beta) + (1-t)Q_1(X\hat\gamma)$, and since $Q_1$ is strictly convex this implies $X\hat\beta = X\hat\gamma$. 
 \end{proof}
 
+From this proposition, it follows that the vector $\hat\nu$ from the KKT conditions is also unique with $\hat\nu = \frac1{\lambda n} X\T (Y - X\hat\beta)$. 
 \subsubsection{Variable selection}
 We consider the noiseless model $Y = X\beta^0$, where no randomness is involved. Let $S = \qty{k \mid \beta_k \neq 0}$, $N = \qty{1, \dotsc, p} \setminus S$, and assume that $S = \qty{1, \dotsc, s}$ (so $\beta_1, \dotsc, \beta_s$ are nonzero and $\beta_{s+1}, \dotsc, \beta_p$ are zero). 
 

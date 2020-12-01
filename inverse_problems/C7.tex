@@ -1,0 +1,61 @@
+\section{Function space priors and Monte Carlo}
+Recall that a random variable in $\RR^d$ is called Gaussian if and only if every linear combination of its components is a Gaussian random variable on $\RR$. This can be generalised to any separable Banach space $(\XX, \BB\XX)$: 
+\begin{definition}
+	Let $\mu$ be a probability measure on $\Prob(\XX, \BB\XX)$ and let $U \sim \mu$. We call $\mu$ \emph{Gaussian} if, for all $\ell \in \XX^*$, the random variable $\ang{\ell, U}$ has a normal distribution.
+	
+	We define the \emph{mean} of $\mu$ by  
+	\[
+	a_\mu \in \XX^{**} \colon \ell \mapsto \int_\XX  \ang{\ell, u} \dd{\mu}(u),
+	\]
+	and the \emph{covariance operator} of $\mu$ by $R_\mu \colon (\XX^*)^2 \to \RR$, where 
+	\[
+	R_\mu(\ell, \ell') = \int_\XX \qty(\ang{\ell, u} - a_\mu(\ell))(\ang{\ell', u} - a_\mu(\ell'))\dd{\mu(u)}
+	\]
+	
+	If $\XX$ is a function space, $U$ is called a \emph{Gaussian random field}. 
+\end{definition}
+
+This definition is not constructive, and in general, it is nontrivial to construct a Gaussian random field. On a separable Hilbert space however, an explicit construction is possible. 
+
+\begin{definition}
+	Let $\XX$ be a separable Hilbert space and $C \in \KK(\XX, \XX)$ self-adjoint, 
+	and write the eigendecomposition
+	\[
+	Cx = \sum_{i=1}^\infty \lambda_i \ang{x, \phi_i} \phi_i
+	\]
+	where $\abs{\lambda_1} \geq \abs{\lambda_2} \geq \dotsb$. Then $C$ is called a \emph{trace class} operator if $(\lambda_i)_{i \in \NN} \in \ell^1$. 
+\end{definition}
+
+\begin{proposition}
+	Let $\XX$ be a separable Hilbert space and $C$ a positive semi-definite trace class operator with an eigenvalue decomposition as in the previous definition. Letting $m \in \XX$ and $\xi \sim \Rm N(0, 1)^{\otimes\NN}$ (a sequence of independent $\Rm N(0,1)$ random variables), we have that
+	\[
+	U \ceq m + \sum_{i=1}^\infty \sqrt{\lambda_i} \xi_i \phi_i. 
+	\]
+	is distributed according to a Gaussian measure with mean $m$ and covariance operator $C$ (in the sence that $R_\mu(x, y) = \ang{Cx, y}$). 
+\end{proposition}
+
+\begin{proof}
+	Let $k \in \NN$ and $U_k \ceq m + \sum_{i=1}^k \sqrt{\lambda_i} \xi_i \phi_i$, and let $x \in \XX$ and $x_i \ceq \ang{x, \phi_i}$. Then we have 
+	\begin{align*}
+		\ang{x, U_k} &= \ang{x, m} + \sum_{i=1}^k \sqrt{\lambda_i} \ang{x, \phi_i} \xi_i \\
+		&= \ang{x, m} + \sum_{i=1}^k \sqrt{\lambda_i} x_i \xi_i, 
+	\end{align*}
+and since $\sqrt{\lambda_i}x_i\xi_i \sim \Rm N(0, \lambda_i x_i^2)$, it can be shown that $\ang{x, U_k}$ converges weakly to the distribution $\Rm N(\ang{x, m}, \sum_{i=1}^\infty \lambda_i x_i^2)$ if the sum $\sum_{i=1}^\infty \lambda_ix_i^2$ is finite. 
+
+Indeed, the sum is finite: $(\lambda_i) \in \ell^1$ by assumption and $(x_i^2) \in \ell^1$ since $\sum_i x_i^2 = \norm{x}^2 < \infty$. It is known that the pointwise product of two $\ell^1$ sequences lies again in $\ell^1$. 
+
+This proves that $U$ has a normal distribution, and we cam compute the mean and covariance  using Fubini's theorem, which proves the claim. 
+\end{proof}
+
+\begin{example}
+	Let $D = [0, 1]^2$ and $\XX \ceq L^2(D, \BB D, \lambda_2)$ and $\ell > 0$, $\sigma^2 \geq 0$. Then the \emph{exponential covariance function} is defined as
+	\[
+	c_\Rm{exp}(x, y) \ceq \sigma^2\exp(-\norm{x - y}_2 / \ell),
+	\]
+	while the \emph{Gaussian covariance function} is defined as
+	\[
+	c_\Rm{N}(x, y) \ceq \sigma^2 \exp(- \norm{x - y}_2 / (2\ell^2)). 
+	\]
+	
+	The parameter $\ell$ is called \emph{correlation length} while $\sigma^2$ is called \emph{pointwise variance}. 
+\end{example}

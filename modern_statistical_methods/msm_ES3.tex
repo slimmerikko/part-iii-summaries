@@ -294,7 +294,7 @@ By the KKT conditions we have $\norm{X\T\theta}_\infty = \frac1n\norm{X\T(Y - X\
 	&= \frac1{2n}\norm{Y - X\hat\beta}_2^2 + \hat\beta\T \qty{\frac1n X\T(Y - X\hat\beta)} \\
 	&\overset\star= \frac1{2n} \norm{Y - X\hat\beta}_2^2 + \lambda \norm{\beta}_1,
 \end{align*}
-where $\star$ follows from the KKT conditions. This shows that $\theta^*$ maximises $G$ over the objective set.  \TODO Uniqueness of $\theta^*$? 
+where $\star$ follows from the KKT conditions. This shows that $\theta^*$ maximises $G$ over the objective set.  Finally, $\theta^*$ is the unique maximum since we are maximising a strictly concave function over a convex set. 
 
 \item Clearly
 \[
@@ -346,7 +346,7 @@ and from the previous observation we conclude $\hat\beta^L_{\lambda, k} = 0$ (no
 	\]
 	where $(\hat\nu)_S = \sign(\gamma)_S$ and $\norm{\hat\nu}_\infty \leq 1$. This shows that $\gamma$ is a Lasso solution.
 	
-	It follows that the solution path is piecewise linear with knots whenever the sign of the Lasso solution changes. Since the Lasso solution is 0 for $\lambda$ large enough, there can only be finitely many sign changes, which concludes the proof. (\TODO elaborate on last step)
+	It follows that the solution path is piecewise linear with knots whenever the sign of the Lasso solution changes. Since there are $3^p$ possible signs and alternating is not possible, there are finitely many knots. 
 \end{proof}
 
 \begin{question}

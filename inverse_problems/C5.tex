@@ -150,3 +150,23 @@ Assume we are given a likelihood $L = f_{Y \mid U = u}$ for some $U$. We are int
 	\]
 	for $u \in \XX$, $\nu_U$-a.e., and $y \in \YY$, $\PP(Y \in \cdot)$-a.e.\ with $g_Y(y) > 0$. 
 \end{theorem}
+
+\begin{definition}
+	In the formulation of Bayes' formula: 
+	\begin{enumerate}
+		\item $Z(y) \ceq g_{Y}(y)$ is called the \emph{model evidence} or \emph{marginal likelihood};
+		\item $L(y\mid u) \ceq g_{Y\mid U =u}(y)$ is called the \emph{(data) likelihood};
+		\item $\mu_0 \ceq \PP(U \in \cdot)$ is called the \emph{prior measure};
+		\item $\mu_\Rm{post} \ceq \PP(U \in \cdot \mid Y = y)$ is called the \emph{posterior measure}. 
+	\end{enumerate}
+\end{definition}
+
+If we assume that $\nu_U \ceq \mu_0$ (we can choose $\nu_U$ freely so long as $\mu_0$ has a probability density w.r.t.\ $\nu_0$), we obtain from Bayes' formula the formulation
+\[
+\dv{\mu_\Rm{post}}{\mu_0}(u) = \frac{L(y \mid u)}{Z(y)} \qquad(\mu_0\text{-a.s.}).
+\] 
+If $\mu_0$ has a density with respect to some other measure $\nu$ (say, Lebesgue measure), then we obtain
+\[
+\dv{\mu_\Rm{post}}{\nu} = \dv{\mu_\Rm{post}}{\mu_0} \dv{\mu_0}{\nu} = \frac{L(y \mid u)}{Z(y)} \dv{\mu_0}{\nu}. 
+\]
+In practice, this means that computing the density of the posterior measure comes down to multiplying the likelihood with the prior measure and normalising accordingly. 
