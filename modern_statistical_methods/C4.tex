@@ -229,7 +229,7 @@ Note that $\lambda_j$ and $\hat\tau_j$ do not depend on the responses $Y$ for ou
 \norm{\Delta}_\infty\leq \sqrt n \norm{\hat\beta - \beta^0}_1 \cdot \max_j \frac{\lambda_j}{\hat\tau_j^2}.
 \]
 
-Therefore, we must only understand how we can make $\lambda_j/\hat\tau_j^2$ small. First we will briefly consider its practical use. 
+Therefore, we must only understand how we can make $\lambda_j/\hat\tau_j^2$ small. First we will briefly consider the practical use of the debiased lasso. 
 
 \subsubsection{Using the debiased Lasso in practice}
 Under the assumption that $\norm{\Delta}_\infty$ is small, we have by \cref{eq:debiased_lasso_error} that
@@ -243,3 +243,120 @@ Therefore, an \emph{approximate} $(1 - \alpha)$-level confidence interval for $\
 \qty[\hat b_j - z_{\alpha/2} \sigma \sqrt{d_j/n} , \hat b_j + z_{\alpha / 2} \sigma \sqrt{{d_j}/{n}}],
 \]  
 (\TODO Recap how to construct confidence intervals).  The only unknown in the above expression is $\sigma$, which must be estimated. 
+
+\subsubsection{Making the error small}
+We will need the following fact about normally distributed random variables:
+\begin{lemma} \label{lem:multivariate_normal_conditional}
+	Let $\Sigma \in \RR^{p \times p}$ be a covariance matrix with $\Omega \ceq \Sigma^{-1}$.
+	
+	Let $x_{-j} \sim N(0, \Sigma_{-j, -j})$ and let $\eps \sim N(0, \Omega_{jj}^{-1})$ where $x_{-j}$ and $\eps$ are independent. Then, defining
+	\[
+	x_j \ceq x_{-j}\T \gamma^{(j)} + \eps, \qquad\text{where } \gamma^{(j)} \ceq - \Omega_{jj}^{-1} \Omega_{-j, j},
+	\]
+	we have $x \sim N(0, \Sigma)$. 
+\end{lemma}
+
+
+\begin{proof}
+	It is clear that $x$ has a multivariate normal distribution, since it is a linear combination of the independent normal variables $x_{-j}$ and $\eps$. It is therefore enough to compute its mean and covariance. We clearly have
+	\[
+	\EE[x] = \EE[x_{-j}\T \gamma^{(j)}] + \EE[\eps] = 0.
+	\]
+	
+	For the variance, let $j = 1$ without loss of generality. 
+%	Then we can write by blockwise matrix inversion
+%	\[
+%	\Sigma = \mqty[ \Sigma_{jj} & \Sigma_{-j, j}\T \\ \Sigma_{-j, j} & \Sigma_{-j, -j}] \implies \Omega = \mqty[ \Omega_{jj}^{-1} + \Omega_{jj}^{-1} \Sigma_{-j, j}\T ]
+%	\]
+%	
+	Then we have
+	\[
+	\Var(x) = \EE\mqty[x_j^2 & x_j x_{-j}\T  \\
+	x_{-j} x_j & x_{-j} x_{-j}\T] \eqqcolon \mqty[ A & B \\ B\T & \Sigma_{-j, -j}]. 
+	\]
+	We can compute 
+	\begin{align*}
+		A &= \EE[x_j^2] = \gamma^{(j)\top} \Sigma_{-j, -j} \gamma^{(j)} + \Omega_{jj}^{-1} = \Omega_{jj}^{-1} \qty(1 + \Omega_{jj}^{-1} \Omega_{-j, j}\T \Sigma_{-j, -j} \Omega_{-j, j}) \overset\star= \Sigma_{jj},
+	\end{align*}
+where $\star$ follows from blockwise matrix inversion. 
+
+Analogously, we can compute 
+\begin{align*}
+	B &= \EE[x_j x_{-j}\T] = \EE[\gamma^{(j)\top} x_{-j} x_{-j}\T] + \EE[\eps] \EE[x_{-j}\T] \\
+	&= \gamma^{(j)\top} \Sigma_{-j, -j} = -\Omega_{jj}^{-1} \Omega_{-j, j} \Sigma_{-j, -j} = \Sigma_{j, -j},
+\end{align*}
+where the last step again follows from blockwise matrix inversion.
+This proves that $x \sim N(0, \Sigma)$. 
+\end{proof}
+
+By this lemma, we know that the $j$-th variable can be interpreted as the response of a linear model in the other variables with coefficients $\gamma^{(j)}$. Therefore, $\hat\gamma^{(j)}$ defined in \cref{eq:lasso_regress_column} is the Lasso estimator of $\gamma^{(j)}$ with tuning parameter $\lambda_j$. We can use Lasso properties to understand properties of $\hat\gamma^{(j)}$, but for this we need $\gamma^{(j)}$ to be sparse. We define
+\[
+s \ceq \norm{\beta^0}_0, \quad s_j \ceq \norm{\gamma^{(j)}}_0, \quad s_\Rm{max} \ceq \max(s, s_1, \dotsc, s_p),
+\]
+where $\norm{v}_0$ is the amount of nonzero entries of $v$. 
+
+We assume we have a sequence of models with $n \to \infty$. Recall our setting:
+\begin{enumerate}
+	\item We have $Y = X\beta^0 + \eps$, where $\eps \sim N(0, \sigma^2I)$. We will assume $\sigma$ is constant. 
+	\item We assume that the rows of $X$ are i.i.d.\ $N(0, \Sigma)$ variables, where $\Sigma$ is positive definite with inverse $\Omega$. We let $c$ denote the smallest eigenvalue of $\Sigma$. 
+\end{enumerate}
+\begin{theorem}
+	Suppose $c \geq c_\Rm{min} > 0$ and $\max_j \Sigma_{jj} \leq 1$ for all models in the sequence, and suppose $s_\Rm{max} \sqrt{\log(p) / n} \to 0$. Then there exist constants $A_1, A_2$ such that setting $\lambda = \lambda_j = A_1 \sqrt{\log(p)/n}$ we have
+\begin{align*}
+	\sqrt n(\hat b - \beta^0) = W + \Delta \qquad\text{where } W \mid X  \sim N(0, \sigma^2 \hat\Theta\Sigma\hat\Theta\T), 
+\end{align*}
+and as $n, p \to\infty$, 
+\[
+\PP(\norm{\Delta}_\infty > A_2 s \log(p)/\sqrt n) \to 0. 
+\]
+\end{theorem}
+
+\begin{proof}
+	We define an event $\Lambda_n$ by the following properties:
+	\begin{enumerate}
+		\item $\phi^2_{\hat\Sigma, s} \geq c_\Rm{min} / 2$ and $\phi^2_{\hat \Sigma_{-j, -j}, s_j} \geq c_\Rm{min} / 2$ for all $j$ (recall the definitions from \cref{thm:lasso_compatibility_condition_asymptotics});
+		
+		\item $2\norm{X\T\eps}_\infty / n \leq \lambda$ and $2\norm{X_{-j}\T\eps}_\infty/n \leq \lambda$ for all $j$;
+		\item $\norm{\eps^{(j)}}_2^2/n \geq \Omega_{jj}^{-1} (1 - 4\sqrt{\log(p)/n})$ for all $j$.
+	\end{enumerate}
+On the third example sheet it is shown that $\PP(\Lambda_n) \to 1$ for sufficiently large $A_1$. We work on $\Lambda_n$ and let $c_1, c_2, \dotsc$ be constants. 
+
+By the fast rate (\cref{thm:lasso_fast_rate}), we have
+\[
+\norm{\hat\beta - \beta^0}_1 \leq c_1 s \sqrt{\log(p)/n}. 
+\]
+
+Now, fix any $j$, and note that the maximum eigenvalue of $\Omega$ is at most $c_\Rm{min}^{-1}$, so we have
+\[
+c_\Rm{min}^{-1} \geq \max_{v \in S^{p-1}} v\T \Omega v \geq e_j\T \Omega e_j = \Omega_{jj} \implies  \Omega_{jj}\leq c_\Rm{min}^{-1}. 
+\]
+Furthermore, we have by \cref{lem:multivariate_normal_conditional} that 
+\[
+\Omega_{jj}^{-1} = \Var(X_{ij} \mid X_{i, -j}) \overset?\leq \Var(X_{ij}) \leq \max_j \Sigma_{jj} \leq 1.
+\]
+
+Applying the fast rate (\cref{thm:lasso_fast_rate}) to the lasso estimator $\hat\gamma^{(j)}$, we have
+\begin{align*}
+	\norm{\gamma^{(j)} - \hat\gamma^{(j)}}_1 \leq c_2 s_j \Omega_{jj}^{-1} \sqrt{\log(p)/n} \cdot \frac{1}{\phi^2_{\hat\Sigma_{-j, -j}}},
+\end{align*}
+but since we are working on $\Lambda_n$ we can upper bound the compatibility constant and bound $\Omega_{jj}^{-1} \leq 1$ to obtain
+\[
+\norm{\gamma^{(j)} -\hat\gamma^{(j)}}_1 \leq c_3 s_j \sqrt{\log(p)/n}.
+\]
+
+Now we can lower bound the factor $\hat\tau_j^2$: by definition we have
+\begin{align*}
+	\hat \tau_j^2 &\geq \frac1n \norm{X_j - X_{-j} \hat\gamma^{(j)}}_2^2 \geq \frac1n \norm{e^{(j)}}_2^2 - \frac2n \norm{X_{-j}\T \eps^{(j)}}_\infty \norm{\gamma^{(j)} - \hat\gamma^{(j)}}_1 \\
+	&\overset\star\geq \Omega_{jj}^{-1} (1 - 4 \sqrt{\log(p)/n}) - c_5 \frac{s_\Rm{max} \log(p)}{n} \\
+	&\geq c_\Rm{min}(1 - 4 \sqrt{\log(p)/n}) - c_5 \frac{s_\Rm{max} \log p}{n}, 
+\end{align*}
+and the right hand side goes to 0 for $n \to\infty$ by assumption (here $\star$ follows from the conditions on $\Lambda_n$), so for $n$ large enough we have $\hat\tau_j^2 \geq \frac{c_\Rm{min}}{2}$. 
+
+Putting everything together, on $\Lambda_n$ we have
+\begin{align*}
+	\norm{\Delta}_\infty &\leq \lambda \sqrt n \norm{\hat\beta- \beta^0}_1 \max_j \hat\tau_j^{-2} \\
+	&\leq \frac{2}{c_\Rm{min}} \cdot A_1 \sqrt{\log p} \cdot c_1 s \sqrt{\log(p)/n} \\
+	&\leq A_2 s \log(p)/\sqrt n, 
+\end{align*}
+and therefore  $\PP(\norm{\Delta}_\infty > A_2 s \log(p)/\sqrt n) \leq \PP(\Lambda_n\C) \to 0$, which proves the claim.
+\end{proof}

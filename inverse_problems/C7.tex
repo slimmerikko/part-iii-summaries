@@ -1,4 +1,10 @@
 \section{Function space priors and Monte Carlo}
+This section covers two different topics: 
+\begin{enumerate}
+	\item The general definition of a Gaussian distribution on an infinite-dimensional space (useful for constructing priors);
+	\item Description of Monte Carlo methods for approximating the posterior. 
+\end{enumerate}
+\subsection{Gaussian measures}
 Recall that a random variable in $\RR^d$ is called Gaussian if and only if every linear combination of its components is a Gaussian random variable on $\RR$. This can be generalised to any separable Banach space $(\XX, \BB\XX)$: 
 \begin{definition}
 	Let $\mu$ be a probability measure on $\Prob(\XX, \BB\XX)$ and let $U \sim \mu$. We call $\mu$ \emph{Gaussian} if, for all $\ell \in \XX^*$, the random variable $\ang{\ell, U}$ has a normal distribution.
@@ -59,3 +65,70 @@ This proves that $U$ has a normal distribution, and we cam compute the mean and 
 	
 	The parameter $\ell$ is called \emph{correlation length} while $\sigma^2$ is called \emph{pointwise variance}. 
 \end{example}
+
+\subsection{Monte Carlo methods}
+Generally, Monte Carlo techniques aim at approximating the integral $\bar g \ceq \int_\XX g \dd{\mu}$ by generating independent samples $U_1, U_2, \dotsc \overset{\Rm{iid}}\sim \mu$ and computing the estimator
+\[
+\bar g \approx \hat g_M \ceq \frac1M \sum_{m=1}^M  g(U_m). 
+\]
+By the strong law of large numbers, we know that $\hat g_m \to \bar g$ for $M \to\infty$, $\PP$-almost surely. Furthermore, if $\Var_\mu(g)< \infty$, then we have the following expression for the standard deviation:
+\[
+\sqrt{\EE[(\hat g_m - \bar g)^2]} = \sqrt{\Var_\mu(g)} \cdot M^{-1/2},
+\]
+which gives a convergence rate of $M^{-1/2}$. 
+
+This rate is not the best possible rate: if we assume that $g$ is smooth in some sense, much better rates can be obtained. However, a large advantage is that the rate $M^{-1/2}$ is independent of the dimension of the domain. 
+
+The standard Monte Carlo method does not work for Bayesian inverse problems because in general it is not possible to sample independently from the posterior measure. We must therefore sample dependently (there are also other options such as sampling independently from a different measure and correct using weights). 
+
+\begin{definition}
+	Let $(U_n)_{n=1}^\infty$ be a sequence of $\XX$-valued random variables. Then $(U_n)$ is called a \emph{Markov chain} if, for any $n \in \NN$ and $u_1, \dotsc, u_n \in \XX$, we have
+	\[
+	\PP(U_{n+1} \in \cdot \mid U_1 = u_1, \dotsc, U_n = u_n) = \PP(U_{n+1} \in \cdot \mid U_n = u_n)
+	\]
+	We call the chain \emph{time-homogeneous} if, for all $u \in \XX, n \in \NN$ we have
+	\[
+	 \PP(U_{k+2} \in \cdot \mid U_{k+1} = u) = \PP(U_2 \in \cdot \mid U_1 = u). 
+	\]
+	
+	A time-homogeneous Markov chain can be fully represented by a Markov kernel $K \colon \BB\XX \times \XX \to [0, 1]$ where
+	\[
+	K(B \mid u) \ceq \PP(U_2 \in B \mid U_1 = u)
+	\]
+	
+	Let $\mu \in \Prob(\XX, \BB\XX)$ be any probability meaure, then we denote the \emph{composition} of $\mu$ and $K$ by
+	\[
+	\mu K(B) \ceq \int_\XX K(B \mid u) \dd{\mu(u)} \qquad(B \in \BB\XX),
+	\]
+	and we call $\mu$ \emph{stationary} w.r.t.\ $K$ if $\mu K = \mu$. Note that $\mu$ is stationary w.r.t.\ $K$ if and only if $U_1 \sim \mu \implies U_2 \sim \mu$. 
+	
+	Finally, we say that the Markov kernel $K$ satisfies \emph{detailed balance} w.r.t.\ $\mu' \in \Prob(\XX, \BB\XX)$ if
+	\[
+	\int_B K(A \mid u) \dd{\mu'(u)} = \int_A K(B \mid u) \dd{\mu'(u)} \qquad(A, B \in \BB\XX). 
+	\]
+\end{definition}
+
+\begin{lemma}
+	Let $K \colon \BB \XX \times \XX \to [0, 1]$ be a Markov kernel that satisfies detailed balance w.r.t.\ $\mu \in \Prob(\XX, \BB\XX)$. Then $K$ is stationary w.r.t.\ $\mu$. 
+\end{lemma}
+
+\begin{definition}
+	Let $\mu \in \Prob(\XX, \BB\XX, \nu)$ and let $g \colon (\XX, \BB\XX) \to (\RR, \BB\RR)$ be positive with $g = c \dv{\mu}{\nu}$ for some $c > 0$. Moreover, let $Q \colon \XX \times \BB\XX \to [0, 1]$ be a Markov kernel, given by a positive function $q \colon (\XX, \BB\XX)^2 \to (\RR, \BB\RR)$ with
+	\[
+	Q(A \mid u) = \int_A q(u' \mid u) \dd{\nu(u')} \qquad(A \in \BB\XX, u \in \XX). 
+	\]
+	Now the \emph{Metropolis-Hastings} Markov kernel is given by
+	\[
+	K_\Rm{MH}(A \mid u) \ceq \delta(A - u) \int_\XX (1-\alpha(u, u'')) Q(\dd{u''} \mid u) + \int_A \alpha(u, u') Q(\dd{u'} \mid u) \qquad(u \in \XX, A \in \BB\XX),
+	\]
+	where $\alpha(u, u') \ceq 1 \lor \frac{g(u') q(u \mid u')}{g(u) q(u' \mid u)}$. 
+\end{definition}
+
+The \emph{Metropolis-Hastings MCMC method} (MCMC = Markov Chain Monte Carlo) is given as follows:
+\begin{enumerate}
+	\item Start with some initial $U_1 \in \XX$ and set $m = 1$;
+	\item Sample $U^* \sim Q(\cdot \mid U_m)$;
+	\item With probability $\alpha(U_m, U^*)$ set $U_{m+1} \leftarrow U^*$, otherwise set $U_{m+1} \leftarrow U_m$. 
+	\item Increment $m \leftarrow m + 1$ and go to step 2. 
+\end{enumerate}
+

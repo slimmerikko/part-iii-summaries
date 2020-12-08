@@ -46,7 +46,7 @@ In a well-specified parametric model, the maximum likelihood estimator (MLE) $\h
     The \emph{strong law of large numbers} tells us that if $(Y_n)$ are i.i.d.\ with finite mean $\mu$, then $\bar{Y} \ceq \frac1n \sum_{i=1}^n Y_i \toas \mu$. 
 \end{recap}
 
-Note that the strong law of large numbers immediately implies that $\hat{F_n}(x)$ converges almost surely to $F(x)$ as $n \to \infty$. However, the following stronger result states that this convergence holds uniformly in $x$: 
+Note that the strong law of large numbers immediately implies that $\hat{F_n}(x)$ converges almost surely to $F(x)$ as $n \to \infty$ for all fixed $x \in \RR$. However, the following stronger result states that this convergence holds uniformly in $x$: 
 
 \begin{theorem}[Glivenko-Cantelli] \label{thm:GC}
     Let $X_1, X_2, \dotsc \iid F$. Then we have 
@@ -55,9 +55,54 @@ Note that the strong law of large numbers immediately implies that $\hat{F_n}(x)
     \]
 \end{theorem}
 
+The main idea of the proof is to ``control'' $\hat{F_n}$ in a finite number of points $x_1, \dotsc, x_k$, and then deduce what happens between those points using the fact that distributions are increasing and right-continuous. On \href{https://en.wikipedia.org/wiki/Glivenko%E2%80%93Cantelli_theorem#Proof}{Wikipedia}, 
+	a simplified proof can be found assuming that $F$ is continuous, which still encapsulates the main idea.  For the general proof, we need the following fact about quantile functions:
+	\begin{recap}
+		For any distribution function $F$, its \emph{quantile function} is defined as
+		\[
+		F^{-1} \colon (0, 1] \to \RR \cup \qty{\infty} \colon p \mapsto \inf \qty{x \in \RR \mid F(x) \geq p}. 
+		\]
+		Note that since $F$ is right-continuous and non-decreasing, the infimum is well-defined and may be replaced by a minimum, and therefore we always have $F(F^{-1}(p)) \geq p$. 
+		
+		When necessary, we also define $F^{-1}(0) \ceq \sup\qty{x \in \RR \mid F(x) = 0}$.
+
+	\end{recap}
+	
+	
 \begin{proof}
-    See lecture notes. The main idea of the proof is to ``control'' $\hat{F_n}$ in a finite number of points $x_1, \dotsc, x_k$, and then deduce what happens between those points using the fact that distributions are increasing and right-continuous. On \href{https://en.wikipedia.org/wiki/Glivenko%E2%80%93Cantelli_theorem#Proof}{Wikipedia}, 
-        a simplified proof can be found assuming that $F$ is continuous, which still encapsulates the main idea.  
+    Let $\eps > 0$ and choose $k$ such that $\frac1k \leq \eps$. Now set $x_0 \ceq -\infty$ and $x_i \ceq F^{-1}(\frac ik)$. 
+   Then we have 
+    \[
+    F(x_i-) - F(x_{i-1}) \leq \frac ik - \frac{i-1}{k} = \frac1k \leq \eps
+    \]
+    for all $i$. Define $X = \qty{x_1, \dotsc, x_k, x_1-, \dotsc, x_k-}$ (we abuse notation here) and 
+    \[
+    \Omega_{n, \eps} \ceq \qty{\max_{x \in X} \sup_{m \geq n} \abs{\hat F_m(x) - F(x)} \leq \eps}. 
+    \]
+    By a union bound and the strong law of large numbers we have
+    \[
+    \PP_F(\Omega_{n, \eps}\C) \leq \sum_{x \in X} \PP(\sup_{m \geq n} \abs{\hat F_m(x) - F(x)} > \eps) \to 0, 
+    \]
+    since $\hat F_m(x)$ and $\hat F_m(x-)$ are the sample averages of the random variables $\ind_{X \leq x}$ and $\ind_{X < x}$ and therefore converge almost surely to their means $F(x)$ and $F(x-)$. 
+    
+    Now, fixing $x \in [x_{i-1}, x_i)$ we have for any $n \in \NN$, $m \geq n$
+    \begin{align*}
+    \hat F_m(x) - F(x) &\leq \hat F_m(x_i-) - F(x_{i-1}) \leq \hat F_m(x_i-) - F(x_i-) + F(x_i-) - F(x_{i-1}) \\
+    &\leq \max_{x \in X} \sup_{m \geq n} \abs{\hat F_m(x) - F(x)} + \eps, 
+        \end{align*}
+    and analogously $F(x) - \hat F_n(x) \leq \max_{x \in X}\sup_{m \geq n} \abs{\hat F_m(x) - F(x)} + \eps$.
+    
+    Therefore, we have 
+    \begin{align*}
+    	\PP_F\qty(\sup_{m \geq n} \sup_{x \in \RR} \abs{\hat F_m(x) - F(x)} > 2\eps) \leq \PP_F \qty(\max_{x \in X} \sup_{m \geq n} \abs{\hat F_m(x) - F(x)} > \eps) = \PP(\Omega_{n, \eps}\C) \to 0. 
+    \end{align*}
+
+	Noting that $\eps$ was arbitrary, we conclude
+	\begin{align*}
+		\PP_F\qty(\sup_{x \in \RR} \abs{\hat F_n(x) - F(x)} \to 0) &= \PP_F\qty(\forall L \in \NN \ \exists n \in \NN \ \forall m \geq n : \sup_{x \in \RR} \abs{\hat F_n(x) - F(x)} \leq \frac1L) \\
+		&= \PP_F \qty(\bigcap_{L=1}^\infty \bigcup_{n = 1}^\infty  \bigcap_{m = n}^\infty  \qty{\sup_{x \in \RR} \abs{\hat F_n(x) - F(x)} \leq \frac1L}) \\
+		&= \lim_{L \to\infty} \lim_{n \to\infty} \PP_F \qty(\sup_{m \geq n} \sup_{x \in \RR} \abs{\hat F_m(x) - F(x)} \leq \frac 1L) = 1. 
+	\end{align*}
 \end{proof}
 
 \begin{theorem}[Dvoretzky-Kiefer-Wolfowitz] 
@@ -85,6 +130,7 @@ One of these consequences is the following:
 which converges to 0 as it is the tail of a converging sum. 
 \end{proof}
 
+\begin{consequence}
 For another consequence, we consider the problem of finding a confidence band for $F$. Given $\alpha \in (0, 1)$, set $\eps_n \ceq \sqrt{-\frac1{2n}\log(\alpha/2)}$. Then the DKW inequality tells us that
 \[
 \PP_F \qty( \sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)} > \eps_n) \leq \alpha,
@@ -93,38 +139,29 @@ or equivalently, that
 \[
 \PP_F\qty(\hat{F_n}(x) - \eps_n \leq F(x) \leq \hat{F_n}(x) + \eps_n \ \text{for all $x \in \RR$}) \geq 1 - \alpha. 
 \]
+\end{consequence}
 
-We can say even more.
-
-\begin{recap}
-    For any distribution function $F$, its \emph{quantile function} is defined as
-    \[
-    F^{-1} \colon (0, 1] \to \RR \cup \qty{\infty} \colon p \mapsto \inf \qty{x \in \RR \mid F(x) \geq p}. 
-    \]
-    When necessary, we also define $F^{-1}(0) \ceq \sup\qty{x \in \RR \mid F(x) = 0}$.
-    
-    If $U \sim U(0, 1)$ and $X \sim F$, then for any $x \in \RR$ we have
-    \[
-    \PP(F^{-1}(U) \leq x) = \PP(U \leq F(x)) = F(x) = \PP(X \leq x). 
-    \]
-    This can be written simply as $F^{-1}(U) \deq X$. 
-\end{recap}
-
-Let $U_1, \dotsc, U_n \iid U(0, 1)$ with empirical distribution function $\hat{G_n}$, and let $X_1, \dotsc, X_n \iid F$. Then, we have
+\begin{discussion}
+Let $U_1, \dotsc, U_n \iid U(0, 1)$ with empirical distribution function $\hat{G}_n$, and let $X_1, \dotsc, X_n \iid F$. Then, we have
 \begin{align*}
-\hat{G_n}(F(x)) = \frac1n \sum_{i=1}^n \ind_\qty{U_i \leq F(x)} \deq \frac1n \sum_{i=1}^n \ind_\qty{X \leq x} = \hat{F_n}(x), 
+	\hat{G_n}(F(x)) = \frac1n \sum_{i=1}^n \ind_\qty{U_i \leq F(x)} \deq \frac1n \sum_{i=1}^n \ind_\qty{X_i \leq x} = \hat{F_n}(x), 
 \end{align*}
 where $\deq$ means equality in distribution. It follows that
 \[
 \sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)} \deq \sup_{x \in \RR} \abs{\hat{G_n}(F(x)) - F(x)} \leq \sup_{t \in [0, 1]} \abs{\hat{G_n}(t) - t},
 \]
-with equality if $F$ is continuous. We conclude that if $F$ is continuous, the distribution of $\sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)}$ does not depend on $F$. 
+with equality if $F$ is continuous. We conclude that if $F$ is continuous, the distribution of $\sup_{x \in \RR} \abs{\hat{F_n}(x) - F(x)}$ does not depend on $F$, and that continuous functions give a ``worst-case'' scenario for $\sup_{x \in \RR} \abs{\hat F_n(x) - F(x)}$. 
+\end{discussion}
 
-Other generalisations of \cref{thm:GC} include Uniform Laws of Large Numbers. Let $X, X_1, \dotsc, X_n$ be i.i.d.\ on a measurable space $(\Cal X, \Cal A)$, and $\Cal G$ a class of measurable functions on $\Cal X$. We say that $\Cal G$ satisfies a ULLN if 
-\[
-\sup_{g \in \Cal G} \abs{\frac1n \sum_{i=1}^n g(X_i) - \EE[g(X)]} \toas 0. 
-\]
-In \cref{thm:GC}, we showed that $\Cal  G = \qty{ \ind_\qty{\cdot \leq x} \mid x \in \RR}$ satisfies a ULLN. 
+\begin{discussion}
+	Other generalisations of \cref{thm:GC} include Uniform Laws of Large Numbers. Let $X, X_1, \dotsc, X_n$ be i.i.d.\ on a measurable space $(\Cal X, \Cal A)$, and $\Cal G$ a class of measurable functions on $\Cal X$. We say that $\Cal G$ satisfies a ULLN if 
+	\[
+	\sup_{g \in \Cal G} \abs{\frac1n \sum_{i=1}^n g(X_i) - \EE[g(X)]} \toas 0. 
+	\]
+	In \cref{thm:GC}, we showed that $\Cal  G = \qty{ \ind_\qty{\cdot \leq x} \mid x \in \RR}$ satisfies a ULLN. 
+\end{discussion}
+
+
 
 \begin{recap}
     We recall the central limit theorem: if $X_1, \dotsc, X_n$ are i.i.d.\ random variables with mean $\mu$ and variance $\sigma^2 < \infty$, then $\sqrt n \qty(\bar{X_n} - \mu) \todist N(0, \sigma^2)$. 
@@ -138,13 +175,24 @@ In \cref{thm:GC}, we showed that $\Cal  G = \qty{ \ind_\qty{\cdot \leq x} \mid x
     \frac{V_i - \EE V_i}{\sqrt{\Var(V_i)}} \todist N(0, 1).
     \]
 \end{recap}
+\begin{discussion}
 Another extension starts with the observation that $\sqrt n \qty(\hat{F_n}(x) - F(x)) \todist N(0, \sigma^2)$, where
 \[
 \sigma^2 = \Var(\ind_\qty{X \leq x}) = \EE[\ind_{X \leq x}^2] - \EE[\ind_{X \leq x}]^2 = F(x) - F(x)^2 = F(x)(1 - F(x)). 
 \]
-This can be strengthened by considering $(\sqrt n \qty(\hat{F_n}(x) - F(x)) \todist N(0, \sigma^2) \mid x \in \RR)$ as a stochastic process. 
+This can be strengthened by considering $\qty(\sqrt n (\hat{F_n}(x) - F(x)) : x \in \RR)$ as a stochastic process. 
+\end{discussion}
+
 
 \subsection{Order statistics and quantiles}
+\begin{recap}
+			
+	If $U \sim U(0, 1)$ and $X \sim F$, then for any $x \in \RR$ we have
+	\[
+	\PP(F^{-1}(U) \leq x) = \PP(U \leq F(x)) = F(x) = \PP(X \leq x). 
+	\]
+	This can be written simply as $F^{-1}(U) \deq X$. 
+\end{recap}
 \begin{definition}
     Let $X_1, \dotsc, X_n \iid F \in \Cal F$. The \emph{order statistics} are the ordered samples $X_{(1)} \leq \dotsb \leq X_{(n)}$ (where the original order is preserved in case of a tie). 
 \end{definition}
@@ -166,6 +214,7 @@ The order statistics of the uniform distribution can be computed explicitly:
     \hat F_n^{-1}(p) = \inf \qty{x \in \RR \mid \hat F_n(x) \geq p}. 
     \]
 \end{definition}
+Note that the sample quantile function is the quantile function of the empirical distribution function. 
 
 \begin{proposition}
     It holds that $\hat F_n^{-1}(p) = X_{(\ceil{np})}$. 
@@ -179,7 +228,7 @@ The order statistics of the uniform distribution can be computed explicitly:
     The smallest value of $x$ for which this occurs is the smallest value of $x$ such that exactly $\ceil{np}$ of the variables $X_1, \dotsc, X_n$ satisfy $X_i \leq x$. We conclude that $\hat F_n^{-1}(p) = X_{(\ceil{np})}$. 
 \end{proof}
 
-For $p = \frac12$ for example, this proposition tells us that $\hat F_n^{-1}(p) = X_{(\ceil{n/2})}$, the median of the data. We now explore the distribution of $X_{(\ceil{np})}$. 
+For example, this proposition tells us that $\hat F_n^{-1}(1/2) = X_{(\ceil{n/2})}$, the median of the data. We now explore the distribution of $X_{(\ceil{np})}$. 
 
 \begin{recap}
 We recall two theorems. The first is \emph{Slutsky's theorem}:
@@ -208,20 +257,25 @@ The second is the \emph{delta method}:
     \sqrt{n} \qty(\frac{V_n}{n} - p) &= \frac{\sqrt{\ceil{np}}}{\sqrt n} \qty(\frac{V_n - \ceil{np}}{\sqrt{\ceil{np}}}) + \frac{\ceil{np} - np}{\sqrt n} \\
     &= \frac{\sqrt{\ceil{np}}}{\sqrt n}  \qty(\frac{V_n - \EE V_n}{\sqrt{\Var(V_n)}}) +  \frac{\ceil{np} - np}{\sqrt n}.
     \end{align*}
-    Now, by the central limit theorem, the term between brackets converges to a standard $N(0, 1)$ distribution. The term $\sqrt{\ceil{np}}{\sqrt n}$ converges to $\sqrt p$ and the term $(\ceil{np} - np)/\sqrt n$ converges to 0, so by Slutsky's lemma, we find
+    Now, by the central limit theorem, the term between brackets converges to a standard $N(0, 1)$ distribution. The term $\sqrt{\ceil{np}}/{\sqrt n}$ converges to $\sqrt p$ and the term $(\ceil{np} - np)/\sqrt n$ converges to 0, so by Slutsky's lemma, we find
     \[
     \sqrt{n}\qty(\frac{V_n}{n} - p) \todist \sqrt p N(0, 1) = N(0, p). 
     \]
     
-    An analogous calculation shows that $\sqrt n \qty(\frac{W_n}{n} - (1-p)) \to N(0, 1 - p)$. 
+    Letting $q \ceq 1 - p$, 
+    an analogous calculation shows that $\sqrt n \qty(\frac{W_n}{n} - q) \to N(0, q)$. 
     
-    Now we define $g \colon (0, \infty)^2 \to (0, \infty)$ by $g(x, y) \ceq x / (x + y)$, which is differentiable at $(p, 1 - p)$. Note that the distribution of $(V_n, W_n)$ is an $N(0, \smqty(p & 0 \\ 0 & q))$ distribution. By the delta method we find
+    Now we define $g \colon (0, \infty)^2 \to (0, \infty)$ by $g(x, y) \ceq x / (x + y)$, which is differentiable at $(p, q)$ with derivative
+    \[
+    \nabla g(x, y) = \mqty[y / (x+y)^2 \\ -x / (x+y)^2] \implies \nabla g(p, q) = \mqty[ q \\ -p]. 
+    \]Note that the distribution of $(V_n, W_n)$ is an $N(0, \smqty(p & 0 \\ 0 & q))$ distribution. By the delta method we find
     \begin{align*}
         \sqrt n \qty(U_{\ceil{np}} - p) &\deq \sqrt n\qty( g\qty(\frac{V_n}{n}, \frac{W_n}{n}) - g(p, q)) \\
-        &\todist g'(p, 1-p) N\qty(0, \mqty(p & 0 \\ 0 & q)) \\
-        &= N\qty(0, g'(p, 1-p) \mqty(p & 0 \\ 0 & q) g'(p, 1-p)\T) \\
-        &= N(0, p(1-p)).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+        &\todist \nabla g(p, q)\T \cdot N\qty(0, \mqty(p & 0 \\ 0 & q)) \\
+        &\deq  N\qty(0, \nabla g(p, q)\T  \mqty(p & 0 \\ 0 & q) \nabla g(p, q)) \\
+        &\deq  N(0, pq),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     \end{align*}
+since $\nabla g(p, q)\T \mqty(p & 0 \\ 0 & q) \nabla g(p, q) = q^2 p + p^2 q = pq(p+q) = pq$.
 \end{proof}
 
 We now relate what we know about the uniform distribution to the  quantile function: 
@@ -249,7 +303,10 @@ We turn our attention to concentration inequalities, with a focus on finite-samp
     \]
     for every $t \in \RR$. 
 \end{definition}
+\begin{remark}
 Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\mu, \sigma^2)$ distribution is given by $t \mapsto \exp(\mu t + \sigma^2 t^2 /2)$. 
+	content...
+\end{remark}
 
 \begin{recap}
 	Recall the \emph{tail bound formula} for the expectation: if $X$ is a nonnegative random variable, then 
@@ -270,6 +327,16 @@ Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\m
 	This follows from the convexity of the function $x \mapsto x^p$. 
 \end{recap}
 
+\begin{discussion}[Chernoff bounding]
+	Let $X$ be any random variable, then by Markov's inequality, then we have for all $t > 0$ that 
+	\[
+	\PP(X \geq x) = \PP(e^{tX} \geq e^{tx}) \leq e^{-tx} \EE[e^{tX}] = e^{-tx} M_X(t).
+	\]
+	Since the left-hand side is independent of $t$, we can minimise over all $t$ and obtain \[
+	\PP(X \geq x) \leq \inf_{t > 0} e^{-tx} M_X(t), 
+	\]
+	which often gives better results than the ``standard'' Markov bound. This technique is called \emph{Chernoff bounding}, and is very useful if bounds on $M_X(t)$ are known. 
+\end{discussion}
 \begin{proposition}We consider some characterisations of sub-Gaussianity: 
     \begin{enumerate}[(a)]
         \item     Let $X$ be sub-Gaussian with parameter $\sigma^2$. Then 
@@ -291,15 +358,11 @@ Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\m
 \begin{proof}
     \begin{enumerate}[(a)]
         \item We first consider $\PP(X \geq x)$. 
-        By Markov's inequality, we have for all $t \in \RR$ that
-        \[
-        \PP(X \geq x) = \PP(e^{tX} \geq e^{tx}) \leq e^{-tX} \EE(e^{tX}) \leq e^{-tx + t^2\sigma^2/2}.  
-        \]
-        Since the LHS is independent of $t$, we can take the infimum over $t$ on the RHS and obtain
+        By a Chernoff bound, we have
         \[
         \PP(X \geq x) \leq \inf_{t \in \RR} e^{-tx + t^2\sigma^2/2} = e^{-x^2/(2\sigma^2)}, 
         \]
-        since the infimum of $t^2\sigma^2/2 - tx$ is attained at $t = x/\sigma^2$ (this method is called \emph{Chernoff bounding}). 
+        since the infimum of $t^2\sigma^2/2 - tx$ is attained at $t = x/\sigma^2$.
         
         For $\PP(X \leq -x) = \PP(-X \geq x)$ we can use the fact that $-X$ is also sub-Gaussian with parameter $\sigma^2$. 
         
@@ -317,11 +380,13 @@ Note that equality holds when $X \sim N(0, \sigma^2)$, since the MGF of an $N(\m
 
 \item Note that $x \mapsto e^{-tx}$ is convex for every $t \in \RR$, so $\EE(e^{-tX}) \geq e^{-t \EE(X)} = e^{0} = 1$ by Jensen's inequality. Let $X'$ denote an independent copy of $X$: then $X - X'$ has a symmetric distribution, so all its odd moments vanish. Therefore we find
 \begin{align*}
-	\EE[e^{tX}] &\leq \EE[e^{-tX'}] \EE[e^{tX}] = \EE[e^{t(X - X')}] = \EE \sum_{q=0}^\infty \qty[\frac{t^{2q} (X - X')^{2q}}{(2q)!}] \\
-	&= \sum_{q=0}^\infty \frac{t^{2q} \EE[(X - X')^{2q}]}{(2q)!} \leq \sum_{q=0}^\infty \frac{2^{2q-1} t^{2q} \qty(\EE[X^{2q}] + \EE[(X')^{2q}])}{(2q)!} \\
+	\EE[e^{tX}] &\leq \EE[e^{-tX'}] \EE[e^{tX}] = \EE[e^{t(X - X')}]= \EE \sum_{q=0}^\infty \qty[\frac{t^q (X - X')^{q}}{q!}] 
+	\\
+	&\overset\star= \sum_{q=0}^\infty \frac{t^{2q} \EE[(X - X')^{2q}]}{(2q)!} \leq \sum_{q=0}^\infty \frac{2^{2q-1} t^{2q} \qty(\EE[X^{2q}] + \EE[(X')^{2q}])}{(2q)!} \\
 	&\leq \sum_{q=0}^\infty  \frac{2^{2q - 1}t^{2q} 2 q! C^{2q}}{(2q)!} =\sum_{q=0}^\infty  \frac{(2tC)^{2q}q!}{(2q)!} = \sum_{q=0}^\infty \frac{(2tC)^{2q}}{\prod_{j=1}^q (q+j)} \\
 	&\leq \sum_{q=0}^\infty \frac{(2tC)^{2q}}{\prod_{j=1}^q (2j)} = \sum_{q=1}^\infty \frac{(2t^2C^2)^q}{q!} = e^{2t^2C^2}.
 \end{align*}
+Here, $\star$ follows from Fubini's theorem and the fact that the odd moments of $X - X'$ vanish. 
 This shows that $X$ is sub-Gaussian with parameter $4C^2$. 
     \end{enumerate}
 \end{proof}
@@ -329,7 +394,7 @@ This shows that $X$ is sub-Gaussian with parameter $4C^2$.
 Note that the proposition is not an ``if and only if''-type theorem: suppose we start with a sub-Gaussian variable $X$ with parameter $\sigma^2$. Then by (b), we have $\EE[X^{2q}] \leq q!(2\sigma)^{2q}$, and (c) then implies that $X$ is sub-Gaussian with parameter $16\sigma^2$. 
 
 \begin{theorem}[Hoeffding's inequality] \label{thm:hoeffding}
-	Let $X_1, \dotsc, X_n$ be independent sub-Gaussian random variables, with $X_i$ having parameter $\sigma_i^2$. Then $\bar X$ is sub-Gaussian with parameter $\overline{\sigma^2}$. In particular, we have
+	Let $X_1, \dotsc, X_n$ be independent sub-Gaussian random variables, with $X_i$ having parameter $\sigma_i^2$. Then $\bar X$ is sub-Gaussian with parameter $\overline{\sigma^2} = \frac1n \sum_{i=1}^n \sigma_i^2$. In particular, we have
 	\[
 	\max\qty{\PP(\bar X \geq x), \PP(\bar X \leq -x)} \leq e^{-nx^2/(2\overline{\sigma^2})}.
 	\]
@@ -370,10 +435,12 @@ Note that the proposition is not an ``if and only if''-type theorem: suppose we 
 	By Hoeffding's lemma, $X_i - \mu_i$ is sub-Gaussian with parameter $(b_i - a_i)^2/4$ for each $i$. The result now follows from \cref{thm:hoeffding}.
 \end{proof}
 
-Note that when $X$ takes values in $[a, b]$, its variance is at most $(b-a)^2$. However, when $\Var(X_i) \ll (b_i - a_i)^2$, Hoeffding's inequality can be loose (for example, when $X_i \sim \Rm{Bern}(p_i)$ with $p_i$ small). In such circumstances, Bennett's or Bernstein's inequality may give better results. 
+\begin{example}
+	Note that when $X$ takes values in $[a, b]$, its variance is at most $(b-a)^2$. However, when $\Var(X_i) \ll (b_i - a_i)^2$, Hoeffding's inequality can be loose (for example, when $X_i \sim \Rm{Bern}(p_i)$ with $p_i$ small). In such circumstances, Bennett's or Bernstein's inequality may give better results (example sheet 1, question 4). 
+\end{example}
 
 \begin{theorem}[Bennett's inequality]
-	Let $X_1, \dotsc, X_n$ be independent random variables with $\EE[X_i] = 0$, $\sigma_i^2 \ceq \Var(X_i) < \infty$, and $X_i \leq b$ for some $b > 0$. Define  $S \ceq \sum_{i=1}^n X_i$, $\nu \ceq \overline{\Var(X_i)}$ and $\phi \colon \RR \to \RR$ by $\phi(u) \ceq e^u - 1 - u = \sum_{k=2}^\infty \frac{u^k}{k!}$, then for every $t > 0$ we have
+	Let $X_1, \dotsc, X_n$ be independent random variables with $\EE[X_i] = 0$, $\sigma_i^2 \ceq \Var(X_i) < \infty$, and $X_i \leq b$ for some $b > 0$. Define  $S \ceq \sum_{i=1}^n X_i$, $\nu \ceq \overline{\sigma^2}$ and $\phi \colon \RR \to \RR$ by $\phi(u) \ceq e^u - 1 - u = \sum_{k=2}^\infty \frac{u^k}{k!}$, then for every $t > 0$ we have
 	\[
 	\log\EE[e^{tS}] \leq \frac{n \nu }{b^2} \phi(bt). 
 	\]
@@ -398,12 +465,12 @@ Note that when $X$ takes values in $[a, b]$, its variance is at most $(b-a)^2$. 
 	\]
 	and therefore
 	\[
-	e^{tX_i} \leq 1 + tX_i + X_i^2 \frac{\phi(bt)}{b^2} \implies \EE[e^{tX_i}] \leq 1 + \EE[X_i^2] \frac{\phi(bt)}{t^2} = 1 + \Var(X_i) \frac{\phi(bt)}{b^2}. 
+	e^{tX_i} \leq 1 + tX_i + X_i^2 \frac{\phi(bt)}{b^2} \implies \EE[e^{tX_i}] \leq 1 + \EE[X_i^2] \frac{\phi(bt)}{t^2} = 1 + \sigma_i^2 \frac{\phi(bt)}{b^2}. 
 	\]
 	
 	Hence for $t > 0$ we have
 	\begin{align*}
-		\log \EE[e^{tS}] &= \sum_{i=1}^n \log\EE[e^{tX_i}] \leq n \cdot \frac1n\sum_{i=1}^n \log\qty(1 + \Var(X_i) \frac{\phi(bt)}{b^2}) \\
+		\log \EE[e^{tS}] &= \sum_{i=1}^n \log\EE[e^{tX_i}] \leq n \cdot \frac1n\sum_{i=1}^n \log\qty(1 + \sigma_i^2 \frac{\phi(bt)}{b^2}) \\
 		&\overset*\leq n \log(1 + \frac{\nu \phi(bt)}{b^2}) \overset{**}\leq  \frac{n\nu}{b^2}\phi(bt).
 	\end{align*}
 Here, $(*)$ follows from the fact that $\log$ is a concave function while $(**)$ follows from the fact that $\log(1+u) \leq u$ for all $u \geq 0$. This concludes the proof for the first part of the theorem.
@@ -415,6 +482,7 @@ Now, we apply the method of Chernoff bounding and find
 since once can check that the infimum is attained at $t = b^{-1} \log(1 + bx/\nu)$. 
 \end{proof}
 
+
 \begin{definition}
 	A random variable $X$ with $\EE X = 0$ is called \emph{sub-Gamma in the right tail} with variance factor $\sigma^2 > 0$ and scale $c > 0$ if
 	\[
@@ -425,9 +493,9 @@ since once can check that the infimum is attained at $t = b^{-1} \log(1 + bx/\nu
 
 Note that this definition looks like that of sub-Gaussianity, except that $e^{tX}$ can explode as $t$ approaches $1/c$. We give some characteristics of sub-Gamma distributions:
 
-\begin{definition}
-	For any $x \in \RR$ we define $x_+ \ceq \max(x, 0)$. 
-\end{definition}
+%\begin{definition}
+%	For any $x \in \RR$ we define $x_+ \ceq \max(x, 0)$. 
+%\end{definition}
 
 \begin{proposition}
 \begin{enumerate}[(a)]
@@ -460,7 +528,7 @@ We deduce that for $t \in [0, 1/c)$ we have (note $\log(x) \leq x - 1$ for all $
 \]
 By Fubini's theorem, since the infinite sum has only positive terms we may interchange sum and expectation to obtain
 \[
-\EE \qty[\frac{t^2X^2}{2} + \sum_{q=3}^\infty \frac{t^q \EE[X_+^q]}{q!}] =  \frac{t^2 \Var[X]}{2} + \sum_{q=3}^\infty \frac{t^q \EE[X_+^q]}{q!} \leq \frac{\sigma^2 t^2}{2} \sum_{q=2}^\infty t^{q-2} c^{q-2} = \frac{\sigma^2t^2}{2(1-ct)}. 
+\EE \qty[\frac{t^2X^2}{2} + \sum_{q=3}^\infty \frac{t^q X_+^q}{q!}] =  \frac{t^2 \EE[X^2]}{2} + \sum_{q=3}^\infty \frac{t^q \EE[X_+^q]}{q!} \leq \frac{\sigma^2 t^2}{2} \sum_{q=2}^\infty t^{q-2} c^{q-2} = \frac{\sigma^2t^2}{2(1-ct)}. 
 \]
 \end{enumerate}
 \end{proof}
